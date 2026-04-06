@@ -1,0 +1,38 @@
+import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
+}
+
+@main
+struct RainDropApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var container = AppContainer()
+
+    init() {
+        FirebaseConfig.configure()
+    }
+
+    var body: some Scene {
+        WindowGroup("RainDrop", id: "main") {
+            TimerScreen(
+                viewModel: container.timerViewModel,
+                historyViewModel: container.makeHistoryViewModel(),
+                settingsViewModel: container.makeSettingsViewModel(),
+                shopViewModel: container.shopViewModel,
+                authViewModel: container.authViewModel,
+                socialViewModel: container.makeSocialViewModel(),
+                friendsViewModel: container.makeFriendsViewModel()
+            )
+            .frame(width: 1040, height: 700)
+        }
+        .windowResizability(.contentSize)
+
+        MenuBarExtra("RainDrop", systemImage: "drop.fill") {
+            MenuBarContent(viewModel: container.timerViewModel)
+        }
+    }
+}

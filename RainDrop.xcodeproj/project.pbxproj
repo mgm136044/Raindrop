@@ -1,0 +1,711 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000001 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000001 /* AppContainer.swift */; };
+		AA000002 /* RainDropApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000002 /* RainDropApp.swift */; };
+		AA000003 /* FirebaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000003 /* FirebaseConfig.swift */; };
+		AA000004 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000004 /* FirestoreService.swift */; };
+		AA000005 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000005 /* AppSettings.swift */; };
+		AA000006 /* DailyFocusSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000006 /* DailyFocusSummary.swift */; };
+		AA000007 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000007 /* FocusSession.swift */; };
+		AA000008 /* FriendRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000008 /* FriendRequest.swift */; };
+		AA000009 /* Friendship.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000009 /* Friendship.swift */; };
+		AA00000A /* ShopCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000A /* ShopCatalog.swift */; };
+		AA00000B /* ShopItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000B /* ShopItem.swift */; };
+		AA00000C /* ShopState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000C /* ShopState.swift */; };
+		AA00000D /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000D /* TimerState.swift */; };
+		AA00000E /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000E /* UserProfile.swift */; };
+		AA00000F /* FirebaseSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00000F /* FirebaseSyncService.swift */; };
+		AA000010 /* FocusSessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000010 /* FocusSessionRepository.swift */; };
+		AA000011 /* SettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000011 /* SettingsRepository.swift */; };
+		AA000012 /* ShopRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000012 /* ShopRepository.swift */; };
+		AA000013 /* DateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000013 /* DateService.swift */; };
+		AA000014 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000014 /* NotificationService.swift */; };
+		AA000015 /* TimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000015 /* TimerService.swift */; };
+		AA000016 /* JSONFileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000016 /* JSONFileStore.swift */; };
+		AA000017 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000017 /* AppConstants.swift */; };
+		AA000018 /* TimeFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000018 /* TimeFormatter.swift */; };
+		AA000019 /* AppleSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000019 /* AppleSignInCoordinator.swift */; };
+		AA00001A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001A /* AuthViewModel.swift */; };
+		AA00001B /* ProfileSetupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001B /* ProfileSetupScreen.swift */; };
+		AA00001C /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001C /* SignInScreen.swift */; };
+		AA00001D /* CalendarDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001D /* CalendarDay.swift */; };
+		AA00001E /* CalendarHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001E /* CalendarHeatmapView.swift */; };
+		AA00001F /* HistoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00001F /* HistoryScreen.swift */; };
+		AA000020 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000020 /* HistoryViewModel.swift */; };
+		AA000021 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000021 /* SettingsScreen.swift */; };
+		AA000022 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000022 /* SettingsViewModel.swift */; };
+		AA000023 /* ShopScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000023 /* ShopScreen.swift */; };
+		AA000024 /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000024 /* ShopViewModel.swift */; };
+		AA000025 /* FocusingFriendRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000025 /* FocusingFriendRow.swift */; };
+		AA000026 /* FriendRequestsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000026 /* FriendRequestsScreen.swift */; };
+		AA000027 /* FriendSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000027 /* FriendSearchScreen.swift */; };
+		AA000028 /* FriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000028 /* FriendsViewModel.swift */; };
+		AA000029 /* RankingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000029 /* RankingRowView.swift */; };
+		AA00002A /* SocialScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002A /* SocialScreen.swift */; };
+		AA00002B /* SocialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002B /* SocialViewModel.swift */; };
+		AA00002C /* BucketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002C /* BucketView.swift */; };
+		AA00002D /* StickerPlacementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002D /* StickerPlacementView.swift */; };
+		AA00002E /* TimerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002E /* TimerControlsView.swift */; };
+		AA00002F /* TimerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002F /* TimerScreen.swift */; };
+		AA000030 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000030 /* TimerViewModel.swift */; };
+		AA000031 /* WaterDropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000031 /* WaterDropView.swift */; };
+		AA000032 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000032 /* PrimaryButtonStyle.swift */; };
+		AA000033 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000033 /* AppColors.swift */; };
+		AA000034 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = AB000034 /* AppIcon.icns */; };
+		AA000035 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AD000001 /* FirebaseAuth */; };
+		AA000036 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AD000002 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AB000001 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		AB000002 /* RainDropApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainDropApp.swift; sourceTree = "<group>"; };
+		AB000003 /* FirebaseConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseConfig.swift; sourceTree = "<group>"; };
+		AB000004 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		AB000005 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		AB000006 /* DailyFocusSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyFocusSummary.swift; sourceTree = "<group>"; };
+		AB000007 /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSession.swift; sourceTree = "<group>"; };
+		AB000008 /* FriendRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequest.swift; sourceTree = "<group>"; };
+		AB000009 /* Friendship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Friendship.swift; sourceTree = "<group>"; };
+		AB00000A /* ShopCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCatalog.swift; sourceTree = "<group>"; };
+		AB00000B /* ShopItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItem.swift; sourceTree = "<group>"; };
+		AB00000C /* ShopState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopState.swift; sourceTree = "<group>"; };
+		AB00000D /* TimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerState.swift; sourceTree = "<group>"; };
+		AB00000E /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		AB00000F /* FirebaseSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSyncService.swift; sourceTree = "<group>"; };
+		AB000010 /* FocusSessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionRepository.swift; sourceTree = "<group>"; };
+		AB000011 /* SettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRepository.swift; sourceTree = "<group>"; };
+		AB000012 /* ShopRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopRepository.swift; sourceTree = "<group>"; };
+		AB000013 /* DateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateService.swift; sourceTree = "<group>"; };
+		AB000014 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		AB000015 /* TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerService.swift; sourceTree = "<group>"; };
+		AB000016 /* JSONFileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFileStore.swift; sourceTree = "<group>"; };
+		AB000017 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		AB000018 /* TimeFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatter.swift; sourceTree = "<group>"; };
+		AB000019 /* AppleSignInCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInCoordinator.swift; sourceTree = "<group>"; };
+		AB00001A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		AB00001B /* ProfileSetupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupScreen.swift; sourceTree = "<group>"; };
+		AB00001C /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
+		AB00001D /* CalendarDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDay.swift; sourceTree = "<group>"; };
+		AB00001E /* CalendarHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeatmapView.swift; sourceTree = "<group>"; };
+		AB00001F /* HistoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryScreen.swift; sourceTree = "<group>"; };
+		AB000020 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
+		AB000021 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
+		AB000022 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		AB000023 /* ShopScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopScreen.swift; sourceTree = "<group>"; };
+		AB000024 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
+		AB000025 /* FocusingFriendRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusingFriendRow.swift; sourceTree = "<group>"; };
+		AB000026 /* FriendRequestsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestsScreen.swift; sourceTree = "<group>"; };
+		AB000027 /* FriendSearchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendSearchScreen.swift; sourceTree = "<group>"; };
+		AB000028 /* FriendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsViewModel.swift; sourceTree = "<group>"; };
+		AB000029 /* RankingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankingRowView.swift; sourceTree = "<group>"; };
+		AB00002A /* SocialScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialScreen.swift; sourceTree = "<group>"; };
+		AB00002B /* SocialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialViewModel.swift; sourceTree = "<group>"; };
+		AB00002C /* BucketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BucketView.swift; sourceTree = "<group>"; };
+		AB00002D /* StickerPlacementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementView.swift; sourceTree = "<group>"; };
+		AB00002E /* TimerControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerControlsView.swift; sourceTree = "<group>"; };
+		AB00002F /* TimerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerScreen.swift; sourceTree = "<group>"; };
+		AB000030 /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
+		AB000031 /* WaterDropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterDropView.swift; sourceTree = "<group>"; };
+		AB000032 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
+		AB000033 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		AB000034 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		AB000099 /* RainDrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RainDrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AE000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000035 /* FirebaseAuth in Frameworks */,
+				AA000036 /* FirebaseFirestore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AC000001 = {
+			isa = PBXGroup;
+			children = (
+				AC000002 /* Sources */,
+				AC000099 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AC000002 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AC000003 /* RainDrop */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		AC000003 /* RainDrop */ = {
+			isa = PBXGroup;
+			children = (
+				AC000004 /* App */,
+				AC000005 /* Core */,
+				AC000010 /* Features */,
+				AC000017 /* Shared */,
+				AC00001A /* Resources */,
+			);
+			path = RainDrop;
+			sourceTree = "<group>";
+		};
+		AC000004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				AB000001 /* AppContainer.swift */,
+				AB000002 /* RainDropApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AC000005 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				AC000006 /* Firebase */,
+				AC000007 /* Models */,
+				AC000008 /* Repositories */,
+				AC000009 /* Services */,
+				AC00000A /* Storage */,
+				AC00000B /* Utils */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		AC000006 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				AB000003 /* FirebaseConfig.swift */,
+				AB000004 /* FirestoreService.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		AC000007 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AB000005 /* AppSettings.swift */,
+				AB000006 /* DailyFocusSummary.swift */,
+				AB000007 /* FocusSession.swift */,
+				AB000008 /* FriendRequest.swift */,
+				AB000009 /* Friendship.swift */,
+				AB00000A /* ShopCatalog.swift */,
+				AB00000B /* ShopItem.swift */,
+				AB00000C /* ShopState.swift */,
+				AB00000D /* TimerState.swift */,
+				AB00000E /* UserProfile.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AC000008 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				AB00000F /* FirebaseSyncService.swift */,
+				AB000010 /* FocusSessionRepository.swift */,
+				AB000011 /* SettingsRepository.swift */,
+				AB000012 /* ShopRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		AC000009 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AB000013 /* DateService.swift */,
+				AB000014 /* NotificationService.swift */,
+				AB000015 /* TimerService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AC00000A /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				AB000016 /* JSONFileStore.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		AC00000B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				AB000017 /* AppConstants.swift */,
+				AB000018 /* TimeFormatter.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		AC000010 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				AC000011 /* Auth */,
+				AC000012 /* History */,
+				AC000013 /* Settings */,
+				AC000014 /* Shop */,
+				AC000015 /* Social */,
+				AC000016 /* Timer */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		AC000011 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				AB000019 /* AppleSignInCoordinator.swift */,
+				AB00001A /* AuthViewModel.swift */,
+				AB00001B /* ProfileSetupScreen.swift */,
+				AB00001C /* SignInScreen.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		AC000012 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				AB00001D /* CalendarDay.swift */,
+				AB00001E /* CalendarHeatmapView.swift */,
+				AB00001F /* HistoryScreen.swift */,
+				AB000020 /* HistoryViewModel.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		AC000013 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AB000021 /* SettingsScreen.swift */,
+				AB000022 /* SettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		AC000014 /* Shop */ = {
+			isa = PBXGroup;
+			children = (
+				AB000023 /* ShopScreen.swift */,
+				AB000024 /* ShopViewModel.swift */,
+			);
+			path = Shop;
+			sourceTree = "<group>";
+		};
+		AC000015 /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				AB000025 /* FocusingFriendRow.swift */,
+				AB000026 /* FriendRequestsScreen.swift */,
+				AB000027 /* FriendSearchScreen.swift */,
+				AB000028 /* FriendsViewModel.swift */,
+				AB000029 /* RankingRowView.swift */,
+				AB00002A /* SocialScreen.swift */,
+				AB00002B /* SocialViewModel.swift */,
+			);
+			path = Social;
+			sourceTree = "<group>";
+		};
+		AC000016 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				AB00002C /* BucketView.swift */,
+				AB00002D /* StickerPlacementView.swift */,
+				AB00002E /* TimerControlsView.swift */,
+				AB00002F /* TimerScreen.swift */,
+				AB000030 /* TimerViewModel.swift */,
+				AB000031 /* WaterDropView.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
+		AC000017 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				AC000018 /* Components */,
+				AC000019 /* Theme */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		AC000018 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AB000032 /* PrimaryButtonStyle.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		AC000019 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				AB000033 /* AppColors.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		AC00001A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AB000034 /* AppIcon.icns */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AC000099 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AB000099 /* RainDrop.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AF000001 /* RainDrop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1000003 /* Build configuration list for PBXNativeTarget "RainDrop" */;
+			buildPhases = (
+				AE000002 /* Sources */,
+				AE000001 /* Frameworks */,
+				AE000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RainDrop;
+			packageProductDependencies = (
+				AD000001 /* FirebaseAuth */,
+				AD000002 /* FirebaseFirestore */,
+			);
+			productName = RainDrop;
+			productReference = AB000099 /* RainDrop.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B0000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					AF000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = B1000001 /* Build configuration list for PBXProject "RainDrop" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AC000001;
+			packageReferences = (
+				AC100001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			productRefGroup = AC000099 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF000001 /* RainDrop */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AE000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000034 /* AppIcon.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AE000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001 /* AppContainer.swift in Sources */,
+				AA000002 /* RainDropApp.swift in Sources */,
+				AA000003 /* FirebaseConfig.swift in Sources */,
+				AA000004 /* FirestoreService.swift in Sources */,
+				AA000005 /* AppSettings.swift in Sources */,
+				AA000006 /* DailyFocusSummary.swift in Sources */,
+				AA000007 /* FocusSession.swift in Sources */,
+				AA000008 /* FriendRequest.swift in Sources */,
+				AA000009 /* Friendship.swift in Sources */,
+				AA00000A /* ShopCatalog.swift in Sources */,
+				AA00000B /* ShopItem.swift in Sources */,
+				AA00000C /* ShopState.swift in Sources */,
+				AA00000D /* TimerState.swift in Sources */,
+				AA00000E /* UserProfile.swift in Sources */,
+				AA00000F /* FirebaseSyncService.swift in Sources */,
+				AA000010 /* FocusSessionRepository.swift in Sources */,
+				AA000011 /* SettingsRepository.swift in Sources */,
+				AA000012 /* ShopRepository.swift in Sources */,
+				AA000013 /* DateService.swift in Sources */,
+				AA000014 /* NotificationService.swift in Sources */,
+				AA000015 /* TimerService.swift in Sources */,
+				AA000016 /* JSONFileStore.swift in Sources */,
+				AA000017 /* AppConstants.swift in Sources */,
+				AA000018 /* TimeFormatter.swift in Sources */,
+				AA000019 /* AppleSignInCoordinator.swift in Sources */,
+				AA00001A /* AuthViewModel.swift in Sources */,
+				AA00001B /* ProfileSetupScreen.swift in Sources */,
+				AA00001C /* SignInScreen.swift in Sources */,
+				AA00001D /* CalendarDay.swift in Sources */,
+				AA00001E /* CalendarHeatmapView.swift in Sources */,
+				AA00001F /* HistoryScreen.swift in Sources */,
+				AA000020 /* HistoryViewModel.swift in Sources */,
+				AA000021 /* SettingsScreen.swift in Sources */,
+				AA000022 /* SettingsViewModel.swift in Sources */,
+				AA000023 /* ShopScreen.swift in Sources */,
+				AA000024 /* ShopViewModel.swift in Sources */,
+				AA000025 /* FocusingFriendRow.swift in Sources */,
+				AA000026 /* FriendRequestsScreen.swift in Sources */,
+				AA000027 /* FriendSearchScreen.swift in Sources */,
+				AA000028 /* FriendsViewModel.swift in Sources */,
+				AA000029 /* RankingRowView.swift in Sources */,
+				AA00002A /* SocialScreen.swift in Sources */,
+				AA00002B /* SocialViewModel.swift in Sources */,
+				AA00002C /* BucketView.swift in Sources */,
+				AA00002D /* StickerPlacementView.swift in Sources */,
+				AA00002E /* TimerControlsView.swift in Sources */,
+				AA00002F /* TimerScreen.swift in Sources */,
+				AA000030 /* TimerViewModel.swift in Sources */,
+				AA000031 /* WaterDropView.swift in Sources */,
+				AA000032 /* PrimaryButtonStyle.swift in Sources */,
+				AA000033 /* AppColors.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B2000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B2000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		B2000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RainDrop.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3372U9TU87;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/RainDrop/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleIconFile = AppIcon;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingyeongmin.RainDrop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B2000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RainDrop.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3372U9TU87;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/RainDrop/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleIconFile = AppIcon;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingyeongmin.RainDrop;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B1000001 /* Build configuration list for PBXProject "RainDrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B2000001 /* Debug */,
+				B2000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1000003 /* Build configuration list for PBXNativeTarget "RainDrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B2000003 /* Debug */,
+				B2000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AC100001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD000001 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC100001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		AD000002 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AC100001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B0000001 /* Project object */;
+}
