@@ -62,7 +62,7 @@ struct PatchNotesView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    ForEach(Array(notes.enumerated()), id: \.offset) { _, note in
+                    ForEach(Array(notes.enumerated()), id: \.element.version) { _, note in
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(alignment: .firstTextBaseline) {
                                 Text("v\(note.version)")

@@ -55,14 +55,16 @@ final class UpdateService: ObservableObject {
             ? "/opt/homebrew/bin/brew"
             : "/usr/local/bin/brew"
 
-        Task {
-            let result = await runBrewUpgrade(brewPath: brewPath)
-            updateResult = result
-            isUpdating = false
+        Task.detached { [weak self] in
+            let result = Self.runBrewUpgrade(brewPath: brewPath)
+            await MainActor.run {
+                self?.updateResult = result
+                self?.isUpdating = false
+            }
         }
     }
 
-    private nonisolated func runBrewUpgrade(brewPath: String) async -> String {
+    private nonisolated static func runBrewUpgrade(brewPath: String) -> String {
         // 1. brew update로 tap 캐시 갱신
         let updateProcess = Process()
         updateProcess.executableURL = URL(fileURLWithPath: brewPath)

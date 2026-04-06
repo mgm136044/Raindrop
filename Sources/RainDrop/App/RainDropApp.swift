@@ -39,6 +39,24 @@ struct RainDropApp: App {
                 whiteNoiseService: container.whiteNoiseService
             )
             .frame(width: 1040, height: 700)
+            .overlay {
+                if container.updateService.isUpdating {
+                    ZStack {
+                        Color.black.opacity(0.3)
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .scaleEffect(1.2)
+                            Text("업데이트 중...")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(.white)
+                        }
+                        .padding(24)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .ignoresSafeArea()
+                }
+            }
             .sheet(isPresented: $showOnboarding) {
                 OnboardingView {
                     container.settingsViewModel.settings.hasSeenOnboarding = true
