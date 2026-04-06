@@ -247,19 +247,28 @@ struct CalendarHeatmapView: View {
         }
     }
 
+    private static let monthYearFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ko_KR")
+        f.dateFormat = "yyyy년 M월"
+        return f
+    }()
+
     private func monthYearString(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월"
-        return formatter.string(from: date)
+        Self.monthYearFormatter.string(from: date)
     }
 
     // MARK: - Data Building
 
+    private static let dayKeyFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        f.locale = Locale(identifier: "ko_KR")
+        return f
+    }()
+
     private func buildMonthWeeks() -> [[CalendarDay?]] {
-        let keyFormatter = DateFormatter()
-        keyFormatter.dateFormat = "yyyy-MM-dd"
-        keyFormatter.locale = Locale(identifier: "ko_KR")
+        let keyFormatter = Self.dayKeyFormatter
 
         let comps = calendar.dateComponents([.year, .month], from: displayedMonth)
         guard let firstOfMonth = calendar.date(from: comps),

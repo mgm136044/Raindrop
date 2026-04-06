@@ -24,7 +24,9 @@ final class FirebaseSyncService {
 
         do {
             try await firestoreService.writeSession(uid: uid, session: session)
-            try await incrementTotals(uid: uid, seconds: session.durationSeconds)
+            let todayKey = dateService.dateKey(for: Date())
+            let weekKey = dateService.weekKey(for: Date())
+            try await incrementTotals(uid: uid, seconds: session.durationSeconds, todayKey: todayKey, weekKey: weekKey)
             logger.notice("세션 동기화 완료: \(session.durationSeconds)초")
         } catch {
             let nsError = error as NSError
@@ -49,9 +51,7 @@ final class FirebaseSyncService {
 
     // MARK: - Private
 
-    private nonisolated func incrementTotals(uid: String, seconds: Int) async throws {
-        let todayKey = DateService().dateKey(for: Date())
-        let currentWeekKey = DateService().weekKey(for: Date())
+    private nonisolated func incrementTotals(uid: String, seconds: Int, todayKey: String, weekKey currentWeekKey: String) async throws {
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(uid)
 

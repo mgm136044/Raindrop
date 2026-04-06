@@ -5,6 +5,7 @@ import FirebaseFirestore
 final class SocialViewModel: ObservableObject {
     @Published private(set) var friendProfiles: [UserProfile] = []
     @Published private(set) var isLoading = false
+    @Published var errorMessage: String?
 
     private let firestoreService: FirestoreService
     private let authViewModel: AuthViewModel
@@ -65,7 +66,7 @@ final class SocialViewModel: ObservableObject {
                 // Also do initial fetch
                 friendProfiles = try await firestoreService.fetchFriendProfiles(friendUIDs: friendUIDs)
             } catch {
-                // Silently fail
+                errorMessage = "친구 목록을 불러오는 데 실패했습니다."
             }
             isLoading = false
         }

@@ -91,6 +91,11 @@ final class AuthViewModel: ObservableObject {
     }
 
     func createProfile(nickname: String) {
+        let trimmed = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            errorMessage = "닉네임을 입력해주세요."
+            return
+        }
         guard let uid = Auth.auth().currentUser?.uid else { return }
         isLoading = true
         errorMessage = nil
@@ -102,7 +107,7 @@ final class AuthViewModel: ObservableObject {
 
                 let profile = UserProfile(
                     id: uid,
-                    nickname: nickname,
+                    nickname: trimmed,
                     inviteCode: inviteCode,
                     createdAt: Date(),
                     isCurrentlyFocusing: false,
@@ -144,11 +149,16 @@ final class AuthViewModel: ObservableObject {
         }
 
         Task {
-            if let profile = try? await firestoreService.fetchUserProfile(uid: user.uid) {
-                currentUser = profile
-                authState = .signedIn
-            } else {
-                authState = .needsProfile
+            do {
+                if let profile = try await firestoreService.fetchUserProfile(uid: user.uid) {
+                    currentUser = profile
+                    authState = .signedIn
+                } else {
+                    authState = .needsProfile
+                }
+            } catch {
+                logger.error("세션 복원 실패: \(error.localizedDescription, privacy: .public)")
+                errorMessage = "네트워크 오류로 프로필을 확인할 수 없습니다. 다시 시도해주세요."
             }
         }
     }
