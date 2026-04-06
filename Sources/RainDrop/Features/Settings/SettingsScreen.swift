@@ -5,6 +5,7 @@ struct SettingsScreen: View {
     var totalBuckets: Int = 0
     @Environment(\.dismiss) private var dismiss
     @State private var showOnboarding = false
+    @State private var showPatchNotes = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -140,6 +141,9 @@ struct SettingsScreen: View {
                 }
 
                 Section("기타") {
+                    Button("패치노트") {
+                        showPatchNotes = true
+                    }
                     Button("온보딩 다시 보기") {
                         showOnboarding = true
                     }
@@ -157,6 +161,9 @@ struct SettingsScreen: View {
                 OnboardingView {
                     showOnboarding = false
                 }
+            }
+            .sheet(isPresented: $showPatchNotes) {
+                PatchNotesView()
             }
         }
         .frame(minWidth: 420, minHeight: 320)
