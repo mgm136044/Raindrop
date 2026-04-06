@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
+    var totalBuckets: Int = 0
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -76,6 +77,62 @@ struct SettingsScreen: View {
                             viewModel.save()
                         }
                         Text("1 ~ 60분")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+
+                Section("양동이 스킨") {
+                    ForEach(BucketSkin.allCases, id: \.self) { skin in
+                        let unlocked = skin.isUnlocked(totalBuckets: totalBuckets)
+                        Button {
+                            if unlocked {
+                                viewModel.settings.selectedSkin = skin
+                                viewModel.save()
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: viewModel.settings.selectedSkin == skin ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(viewModel.settings.selectedSkin == skin ? .blue : .secondary)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack {
+                                        Text(skin.displayName)
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundStyle(unlocked ? AppColors.primaryText : .secondary)
+
+                                        if !unlocked {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 11))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+
+                                    Text(unlocked ? skin.materialDescription : "🪣 \(skin.requiredBuckets)번 채움 시 해금")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.tertiary)
+                                }
+
+                                Spacer()
+
+                                Circle()
+                                    .fill(skin.bucketFill)
+                                    .overlay(Circle().stroke(skin.bucketStroke, lineWidth: 2))
+                                    .frame(width: 24, height: 24)
+                                    .opacity(unlocked ? 1.0 : 0.4)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(!unlocked)
+                    }
+
+                    if viewModel.settings.selectedSkin.hasCustomWaterColor {
+                        Toggle("스킨 색 물 사용", isOn: $viewModel.settings.useCustomWaterColor)
+                            .onChange(of: viewModel.settings.useCustomWaterColor) { _ in
+                                viewModel.save()
+                            }
+                        Text("물과 물방울의 색을 스킨 색상에 맞춥니다.")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }

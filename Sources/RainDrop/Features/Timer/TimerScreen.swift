@@ -73,7 +73,10 @@ struct TimerScreen: View {
                 }
         }
         .sheet(isPresented: $isShowingSettings) {
-            SettingsScreen(viewModel: settingsViewModel)
+            SettingsScreen(
+                viewModel: settingsViewModel,
+                totalBuckets: shopViewModel.shopState.totalBucketsEarned
+            )
         }
         .sheet(isPresented: $isShowingShop) {
             ShopScreen(viewModel: shopViewModel)
