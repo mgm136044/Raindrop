@@ -21,9 +21,7 @@ enum ShopCatalog {
         ShopItem(id: "sticker_butterfly", name: "나비", description: "예쁜 나비", price: 2, emoji: "🦋", category: "동물"),
     ]
 
-    static var categories: [String] {
-        Array(Set(allItems.map(\.category))).sorted()
-    }
+    static let categories: [String] = Array(Set(allItems.map(\.category))).sorted()
 
     static func item(for id: String) -> ShopItem? {
         allItems.first { $0.id == id }

@@ -117,7 +117,8 @@ struct SignInScreen: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(32)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
                 focusedField = .email
             }
         }

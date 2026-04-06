@@ -19,12 +19,14 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let firestoreService: FirestoreService
+    private let dateService: DateService
     private let appleCoordinator = AppleSignInCoordinator()
 
     var isSignedIn: Bool { authState == .signedIn }
 
-    init(firestoreService: FirestoreService) {
+    init(firestoreService: FirestoreService, dateService: DateService = DateService()) {
         self.firestoreService = firestoreService
+        self.dateService = dateService
         checkCurrentAuth()
     }
 
@@ -103,7 +105,6 @@ final class AuthViewModel: ObservableObject {
         Task {
             do {
                 let inviteCode = try await generateUniqueInviteCode()
-                let dateService = DateService()
 
                 let profile = UserProfile(
                     id: uid,

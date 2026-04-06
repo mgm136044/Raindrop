@@ -1,6 +1,6 @@
 import Foundation
 
-struct DailyFocusSummary: Identifiable {
+struct DailyFocusSummary: Identifiable, Sendable {
     let dateKey: String
     let displayDate: String
     let totalSeconds: Int

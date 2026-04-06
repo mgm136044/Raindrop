@@ -9,11 +9,15 @@ final class SocialViewModel: ObservableObject {
 
     private let firestoreService: FirestoreService
     private let authViewModel: AuthViewModel
-    private var listeners: [ListenerRegistration] = []
+    nonisolated(unsafe) private var listeners: [ListenerRegistration] = []
 
     init(firestoreService: FirestoreService, authViewModel: AuthViewModel) {
         self.firestoreService = firestoreService
         self.authViewModel = authViewModel
+    }
+
+    deinit {
+        listeners.forEach { $0.remove() }
     }
 
     var myUID: String? { authViewModel.currentUser?.id }

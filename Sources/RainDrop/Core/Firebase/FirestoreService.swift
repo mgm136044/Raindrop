@@ -243,7 +243,7 @@ private extension FirestoreService {
             return date
         }
         if let string = value as? String {
-            return ISO8601DateFormatter().date(from: string)
+            return iso8601Formatter.date(from: string)
         }
         return nil
     }
@@ -261,12 +261,18 @@ private extension FirestoreService {
         return nil
     }
 
+    private static let iso8601Formatter = ISO8601DateFormatter()
+
+    private static let fallbackKeyFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = .current
+        f.locale = Locale(identifier: "ko_KR")
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
     static func dateKey(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.calendar = .current
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
+        fallbackKeyFormatter.string(from: date)
     }
 
     /// DateService.weekKey(for:)와 동일한 로직 — fallback decoder용 static 버전

@@ -1,4 +1,4 @@
-enum TimerState {
+enum TimerState: Sendable {
     case idle
     case running
     case paused
