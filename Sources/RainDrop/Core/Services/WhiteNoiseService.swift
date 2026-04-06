@@ -101,7 +101,13 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
     nonisolated func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         Task { @MainActor in
-            logger.error("rainymood.com 로딩 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("rainymood.com 네비게이션 실패: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    nonisolated func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        Task { @MainActor in
+            logger.error("rainymood.com 초기 로딩 실패 (네트워크 오류): \(error.localizedDescription, privacy: .public)")
         }
     }
 }

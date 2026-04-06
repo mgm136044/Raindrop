@@ -111,6 +111,7 @@ final class TimerViewModel: ObservableObject {
         scheduleFocusChecksIfNeeded()
         Task { await syncService?.setFocusing(true, startTime: now) }
         if settingsRepository.load().whiteNoiseEnabled {
+            whiteNoiseService?.setup()
             whiteNoiseService?.setVolume(settingsRepository.load().whiteNoiseVolume)
             whiteNoiseService?.resumeAudio()
         }
