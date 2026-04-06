@@ -13,6 +13,7 @@ struct TimerScreen: View {
     @State private var isShowingSettings = false
     @State private var isShowingShop = false
     @State private var isShowingSocial = false
+    @State private var isShowingWhiteNoise = false
     @State private var isDecorating = false
     @State private var motivationIndex = 0
     @State private var displayProgress: Double = 0
@@ -76,8 +77,7 @@ struct TimerScreen: View {
         .sheet(isPresented: $isShowingSettings) {
             SettingsScreen(
                 viewModel: settingsViewModel,
-                totalBuckets: shopViewModel.shopState.totalBucketsEarned,
-                whiteNoiseService: whiteNoiseService
+                totalBuckets: shopViewModel.shopState.totalBucketsEarned
             )
         }
         .sheet(isPresented: $isShowingShop) {
@@ -91,6 +91,14 @@ struct TimerScreen: View {
                     authViewModel: authVM,
                     socialViewModel: socialVM,
                     friendsViewModel: friendsVM
+                )
+            }
+        }
+        .sheet(isPresented: $isShowingWhiteNoise) {
+            if let service = whiteNoiseService {
+                WhiteNoiseScreen(
+                    viewModel: settingsViewModel,
+                    whiteNoiseService: service
                 )
             }
         }
@@ -185,6 +193,16 @@ struct TimerScreen: View {
                         .font(.system(size: 16, weight: .medium))
                 }
                 .buttonStyle(.bordered)
+
+                if whiteNoiseService != nil {
+                    Button {
+                        isShowingWhiteNoise = true
+                    } label: {
+                        Image(systemName: "cloud.rain")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .buttonStyle(.bordered)
+                }
 
                 Button("히스토리 보기") {
                     historyViewModel.load()
