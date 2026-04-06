@@ -8,6 +8,7 @@ final class AppContainer: ObservableObject {
     private let settingsRepository: SettingsRepository
     private let shopRepository: ShopRepository
     private let notificationService: NotificationService
+    let whiteNoiseService = WhiteNoiseService()
 
     // Firebase services (소셜 기능 활성화 시에만 사용)
     private lazy var firestoreService: FirestoreService = FirestoreService()
@@ -26,7 +27,8 @@ final class AppContainer: ObservableObject {
         settingsRepository: settingsRepository,
         notificationService: notificationService,
         shopViewModel: shopViewModel,
-        syncService: AppConstants.socialEnabled ? syncService : nil
+        syncService: AppConstants.socialEnabled ? syncService : nil,
+        whiteNoiseService: whiteNoiseService
     )
 
     init() {

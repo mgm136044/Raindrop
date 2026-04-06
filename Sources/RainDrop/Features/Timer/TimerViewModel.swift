@@ -22,6 +22,7 @@ final class TimerViewModel: ObservableObject {
     private let notificationService: NotificationService
     private let shopViewModel: ShopViewModel
     private let syncService: FirebaseSyncService?
+    private let whiteNoiseService: WhiteNoiseService?
     private var sessionStartTime: Date?
     private var activeGoalSeconds: Int = 0
     private var activeInfinityMode: Bool = false
@@ -34,7 +35,8 @@ final class TimerViewModel: ObservableObject {
         settingsRepository: SettingsRepositoryProtocol,
         notificationService: NotificationService,
         shopViewModel: ShopViewModel,
-        syncService: FirebaseSyncService? = nil
+        syncService: FirebaseSyncService? = nil,
+        whiteNoiseService: WhiteNoiseService? = nil
     ) {
         self.timerService = timerService
         self.repository = repository
@@ -43,6 +45,7 @@ final class TimerViewModel: ObservableObject {
         self.notificationService = notificationService
         self.shopViewModel = shopViewModel
         self.syncService = syncService
+        self.whiteNoiseService = whiteNoiseService
         loadSettings()
         loadTodayTotal()
         observeSessionChanges()
@@ -106,6 +109,10 @@ final class TimerViewModel: ObservableObject {
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
         Task { await syncService?.setFocusing(true, startTime: now) }
+        if settingsRepository.load().whiteNoiseEnabled {
+            whiteNoiseService?.setVolume(settingsRepository.load().whiteNoiseVolume)
+            whiteNoiseService?.play()
+        }
     }
 
     func pause() {
@@ -113,6 +120,7 @@ final class TimerViewModel: ObservableObject {
         timerService.stop()
         timerState = .paused
         notificationService.cancelFocusChecks()
+        whiteNoiseService?.pause()
     }
 
     func resume() {
@@ -120,12 +128,16 @@ final class TimerViewModel: ObservableObject {
         timerState = .running
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
+        if settingsRepository.load().whiteNoiseEnabled {
+            whiteNoiseService?.play()
+        }
     }
 
     func stop() {
         guard canStop else { return }
         timerService.stop()
         notificationService.cancelFocusChecks()
+        whiteNoiseService?.stop()
 
         let endTime = Date()
         let elapsed = elapsedSeconds

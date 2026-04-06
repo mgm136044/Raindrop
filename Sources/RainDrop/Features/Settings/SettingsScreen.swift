@@ -82,6 +82,26 @@ struct SettingsScreen: View {
                     }
                 }
 
+                Section("백색소음") {
+                    Toggle("빗소리 백색소음", isOn: $viewModel.settings.whiteNoiseEnabled)
+                        .onChange(of: viewModel.settings.whiteNoiseEnabled) { _ in
+                            viewModel.save()
+                        }
+
+                    if viewModel.settings.whiteNoiseEnabled {
+                        HStack {
+                            Text("볼륨")
+                            Slider(value: $viewModel.settings.whiteNoiseVolume, in: 0...1, step: 0.1)
+                                .onChange(of: viewModel.settings.whiteNoiseVolume) { _ in
+                                    viewModel.save()
+                                }
+                        }
+                        Text("rainymood.com의 빗소리를 재생합니다. 인터넷 연결이 필요합니다.")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+
                 Section("양동이 스킨") {
                     ForEach(BucketSkin.allCases, id: \.self) { skin in
                         let unlocked = skin.isUnlocked(totalBuckets: totalBuckets)

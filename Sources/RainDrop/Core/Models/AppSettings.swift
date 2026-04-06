@@ -7,6 +7,8 @@ struct AppSettings: Codable, Equatable, Sendable {
     var infinityModeEnabled: Bool = false
     var selectedSkin: BucketSkin = .wood
     var useCustomWaterColor: Bool = false
+    var whiteNoiseEnabled: Bool = false
+    var whiteNoiseVolume: Double = 0.5
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
 
@@ -22,6 +24,8 @@ struct AppSettings: Codable, Equatable, Sendable {
         infinityModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .infinityModeEnabled) ?? false
         selectedSkin = try container.decodeIfPresent(BucketSkin.self, forKey: .selectedSkin) ?? .wood
         useCustomWaterColor = try container.decodeIfPresent(Bool.self, forKey: .useCustomWaterColor) ?? false
+        whiteNoiseEnabled = try container.decodeIfPresent(Bool.self, forKey: .whiteNoiseEnabled) ?? false
+        whiteNoiseVolume = try container.decodeIfPresent(Double.self, forKey: .whiteNoiseVolume) ?? 0.5
     }
 
     init(
@@ -30,7 +34,9 @@ struct AppSettings: Codable, Equatable, Sendable {
         focusCheckIntervalMinutes: Int = 5,
         infinityModeEnabled: Bool = false,
         selectedSkin: BucketSkin = .wood,
-        useCustomWaterColor: Bool = false
+        useCustomWaterColor: Bool = false,
+        whiteNoiseEnabled: Bool = false,
+        whiteNoiseVolume: Double = 0.5
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
         self.focusCheckEnabled = focusCheckEnabled
@@ -38,5 +44,7 @@ struct AppSettings: Codable, Equatable, Sendable {
         self.infinityModeEnabled = infinityModeEnabled
         self.selectedSkin = selectedSkin
         self.useCustomWaterColor = useCustomWaterColor
+        self.whiteNoiseEnabled = whiteNoiseEnabled
+        self.whiteNoiseVolume = whiteNoiseVolume
     }
 }
