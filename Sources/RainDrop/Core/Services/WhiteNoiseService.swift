@@ -12,6 +12,38 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
     private var webView: WKWebView?
     private var pendingPlay = false
 
+    private let playJS = """
+    (function() {
+        var a = document.querySelector('audio');
+        if (!a) a = document.getElementById('player');
+        if (!a) a = document.querySelector('[id*="audio"]');
+        if (!a) a = document.querySelector('[id*="player"]');
+        if (a && a.play) { a.play(); return 'audio'; }
+        var btn = document.querySelector('.play-button, .btn-play, [class*="play"], button[aria-label*="play"], #play');
+        if (!btn) { var buttons = document.querySelectorAll('button'); for (var b of buttons) { if (b.textContent.toLowerCase().includes('play') || b.querySelector('svg')) { btn = b; break; } } }
+        if (btn) { btn.click(); return 'button'; }
+        return 'none';
+    })()
+    """
+
+    private let pauseJS = """
+    (function() {
+        var a = document.querySelector('audio');
+        if (!a) a = document.getElementById('player');
+        if (!a) a = document.querySelector('[id*="audio"]');
+        if (a && a.pause) { a.pause(); }
+    })()
+    """
+
+    private let volumeJS = """
+    (function(vol) {
+        var a = document.querySelector('audio');
+        if (!a) a = document.getElementById('player');
+        if (!a) a = document.querySelector('[id*="audio"]');
+        if (a) { a.volume = vol; }
+    })
+    """
+
     func setup() {
         guard webView == nil else { return }
         let config = WKWebViewConfiguration()
@@ -33,14 +65,15 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
             pendingPlay = true
             return
         }
-        webView.evaluateJavaScript("var a = document.querySelector('audio'); if(a) { a.play(); true; } else { false; }") { [weak self] result, error in
+        webView.evaluateJavaScript(playJS) { [weak self] result, error in
             Task { @MainActor in
                 if let error {
                     logger.error("play 실패: \(error.localizedDescription, privacy: .public)")
                     self?.isPlaying = false
                 } else {
-                    self?.isPlaying = true
-                    logger.notice("백색소음 재생 시작")
+                    let method = result as? String ?? "unknown"
+                    logger.notice("백색소음 재생 시도: \(method, privacy: .public)")
+                    self?.isPlaying = method != "none"
                 }
             }
         }
@@ -48,7 +81,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
     func pause() {
         pendingPlay = false
-        webView?.evaluateJavaScript("var a = document.querySelector('audio'); if(a) { a.pause(); }") { _, _ in }
+        webView?.evaluateJavaScript(pauseJS) { _, _ in }
         isPlaying = false
     }
 
@@ -59,7 +92,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
     func setVolume(_ volume: Double) {
         let clamped = max(0, min(1, volume))
-        webView?.evaluateJavaScript("var a = document.querySelector('audio'); if(a) { a.volume = \(clamped); }") { _, _ in }
+        webView?.evaluateJavaScript("(\(volumeJS))(\(clamped))") { _, _ in }
     }
 
     // MARK: - WKNavigationDelegate
@@ -68,8 +101,16 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
         Task { @MainActor in
             self.isLoaded = true
             logger.notice("rainymood.com 로딩 완료")
+
+            // DOM 구조 디버깅
+            webView.evaluateJavaScript("document.querySelector('audio')?.src || 'no-audio-element'") { result, _ in
+                logger.notice("DOM audio src: \(result as? String ?? "nil", privacy: .public)")
+            }
+
             if self.pendingPlay {
                 self.pendingPlay = false
+                // DOM 완전 렌더링 대기 후 재생
+                try? await Task.sleep(for: .seconds(1.0))
                 self.play()
             }
         }

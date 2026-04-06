@@ -301,17 +301,17 @@ struct TimerScreen: View {
                 ZStack {
                     ZStack(alignment: .top) {
                         CloudView(isVisible: viewModel.isRunning)
-                            .frame(width: 300, height: 60)
-                            .offset(y: -20)
+                            .frame(width: 220, height: 60)
+                            .offset(y: -40)
 
                         RainParticleView(
                             isAnimating: viewModel.isRunning,
                             dropGradientTop: effectiveDropGradientTop,
                             dropGradientBottom: effectiveDropGradientBottom
                         )
-                        .frame(width: 300, height: 280)
+                        .frame(width: 220, height: 300)
                     }
-                    .frame(width: 300, height: 280)
+                    .frame(width: 300, height: 300)
 
                     BucketWithStickersView(
                         progress: displayProgress,

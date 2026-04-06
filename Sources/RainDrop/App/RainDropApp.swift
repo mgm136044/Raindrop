@@ -1,9 +1,14 @@
 import SwiftUI
 import FirebaseCore
+import UserNotifications
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
 
