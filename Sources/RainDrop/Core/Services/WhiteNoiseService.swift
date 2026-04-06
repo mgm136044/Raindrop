@@ -33,13 +33,17 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
             pendingPlay = true
             return
         }
-        webView.evaluateJavaScript("var a = document.querySelector('audio'); if(a) { a.play(); }") { _, error in
-            if let error {
-                logger.error("play 실패: \(error.localizedDescription, privacy: .public)")
+        webView.evaluateJavaScript("var a = document.querySelector('audio'); if(a) { a.play(); true; } else { false; }") { [weak self] result, error in
+            Task { @MainActor in
+                if let error {
+                    logger.error("play 실패: \(error.localizedDescription, privacy: .public)")
+                    self?.isPlaying = false
+                } else {
+                    self?.isPlaying = true
+                    logger.notice("백색소음 재생 시작")
+                }
             }
         }
-        isPlaying = true
-        logger.notice("백색소음 재생 시작")
     }
 
     func pause() {
@@ -48,6 +52,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
         isPlaying = false
     }
 
+    /// WebView는 유지하여 재시작 시 로딩 지연 방지. 오디오만 정지.
     func stop() {
         pause()
     }

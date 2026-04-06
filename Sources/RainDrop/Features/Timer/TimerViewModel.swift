@@ -14,6 +14,7 @@ final class TimerViewModel: ObservableObject {
     @Published private(set) var isInfinityMode: Bool = false
     @Published private(set) var cycleCount: Int = 0
     @Published private(set) var isCycleDraining: Bool = false
+    @Published private(set) var lastCycleCount: Int = 0
 
     private let timerService: TimerService
     private let repository: FocusSessionRepositoryProtocol
@@ -142,6 +143,7 @@ final class TimerViewModel: ObservableObject {
         let endTime = Date()
         let elapsed = elapsedSeconds
         let goalSeconds = activeGoalSeconds
+        lastCycleCount = cycleCount
 
         defer {
             timerState = .completed

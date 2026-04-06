@@ -408,8 +408,8 @@ struct TimerScreen: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(AppColors.bannerTitle)
 
-                    if viewModel.isInfinityMode && viewModel.cycleCount > 0 {
-                        Text("🪣 +\(viewModel.cycleCount)")
+                    if viewModel.isInfinityMode && viewModel.lastCycleCount > 0 {
+                        Text("🪣 +\(viewModel.lastCycleCount)")
                             .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(.green)
                     } else if !viewModel.isInfinityMode && session.durationSeconds >= viewModel.sessionGoalSeconds {
