@@ -68,6 +68,7 @@ struct CloudView: View {
             } else {
                 withAnimation(.easeOut(duration: 1.0)) {
                     cloudOpacity = 0
+                    cloudOffset = 0
                 }
             }
         }
