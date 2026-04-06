@@ -110,7 +110,7 @@ final class AuthViewModel: ObservableObject {
                     todayTotalSeconds: 0,
                     weekTotalSeconds: 0,
                     lastTodayResetDateKey: dateService.dateKey(for: Date()),
-                    lastWeekResetWeekKey: weekKey(for: Date())
+                    lastWeekResetWeekKey: dateService.weekKey(for: Date())
                 )
 
                 try await firestoreService.createUserProfile(profile)
@@ -161,12 +161,6 @@ final class AuthViewModel: ObservableObject {
             if existing == nil { return code }
         }
         return UUID().uuidString.prefix(6).uppercased()
-    }
-
-    private func weekKey(for date: Date) -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
-        return "\(components.yearForWeekOfYear ?? 0)-W\(components.weekOfYear ?? 0)"
     }
 
     private func mapAuthError(_ error: Error, context: String) -> String {

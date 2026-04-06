@@ -42,23 +42,23 @@ final class AppContainer: ObservableObject {
         notificationService.initialize()
     }
 
-    func makeHistoryViewModel() -> HistoryViewModel {
-        HistoryViewModel(
-            repository: repository,
-            dateService: dateService,
-            settingsRepository: settingsRepository
-        )
-    }
+    lazy var historyViewModel: HistoryViewModel = HistoryViewModel(
+        repository: repository,
+        dateService: dateService,
+        settingsRepository: settingsRepository
+    )
 
-    func makeSettingsViewModel() -> SettingsViewModel {
-        SettingsViewModel(repository: settingsRepository)
-    }
+    lazy var settingsViewModel: SettingsViewModel = SettingsViewModel(
+        repository: settingsRepository
+    )
 
-    func makeSocialViewModel() -> SocialViewModel {
-        SocialViewModel(firestoreService: firestoreService, authViewModel: authViewModel)
-    }
+    lazy var socialViewModel: SocialViewModel = SocialViewModel(
+        firestoreService: firestoreService,
+        authViewModel: authViewModel
+    )
 
-    func makeFriendsViewModel() -> FriendsViewModel {
-        FriendsViewModel(firestoreService: firestoreService, authViewModel: authViewModel)
-    }
+    lazy var friendsViewModel: FriendsViewModel = FriendsViewModel(
+        firestoreService: firestoreService,
+        authViewModel: authViewModel
+    )
 }

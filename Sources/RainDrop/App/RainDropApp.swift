@@ -20,12 +20,12 @@ struct RainDropApp: App {
         WindowGroup("RainDrop", id: "main") {
             TimerScreen(
                 viewModel: container.timerViewModel,
-                historyViewModel: container.makeHistoryViewModel(),
-                settingsViewModel: container.makeSettingsViewModel(),
+                historyViewModel: container.historyViewModel,
+                settingsViewModel: container.settingsViewModel,
                 shopViewModel: container.shopViewModel,
                 authViewModel: container.authViewModel,
-                socialViewModel: container.makeSocialViewModel(),
-                friendsViewModel: container.makeFriendsViewModel()
+                socialViewModel: container.socialViewModel,
+                friendsViewModel: container.friendsViewModel
             )
             .frame(width: 1040, height: 700)
         }
