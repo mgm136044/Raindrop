@@ -302,16 +302,16 @@ struct TimerScreen: View {
                     ZStack(alignment: .top) {
                         CloudView(isVisible: viewModel.isRunning)
                             .frame(width: 300, height: 60)
-                            .offset(y: -10)
+                            .offset(y: -20)
 
                         RainParticleView(
                             isAnimating: viewModel.isRunning,
                             dropGradientTop: effectiveDropGradientTop,
                             dropGradientBottom: effectiveDropGradientBottom
                         )
-                        .frame(width: 300, height: 220)
+                        .frame(width: 300, height: 280)
                     }
-                    .frame(width: 300, height: 220)
+                    .frame(width: 300, height: 280)
 
                     BucketWithStickersView(
                         progress: displayProgress,
@@ -408,7 +408,11 @@ struct TimerScreen: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(AppColors.bannerTitle)
 
-                    if !viewModel.isInfinityMode && session.durationSeconds >= viewModel.sessionGoalSeconds {
+                    if viewModel.isInfinityMode && viewModel.cycleCount > 0 {
+                        Text("🪣 +\(viewModel.cycleCount)")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(.green)
+                    } else if !viewModel.isInfinityMode && session.durationSeconds >= viewModel.sessionGoalSeconds {
                         Text("🪣 +1")
                             .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(.green)

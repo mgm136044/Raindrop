@@ -12,19 +12,31 @@ struct TimerControlsView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button("집중 시작", action: onStart)
-                .buttonStyle(PrimaryButtonStyle(color: AppColors.startButton))
-                .disabled(!canStart)
-
-            Button(canResume ? "재개" : "일시정지") {
-                canResume ? onResume() : onPause()
+            if canStart {
+                Button("집중 시작", action: onStart)
+                    .buttonStyle(PrimaryButtonStyle(color: AppColors.startButton))
+                    .transition(.scale.combined(with: .opacity))
             }
-            .buttonStyle(PrimaryButtonStyle(color: AppColors.pauseButton))
-            .disabled(!(canPause || canResume))
 
-            Button("집중 종료", action: onStop)
-                .buttonStyle(PrimaryButtonStyle(color: AppColors.stopButton))
-                .disabled(!canStop)
+            if canPause {
+                Button("일시정지", action: onPause)
+                    .buttonStyle(PrimaryButtonStyle(color: AppColors.pauseButton))
+                    .transition(.scale.combined(with: .opacity))
+            }
+
+            if canResume {
+                Button("재개", action: onResume)
+                    .buttonStyle(PrimaryButtonStyle(color: AppColors.startButton))
+                    .transition(.scale.combined(with: .opacity))
+            }
+
+            if canStop {
+                Button("집중 종료", action: onStop)
+                    .buttonStyle(PrimaryButtonStyle(color: AppColors.stopButton))
+                    .transition(.scale.combined(with: .opacity))
+            }
         }
+        .animation(.easeInOut(duration: 0.25), value: canStart)
+        .animation(.easeInOut(duration: 0.25), value: canStop)
     }
 }

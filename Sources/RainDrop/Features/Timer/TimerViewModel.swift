@@ -59,7 +59,7 @@ final class TimerViewModel: ObservableObject {
 
     var goalText: String {
         if isInfinityMode {
-            return "무한 모드 — 양동이 코인 없음"
+            return "무한 모드 — 순환마다 코인 적립"
         }
         return "\(sessionGoalSeconds / 60)분 집중 시 양동이 가득"
     }
@@ -175,6 +175,7 @@ final class TimerViewModel: ObservableObject {
 
     func finishCycleDraining() {
         cycleCount += 1
+        shopViewModel.earnBucket()
         let goal = activeGoalSeconds
         let elapsedInCycle = elapsedSeconds % goal
         currentProgress = Double(elapsedInCycle) / Double(goal)

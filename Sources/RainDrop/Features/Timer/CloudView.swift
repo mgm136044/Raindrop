@@ -12,8 +12,8 @@ struct CloudView: View {
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color.white.opacity(0.25),
-                            Color.white.opacity(0.08),
+                            AppColors.cloudColor.opacity(0.40),
+                            AppColors.cloudColor.opacity(0.12),
                             Color.clear
                         ],
                         center: .center,
@@ -28,8 +28,8 @@ struct CloudView: View {
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color.white.opacity(0.18),
-                            Color.white.opacity(0.05),
+                            AppColors.cloudColor.opacity(0.30),
+                            AppColors.cloudColor.opacity(0.08),
                             Color.clear
                         ],
                         center: .center,
@@ -44,8 +44,8 @@ struct CloudView: View {
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color.white.opacity(0.15),
-                            Color.white.opacity(0.04),
+                            AppColors.cloudColor.opacity(0.25),
+                            AppColors.cloudColor.opacity(0.06),
                             Color.clear
                         ],
                         center: .center,

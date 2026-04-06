@@ -276,4 +276,12 @@ extension AppColors {
     static var waterGradientBottomColor: Color { waterGradientBottom }
     static var dropGradientTopColor: Color { dropGradientTop }
     static var dropGradientBottomColor: Color { dropGradientBottom }
+
+    static var cloudColor: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(white: 1.0, alpha: 1.0)
+                : NSColor(red: 0.55, green: 0.62, blue: 0.72, alpha: 1.0)
+        })
+    }
 }

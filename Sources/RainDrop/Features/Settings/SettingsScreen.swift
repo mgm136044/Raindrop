@@ -42,7 +42,7 @@ struct SettingsScreen: View {
                     }
 
                     if viewModel.settings.infinityModeEnabled {
-                        Text("\(viewModel.settings.sessionGoalMinutes)분마다 양동이가 순환됩니다. 양동이 코인은 지급되지 않습니다.")
+                        Text("\(viewModel.settings.sessionGoalMinutes)분마다 양동이가 순환됩니다. 순환마다 양동이 코인 1개가 적립됩니다.")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     } else {
