@@ -11,6 +11,9 @@ final class TimerViewModel: ObservableObject {
     @Published private(set) var lastCompletedSession: FocusSession?
     @Published private(set) var latestError: String?
     @Published private(set) var sessionGoalSeconds: Int = AppConstants.sessionGoalSeconds
+    @Published private(set) var isInfinityMode: Bool = false
+    @Published private(set) var cycleCount: Int = 0
+    @Published private(set) var isCycleDraining: Bool = false
 
     private let timerService: TimerService
     private let repository: FocusSessionRepositoryProtocol
@@ -20,6 +23,8 @@ final class TimerViewModel: ObservableObject {
     private let shopViewModel: ShopViewModel
     private let syncService: FirebaseSyncService?
     private var sessionStartTime: Date?
+    private var activeGoalSeconds: Int = 0
+    private var activeInfinityMode: Bool = false
     private var cancellables = Set<AnyCancellable>()
 
     init(
@@ -53,7 +58,15 @@ final class TimerViewModel: ObservableObject {
     }
 
     var goalText: String {
-        "\(sessionGoalSeconds / 60)분 집중 시 양동이 가득"
+        if isInfinityMode {
+            return "무한 모드 — 양동이 코인 없음"
+        }
+        return "\(sessionGoalSeconds / 60)분 집중 시 양동이 가득"
+    }
+
+    var cycleText: String? {
+        guard isInfinityMode, (timerState == .running || timerState == .paused) else { return nil }
+        return "\(cycleCount + 1)번째 순환 중"
     }
 
     var isRunning: Bool {
@@ -82,6 +95,10 @@ final class TimerViewModel: ObservableObject {
         lastCompletedSession = nil
         elapsedSeconds = 0
         currentProgress = 0
+        cycleCount = 0
+        isCycleDraining = false
+        activeGoalSeconds = sessionGoalSeconds
+        activeInfinityMode = isInfinityMode
         let now = Date()
         sessionStartTime = now
         timerState = .running
@@ -111,13 +128,14 @@ final class TimerViewModel: ObservableObject {
 
         let endTime = Date()
         let elapsed = elapsedSeconds
-        let goalSeconds = sessionGoalSeconds
+        let goalSeconds = activeGoalSeconds
 
         defer {
             timerState = .completed
             sessionStartTime = nil
             elapsedSeconds = 0
-            // progress는 즉시 0으로 만들지 않고 draining 애니메이션 트리거
+            cycleCount = 0
+            isCycleDraining = false
             isDraining = true
         }
 
@@ -128,21 +146,19 @@ final class TimerViewModel: ObservableObject {
             endTime: endTime,
             durationSeconds: elapsed,
             dateKey: dateService.dateKey(for: startTime),
-            goalSeconds: goalSeconds
+            goalSeconds: activeInfinityMode ? nil : goalSeconds
         )
 
         do {
             try repository.save(session)
             lastCompletedSession = session
 
-            // Award bucket coin if goal was reached
-            if elapsed >= goalSeconds {
+            if !activeInfinityMode && elapsed >= goalSeconds {
                 shopViewModel.earnBucket()
             }
 
             loadTodayTotal()
 
-            // Firebase sync (fire-and-forget)
             Task {
                 await syncService?.syncSession(session)
                 await syncService?.setFocusing(false, startTime: nil)
@@ -157,6 +173,14 @@ final class TimerViewModel: ObservableObject {
         isDraining = false
     }
 
+    func finishCycleDraining() {
+        cycleCount += 1
+        let goal = activeGoalSeconds
+        let elapsedInCycle = elapsedSeconds % goal
+        currentProgress = Double(elapsedInCycle) / Double(goal)
+        isCycleDraining = false
+    }
+
     func resetCompletionStateIfNeeded() {
         lastCompletedSession = nil
         if timerState == .completed {
@@ -168,10 +192,23 @@ final class TimerViewModel: ObservableObject {
         timerService.start { [weak self] in
             guard let self else { return }
             self.elapsedSeconds += 1
-            self.currentProgress = min(
-                Double(self.elapsedSeconds) / Double(self.sessionGoalSeconds),
-                1.0
-            )
+
+            if self.activeInfinityMode {
+                let goal = self.activeGoalSeconds
+                let elapsedInCycle = self.elapsedSeconds % goal
+
+                if elapsedInCycle == 0 && !self.isCycleDraining {
+                    self.currentProgress = 1.0
+                    self.isCycleDraining = true
+                } else if !self.isCycleDraining {
+                    self.currentProgress = Double(elapsedInCycle) / Double(goal)
+                }
+            } else {
+                self.currentProgress = min(
+                    Double(self.elapsedSeconds) / Double(self.activeGoalSeconds),
+                    1.0
+                )
+            }
         }
     }
 
@@ -192,6 +229,7 @@ final class TimerViewModel: ObservableObject {
     private func loadSettings() {
         let settings = settingsRepository.load()
         sessionGoalSeconds = settings.sessionGoalSeconds
+        isInfinityMode = settings.infinityModeEnabled
     }
 
     private func loadTodayTotal() {

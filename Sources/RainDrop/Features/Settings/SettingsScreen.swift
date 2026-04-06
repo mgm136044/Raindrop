@@ -10,13 +10,25 @@ struct SettingsScreen: View {
 
             Form {
                 Section("집중 목표") {
+                    Toggle("무한 모드 (∞)", isOn: $viewModel.settings.infinityModeEnabled)
+                        .onChange(of: viewModel.settings.infinityModeEnabled) { _ in
+                            viewModel.save()
+                        }
+
                     HStack {
                         Text("양동이 채움 목표 시간")
                         Spacer()
-                        TextField("", value: $viewModel.settings.sessionGoalMinutes, format: .number)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 60)
-                            .multilineTextAlignment(.trailing)
+                        if viewModel.settings.infinityModeEnabled {
+                            Text("∞")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(.secondary)
+                                .frame(width: 60, alignment: .trailing)
+                        } else {
+                            TextField("", value: $viewModel.settings.sessionGoalMinutes, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 60)
+                                .multilineTextAlignment(.trailing)
+                        }
                         Text("분")
                             .foregroundStyle(.secondary)
                     }
@@ -27,9 +39,16 @@ struct SettingsScreen: View {
                         }
                         viewModel.save()
                     }
-                    Text("1 ~ 120분")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+
+                    if viewModel.settings.infinityModeEnabled {
+                        Text("\(viewModel.settings.sessionGoalMinutes)분마다 양동이가 순환됩니다. 양동이 코인은 지급되지 않습니다.")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    } else {
+                        Text("1 ~ 120분")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
                 }
 
                 Section("집중 감시 알림") {
