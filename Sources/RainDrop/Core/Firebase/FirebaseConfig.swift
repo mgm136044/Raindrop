@@ -12,7 +12,7 @@ enum FirebaseConfig {
             gcmSenderID: "REDACTED_GCM_ID"
         )
         options.apiKey = "REDACTED_API_KEY"
-        options.projectID = "raindrop"
+        options.projectID = "raibdrop"
         options.bundleID = "com.mingyeongmin.RainDrop"
 
         FirebaseApp.configure(options: options)
