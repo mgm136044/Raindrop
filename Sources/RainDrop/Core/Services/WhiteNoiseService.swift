@@ -11,6 +11,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
     private var webView: WKWebView?
     private var pendingPlay = false
+    private var pendingPlayTask: Task<Void, Never>?
 
     private let playJS = """
     (function() {
@@ -31,6 +32,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
         var a = document.querySelector('audio');
         if (!a) a = document.getElementById('player');
         if (!a) a = document.querySelector('[id*="audio"]');
+        if (!a) a = document.querySelector('[id*="player"]');
         if (a && a.pause) { a.pause(); }
     })()
     """
@@ -40,6 +42,7 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
         var a = document.querySelector('audio');
         if (!a) a = document.getElementById('player');
         if (!a) a = document.querySelector('[id*="audio"]');
+        if (!a) a = document.querySelector('[id*="player"]');
         if (a) { a.volume = vol; }
     })
     """
@@ -81,6 +84,8 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
     func pause() {
         pendingPlay = false
+        pendingPlayTask?.cancel()
+        pendingPlayTask = nil
         webView?.evaluateJavaScript(pauseJS) { _, _ in }
         isPlaying = false
     }
@@ -109,9 +114,11 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
 
             if self.pendingPlay {
                 self.pendingPlay = false
-                // DOM 완전 렌더링 대기 후 재생
-                try? await Task.sleep(for: .seconds(1.0))
-                self.play()
+                self.pendingPlayTask = Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1.0))
+                    guard !Task.isCancelled else { return }
+                    self.play()
+                }
             }
         }
     }
