@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 @MainActor
@@ -7,12 +6,10 @@ final class ShopViewModel: ObservableObject {
     @Published private(set) var latestError: String?
 
     private let repository: ShopRepositoryProtocol
-    private var cancellables = Set<AnyCancellable>()
 
     init(repository: ShopRepositoryProtocol) {
         self.repository = repository
         self.shopState = repository.load()
-        observeChanges()
     }
 
     var balance: Int { shopState.balance }
@@ -68,12 +65,4 @@ final class ShopViewModel: ObservableObject {
         }
     }
 
-    private func observeChanges() {
-        NotificationCenter.default
-            .publisher(for: .shopStateDidChange)
-            .sink { [weak self] _ in
-                self?.reload()
-            }
-            .store(in: &cancellables)
-    }
 }

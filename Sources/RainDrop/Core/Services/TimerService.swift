@@ -6,12 +6,13 @@ final class TimerService {
 
     func start(tick: @escaping @MainActor @Sendable () -> Void) {
         stop()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+        let t = Timer(timeInterval: 1.0, repeats: true) { _ in
             Task { @MainActor in
                 tick()
             }
         }
-        RunLoop.main.add(timer!, forMode: .common)
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
     }
 
     func stop() {

@@ -295,7 +295,8 @@ struct TimerScreen: View {
                             withAnimation(.easeIn(duration: 1.2)) {
                                 displayProgress = 0
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                            Task {
+                                try? await Task.sleep(for: .seconds(1.3))
                                 viewModel.finishDraining()
                             }
                         }
