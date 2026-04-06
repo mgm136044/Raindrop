@@ -2,7 +2,7 @@ import SwiftUI
 
 struct WhiteNoiseScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
-    let whiteNoiseService: WhiteNoiseService
+    @ObservedObject var whiteNoiseService: WhiteNoiseService
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -15,7 +15,9 @@ struct WhiteNoiseScreen: View {
                         .onChange(of: viewModel.settings.whiteNoiseEnabled) { enabled in
                             viewModel.save()
                             if !enabled {
-                                whiteNoiseService.pauseAudio()
+                                whiteNoiseService.teardown()
+                            } else {
+                                whiteNoiseService.setup()
                             }
                         }
 
@@ -29,13 +31,22 @@ struct WhiteNoiseScreen: View {
                                 }
                         }
 
-                        RainySoundWebView(whiteNoiseService: whiteNoiseService)
+                        if whiteNoiseService.webView != nil {
+                            RainySoundWebView(
+                                whiteNoiseService: whiteNoiseService,
+                                webViewID: whiteNoiseService.webViewID
+                            )
                             .frame(height: 120)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
+                            .id(whiteNoiseService.webViewID)
+                        } else {
+                            ProgressView("로딩 중...")
+                                .frame(height: 120)
+                        }
 
                         Text("위 플레이어에서 재생 버튼을 눌러주세요. 인터넷 연결이 필요합니다.")
                             .font(.caption)
@@ -46,6 +57,11 @@ struct WhiteNoiseScreen: View {
             .formStyle(.grouped)
         }
         .frame(minWidth: 420, minHeight: 350)
+        .onAppear {
+            if viewModel.settings.whiteNoiseEnabled && whiteNoiseService.webView == nil {
+                whiteNoiseService.setup()
+            }
+        }
     }
 
     private var header: some View {
