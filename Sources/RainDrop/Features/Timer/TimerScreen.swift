@@ -114,6 +114,22 @@ struct TimerScreen: View {
         motivationIndex = next
     }
 
+    private var effectiveDropGradientTop: Color {
+        let skin = settingsViewModel.settings.selectedSkin
+        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customDropGradientTop
+        }
+        return AppColors.dropGradientTopColor
+    }
+
+    private var effectiveDropGradientBottom: Color {
+        let skin = settingsViewModel.settings.selectedSkin
+        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customDropGradientBottom
+        }
+        return AppColors.dropGradientBottomColor
+    }
+
     private var header: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 8) {
@@ -283,8 +299,19 @@ struct TimerScreen: View {
                 }
 
                 ZStack {
-                    WaterDropView(isAnimating: viewModel.isRunning)
+                    ZStack(alignment: .top) {
+                        CloudView(isVisible: viewModel.isRunning)
+                            .frame(width: 300, height: 60)
+                            .offset(y: -10)
+
+                        RainParticleView(
+                            isAnimating: viewModel.isRunning,
+                            dropGradientTop: effectiveDropGradientTop,
+                            dropGradientBottom: effectiveDropGradientBottom
+                        )
                         .frame(width: 300, height: 220)
+                    }
+                    .frame(width: 300, height: 220)
 
                     BucketWithStickersView(
                         progress: displayProgress,
