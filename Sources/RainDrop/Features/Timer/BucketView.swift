@@ -2,7 +2,23 @@ import SwiftUI
 
 struct BucketView: View {
     let progress: Double
+    let skin: BucketSkin
+    let useCustomWaterColor: Bool
     @State private var waveOffset: Double = 0
+
+    private var waterGradientTop: Color {
+        if useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customWaterGradientTop
+        }
+        return AppColors.waterGradientTopColor
+    }
+
+    private var waterGradientBottom: Color {
+        if useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customWaterGradientBottom
+        }
+        return AppColors.waterGradientBottomColor
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -12,15 +28,15 @@ struct BucketView: View {
             ZStack(alignment: .bottom) {
                 // Bucket background fill
                 BucketShape()
-                    .fill(AppColors.bucketFill)
+                    .fill(skin.bucketFill)
 
                 // Water with wave animation (two layers for depth)
                 WaterWaveShape(progress: progress, waveOffset: waveOffset + 0.3, waveHeight: 4)
                     .fill(
                         LinearGradient(
                             colors: [
-                                AppColors.waterGradientTop.opacity(0.5),
-                                AppColors.waterGradientBottom.opacity(0.5)
+                                waterGradientTop.opacity(0.5),
+                                waterGradientBottom.opacity(0.5)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -32,8 +48,8 @@ struct BucketView: View {
                     .fill(
                         LinearGradient(
                             colors: [
-                                AppColors.waterGradientTop,
-                                AppColors.waterGradientBottom
+                                waterGradientTop,
+                                waterGradientBottom
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -43,21 +59,21 @@ struct BucketView: View {
 
                 // Metal bands
                 BucketBand(verticalFraction: 0.30)
-                    .stroke(AppColors.bucketStroke.opacity(0.4), lineWidth: 2.5)
+                    .stroke(skin.bandColor, lineWidth: 2.5)
                 BucketBand(verticalFraction: 0.70)
-                    .stroke(AppColors.bucketStroke.opacity(0.4), lineWidth: 2.5)
+                    .stroke(skin.bandColor, lineWidth: 2.5)
 
                 // Bucket outline
                 BucketShape()
-                    .stroke(AppColors.bucketStroke, lineWidth: 5)
+                    .stroke(skin.bucketStroke, lineWidth: 5)
 
                 // Rim (thick top edge)
                 BucketRim()
-                    .stroke(AppColors.bucketStroke, style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                    .stroke(skin.bucketStroke, style: StrokeStyle(lineWidth: 7, lineCap: .round))
 
                 // Handle
                 BucketHandleShape()
-                    .stroke(AppColors.bucketHandle, style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                    .stroke(skin.bucketHandle, style: StrokeStyle(lineWidth: 7, lineCap: .round))
                     .frame(width: width * 0.52, height: height * 0.32)
                     .offset(y: -height * 0.30)
             }

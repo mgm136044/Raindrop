@@ -2,6 +2,8 @@ import SwiftUI
 
 struct BucketWithStickersView: View {
     let progress: Double
+    let skin: BucketSkin
+    let useCustomWaterColor: Bool
     let placements: [StickerPlacement]
     let isDecorating: Bool
     let onAddPlacement: (StickerPlacement) -> Void
@@ -13,7 +15,7 @@ struct BucketWithStickersView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                BucketView(progress: progress)
+                BucketView(progress: progress, skin: skin, useCustomWaterColor: useCustomWaterColor)
 
                 // Sticker overlays
                 ForEach(placements) { placement in

@@ -285,6 +285,8 @@ struct TimerScreen: View {
 
                     BucketWithStickersView(
                         progress: displayProgress,
+                        skin: settingsViewModel.settings.selectedSkin,
+                        useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor,
                         placements: shopViewModel.shopState.placements,
                         isDecorating: isDecorating,
                         onAddPlacement: { placement in
