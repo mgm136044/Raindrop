@@ -9,8 +9,8 @@ final class AppContainer: ObservableObject {
     private let shopRepository: ShopRepository
     private let notificationService: NotificationService
 
-    // Firebase services
-    let firestoreService: FirestoreService
+    // Firebase services (소셜 기능 활성화 시에만 사용)
+    private lazy var firestoreService: FirestoreService = FirestoreService()
     private lazy var syncService: FirebaseSyncService = FirebaseSyncService(
         firestoreService: firestoreService,
         dateService: dateService
@@ -18,7 +18,7 @@ final class AppContainer: ObservableObject {
 
     // Shared view models
     lazy var shopViewModel: ShopViewModel = ShopViewModel(repository: shopRepository)
-    lazy var authViewModel: AuthViewModel = AuthViewModel(firestoreService: firestoreService)
+
     lazy var timerViewModel: TimerViewModel = TimerViewModel(
         timerService: TimerService(),
         repository: repository,
@@ -26,7 +26,7 @@ final class AppContainer: ObservableObject {
         settingsRepository: settingsRepository,
         notificationService: notificationService,
         shopViewModel: shopViewModel,
-        syncService: syncService
+        syncService: AppConstants.socialEnabled ? syncService : nil
     )
 
     init() {
@@ -36,7 +36,6 @@ final class AppContainer: ObservableObject {
         self.settingsRepository = SettingsRepository(fileStore: fileStore)
         self.shopRepository = ShopRepository(fileStore: fileStore)
         self.notificationService = NotificationService()
-        self.firestoreService = FirestoreService()
 
         // delegate를 앱 시작 직후 등록 (알림 수신 전에 반드시 설정되어야 함)
         notificationService.initialize()
@@ -52,13 +51,13 @@ final class AppContainer: ObservableObject {
         repository: settingsRepository
     )
 
-    lazy var socialViewModel: SocialViewModel = SocialViewModel(
-        firestoreService: firestoreService,
-        authViewModel: authViewModel
-    )
+    // 소셜 기능 (socialEnabled = true 일 때만 사용)
+    lazy var authViewModel: AuthViewModel? = AppConstants.socialEnabled
+        ? AuthViewModel(firestoreService: firestoreService) : nil
 
-    lazy var friendsViewModel: FriendsViewModel = FriendsViewModel(
-        firestoreService: firestoreService,
-        authViewModel: authViewModel
-    )
+    lazy var socialViewModel: SocialViewModel? = AppConstants.socialEnabled
+        ? SocialViewModel(firestoreService: firestoreService, authViewModel: authViewModel!) : nil
+
+    lazy var friendsViewModel: FriendsViewModel? = AppConstants.socialEnabled
+        ? FriendsViewModel(firestoreService: firestoreService, authViewModel: authViewModel!) : nil
 }
