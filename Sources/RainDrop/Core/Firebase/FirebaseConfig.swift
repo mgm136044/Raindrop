@@ -8,11 +8,11 @@ private let logger = Logger(subsystem: "com.mingyeongmin.RainDrop", category: "F
 enum FirebaseConfig {
     static func configure() {
         let options = FirebaseOptions(
-            googleAppID: "REDACTED_APP_ID",
-            gcmSenderID: "REDACTED_GCM_ID"
+            googleAppID: FirebaseSecrets.googleAppID,
+            gcmSenderID: FirebaseSecrets.gcmSenderID
         )
-        options.apiKey = "REDACTED_API_KEY"
-        options.projectID = "raibdrop"
+        options.apiKey = FirebaseSecrets.apiKey
+        options.projectID = FirebaseSecrets.projectID
         options.bundleID = "com.mingyeongmin.RainDrop"
 
         FirebaseApp.configure(options: options)

@@ -8,3 +8,4 @@ DerivedData/
 .netrc
 /build_output/
 *.provisionprofile
+Sources/RainDrop/Core/Firebase/FirebaseSecrets.swift
