@@ -190,6 +190,12 @@ struct TimerScreen: View {
                 Text(viewModel.goalText)
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(.secondary)
+
+                if let cycleText = viewModel.cycleText {
+                    Text(cycleText)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AppColors.accentBlue)
+                }
             }
 
             VStack(alignment: .leading, spacing: 12) {
@@ -292,7 +298,7 @@ struct TimerScreen: View {
                     .frame(width: 300, height: 280)
                     .padding(.top, 48)
                     .onChange(of: viewModel.currentProgress) { newValue in
-                        if !viewModel.isDraining {
+                        if !viewModel.isDraining && !viewModel.isCycleDraining {
                             displayProgress = newValue
                         }
                     }
@@ -307,11 +313,29 @@ struct TimerScreen: View {
                             }
                         }
                     }
+                    .onChange(of: viewModel.isCycleDraining) { draining in
+                        if draining {
+                            displayProgress = 1.0
+                            withAnimation(.easeIn(duration: 1.2)) {
+                                displayProgress = 0
+                            }
+                            Task {
+                                try? await Task.sleep(for: .seconds(1.3))
+                                viewModel.finishCycleDraining()
+                            }
+                        }
+                    }
                 }
 
-                Text("\(Int(displayProgress * 100))% 채움")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(AppColors.progressText)
+                if let cycleText = viewModel.cycleText {
+                    Text("\(Int(displayProgress * 100))% 채움 · \(cycleText)")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(AppColors.progressText)
+                } else {
+                    Text("\(Int(displayProgress * 100))% 채움")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(AppColors.progressText)
+                }
 
                 if isDecorating {
                     stickerPalette
@@ -352,7 +376,7 @@ struct TimerScreen: View {
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(AppColors.bannerTitle)
 
-                    if session.durationSeconds >= viewModel.sessionGoalSeconds {
+                    if !viewModel.isInfinityMode && session.durationSeconds >= viewModel.sessionGoalSeconds {
                         Text("🪣 +1")
                             .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(.green)
