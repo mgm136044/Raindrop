@@ -5,6 +5,8 @@ struct AppSettings: Codable, Equatable, Sendable {
     var focusCheckEnabled: Bool = false
     var focusCheckIntervalMinutes: Int = 5
     var infinityModeEnabled: Bool = false
+    var selectedSkin: BucketSkin = .wood
+    var useCustomWaterColor: Bool = false
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
 
@@ -18,17 +20,23 @@ struct AppSettings: Codable, Equatable, Sendable {
         focusCheckEnabled = try container.decodeIfPresent(Bool.self, forKey: .focusCheckEnabled) ?? false
         focusCheckIntervalMinutes = try container.decodeIfPresent(Int.self, forKey: .focusCheckIntervalMinutes) ?? 5
         infinityModeEnabled = try container.decodeIfPresent(Bool.self, forKey: .infinityModeEnabled) ?? false
+        selectedSkin = try container.decodeIfPresent(BucketSkin.self, forKey: .selectedSkin) ?? .wood
+        useCustomWaterColor = try container.decodeIfPresent(Bool.self, forKey: .useCustomWaterColor) ?? false
     }
 
     init(
         sessionGoalMinutes: Int = 25,
         focusCheckEnabled: Bool = false,
         focusCheckIntervalMinutes: Int = 5,
-        infinityModeEnabled: Bool = false
+        infinityModeEnabled: Bool = false,
+        selectedSkin: BucketSkin = .wood,
+        useCustomWaterColor: Bool = false
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
         self.focusCheckEnabled = focusCheckEnabled
         self.focusCheckIntervalMinutes = focusCheckIntervalMinutes
         self.infinityModeEnabled = infinityModeEnabled
+        self.selectedSkin = selectedSkin
+        self.useCustomWaterColor = useCustomWaterColor
     }
 }

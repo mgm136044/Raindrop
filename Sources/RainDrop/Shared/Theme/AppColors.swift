@@ -268,3 +268,12 @@ enum AppColors {
         })
     }
 }
+
+// MARK: - SwiftUI Color Accessors (for BucketSkin)
+
+extension AppColors {
+    static var waterGradientTopColor: Color { waterGradientTop }
+    static var waterGradientBottomColor: Color { waterGradientBottom }
+    static var dropGradientTopColor: Color { dropGradientTop }
+    static var dropGradientBottomColor: Color { dropGradientBottom }
+}
