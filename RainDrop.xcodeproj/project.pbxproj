@@ -55,7 +55,6 @@
 		AA00002E /* TimerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002E /* TimerControlsView.swift */; };
 		AA00002F /* TimerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB00002F /* TimerScreen.swift */; };
 		AA000030 /* TimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000030 /* TimerViewModel.swift */; };
-		AA000031 /* WaterDropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000031 /* WaterDropView.swift */; };
 		AA000032 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000032 /* PrimaryButtonStyle.swift */; };
 		AA000033 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000033 /* AppColors.swift */; };
 		AA000034 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = AB000034 /* AppIcon.icns */; };
@@ -112,7 +111,6 @@
 		AB00002E /* TimerControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerControlsView.swift; sourceTree = "<group>"; };
 		AB00002F /* TimerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerScreen.swift; sourceTree = "<group>"; };
 		AB000030 /* TimerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewModel.swift; sourceTree = "<group>"; };
-		AB000031 /* WaterDropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterDropView.swift; sourceTree = "<group>"; };
 		AB000032 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		AB000033 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 		AB000034 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
@@ -321,7 +319,6 @@
 				AB00002E /* TimerControlsView.swift */,
 				AB00002F /* TimerScreen.swift */,
 				AB000030 /* TimerViewModel.swift */,
-				AB000031 /* WaterDropView.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -491,7 +488,6 @@
 				AA00002E /* TimerControlsView.swift in Sources */,
 				AA00002F /* TimerScreen.swift in Sources */,
 				AA000030 /* TimerViewModel.swift in Sources */,
-				AA000031 /* WaterDropView.swift in Sources */,
 				AA000032 /* PrimaryButtonStyle.swift in Sources */,
 				AA000033 /* AppColors.swift in Sources */,
 			);
