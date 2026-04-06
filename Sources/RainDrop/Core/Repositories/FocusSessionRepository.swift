@@ -2,6 +2,7 @@ import Foundation
 
 protocol FocusSessionRepositoryProtocol {
     func fetchAll() throws -> [FocusSession]
+    func fetchByDateKey(_ dateKey: String) throws -> [FocusSession]
     func save(_ session: FocusSession) throws
 }
 
@@ -18,6 +19,10 @@ struct FocusSessionRepository: FocusSessionRepositoryProtocol {
             filename: AppConstants.storageFilename
         )
         return sessions.sorted { $0.startTime > $1.startTime }
+    }
+
+    func fetchByDateKey(_ dateKey: String) throws -> [FocusSession] {
+        try fetchAll().filter { $0.dateKey == dateKey }
     }
 
     func save(_ session: FocusSession) throws {

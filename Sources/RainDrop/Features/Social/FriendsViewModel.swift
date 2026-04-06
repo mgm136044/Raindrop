@@ -11,11 +11,15 @@ final class FriendsViewModel: ObservableObject {
 
     private let firestoreService: FirestoreService
     private let authViewModel: AuthViewModel
-    private var requestListener: ListenerRegistration?
+    nonisolated(unsafe) private var requestListener: ListenerRegistration?
 
     init(firestoreService: FirestoreService, authViewModel: AuthViewModel) {
         self.firestoreService = firestoreService
         self.authViewModel = authViewModel
+    }
+
+    deinit {
+        requestListener?.remove()
     }
 
     var myUID: String? { authViewModel.currentUser?.id }

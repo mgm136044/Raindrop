@@ -53,11 +53,15 @@ final class AppContainer: ObservableObject {
 
     // 소셜 기능 (socialEnabled = true 일 때만 사용)
     lazy var authViewModel: AuthViewModel? = AppConstants.socialEnabled
-        ? AuthViewModel(firestoreService: firestoreService) : nil
+        ? AuthViewModel(firestoreService: firestoreService, dateService: dateService) : nil
 
-    lazy var socialViewModel: SocialViewModel? = AppConstants.socialEnabled
-        ? SocialViewModel(firestoreService: firestoreService, authViewModel: authViewModel!) : nil
+    lazy var socialViewModel: SocialViewModel? = {
+        guard AppConstants.socialEnabled, let auth = authViewModel else { return nil }
+        return SocialViewModel(firestoreService: firestoreService, authViewModel: auth)
+    }()
 
-    lazy var friendsViewModel: FriendsViewModel? = AppConstants.socialEnabled
-        ? FriendsViewModel(firestoreService: firestoreService, authViewModel: authViewModel!) : nil
+    lazy var friendsViewModel: FriendsViewModel? = {
+        guard AppConstants.socialEnabled, let auth = authViewModel else { return nil }
+        return FriendsViewModel(firestoreService: firestoreService, authViewModel: auth)
+    }()
 }

@@ -235,8 +235,7 @@ final class TimerViewModel: ObservableObject {
     private func loadTodayTotal() {
         do {
             let todayKey = dateService.dateKey(for: Date())
-            let total = try repository.fetchAll()
-                .filter { $0.dateKey == todayKey }
+            let total = try repository.fetchByDateKey(todayKey)
                 .reduce(0) { $0 + $1.durationSeconds }
             todayTotalSeconds = total
         } catch {

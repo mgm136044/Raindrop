@@ -1,6 +1,6 @@
 import Foundation
 
-struct FocusSession: Identifiable, Codable, Equatable {
+struct FocusSession: Identifiable, Codable, Equatable, Sendable {
     let id: UUID
     let startTime: Date
     let endTime: Date
