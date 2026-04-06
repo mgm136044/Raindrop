@@ -4,6 +4,7 @@ struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
     @Environment(\.dismiss) private var dismiss
+    @State private var showOnboarding = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -138,6 +139,12 @@ struct SettingsScreen: View {
                     }
                 }
 
+                Section("기타") {
+                    Button("온보딩 다시 보기") {
+                        showOnboarding = true
+                    }
+                }
+
                 if let error = viewModel.latestError {
                     Section {
                         Text(error)
@@ -146,6 +153,11 @@ struct SettingsScreen: View {
                 }
             }
             .formStyle(.grouped)
+            .sheet(isPresented: $showOnboarding) {
+                OnboardingView {
+                    showOnboarding = false
+                }
+            }
         }
         .frame(minWidth: 420, minHeight: 320)
     }
