@@ -261,6 +261,10 @@ struct TimerScreen: View {
             )
 
             Spacer()
+
+            Text("v\(AppConstants.appVersion)")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary.opacity(0.5))
         }
         .padding(28)
         .frame(width: 440, alignment: .topLeading)

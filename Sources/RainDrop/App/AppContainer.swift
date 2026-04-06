@@ -9,6 +9,7 @@ final class AppContainer: ObservableObject {
     private let shopRepository: ShopRepository
     private let notificationService: NotificationService
     let whiteNoiseService = WhiteNoiseService()
+    let updateService = UpdateService()
 
     // Firebase services (소셜 기능 활성화 시에만 사용)
     private lazy var firestoreService: FirestoreService = FirestoreService()

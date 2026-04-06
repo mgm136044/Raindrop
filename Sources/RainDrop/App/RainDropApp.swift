@@ -17,6 +17,8 @@ struct RainDropApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var container = AppContainer()
     @State private var showOnboarding = false
+    @State private var showUpdateAlert = false
+    @State private var showUpdateResult = false
 
     init() {
         if AppConstants.socialEnabled {
@@ -49,6 +51,40 @@ struct RainDropApp: App {
             .onAppear {
                 if !container.settingsViewModel.settings.hasSeenOnboarding && !showOnboarding {
                     showOnboarding = true
+                }
+            }
+            .task {
+                await container.updateService.checkForUpdate()
+                showUpdateAlert = container.updateService.availableVersion != nil
+            }
+            .alert(
+                "새로운 버전이 있습니다",
+                isPresented: $showUpdateAlert
+            ) {
+                Button("예") {
+                    container.updateService.performUpdate()
+                }
+                Button("아니오", role: .cancel) {}
+            } message: {
+                if let version = container.updateService.availableVersion {
+                    Text("v\(version) 버전이 출시되었습니다.\n업데이트 하시겠습니까?")
+                }
+            }
+            .onChange(of: container.updateService.updateResult) { result in
+                if result != nil {
+                    showUpdateResult = true
+                }
+            }
+            .alert(
+                "업데이트",
+                isPresented: $showUpdateResult
+            ) {
+                Button("확인") {
+                    container.updateService.updateResult = nil
+                }
+            } message: {
+                if let result = container.updateService.updateResult {
+                    Text(result)
                 }
             }
         }
