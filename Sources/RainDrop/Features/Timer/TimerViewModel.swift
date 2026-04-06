@@ -47,6 +47,7 @@ final class TimerViewModel: ObservableObject {
         loadTodayTotal()
         observeSessionChanges()
         observeSettingsChanges()
+        observeFocusCheckTimeout()
     }
 
     var timerText: String {
@@ -258,6 +259,15 @@ final class TimerViewModel: ObservableObject {
             .publisher(for: .settingsDidChange)
             .sink { [weak self] _ in
                 self?.loadSettings()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func observeFocusCheckTimeout() {
+        NotificationCenter.default
+            .publisher(for: .focusCheckTimedOut)
+            .sink { [weak self] _ in
+                self?.pause()
             }
             .store(in: &cancellables)
     }

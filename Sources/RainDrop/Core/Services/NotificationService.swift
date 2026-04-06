@@ -8,10 +8,12 @@ private let logger = Logger(subsystem: "com.mingyeongmin.RainDrop", category: "N
 final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     private var permissionGranted = false
     private var delegateRegistered = false
+    private var focusCheckTimeoutWork: DispatchWorkItem?
 
     /// 앱 시작 직후 호출 — delegate를 최대한 빨리 등록
     func initialize() {
         ensureDelegate()
+        setupCategories()
         logger.notice("initialized — bundleID: \(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)")
         Task { await logNotificationSettings() }
     }
@@ -37,6 +39,32 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     ) {
         logger.notice("willPresent 호출됨: \(notification.request.identifier, privacy: .public)")
         completionHandler([.banner, .list, .sound])
+
+        if notification.request.identifier.hasPrefix("focusCheck-") {
+            Task { @MainActor in
+                self.focusCheckTimeoutWork?.cancel()
+                let work = DispatchWorkItem {
+                    NotificationCenter.default.post(name: .focusCheckTimedOut, object: nil)
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: work)
+                self.focusCheckTimeoutWork = work
+            }
+        }
+    }
+
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        if response.notification.request.identifier.hasPrefix("focusCheck-") {
+            Task { @MainActor in
+                self.focusCheckTimeoutWork?.cancel()
+                self.focusCheckTimeoutWork = nil
+            }
+            logger.notice("집중 확인 응답: 사용자가 알림을 클릭함")
+        }
+        completionHandler()
     }
 
     func scheduleFocusChecks(intervalMinutes: Int, maxCount: Int = 20) {
@@ -48,6 +76,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         content.title = "RainDrop"
         content.body = "집중하고 계신가요? 계속 파이팅!"
         content.sound = .default
+        content.categoryIdentifier = "focusCheck"
 
         let count = min(maxCount, max(1, 120 / intervalMinutes))
         logger.notice("\(count)개 알림 스케줄 시작 (간격: \(intervalMinutes)분)")
@@ -120,4 +149,23 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         delegateRegistered = true
         logger.notice("delegate 등록됨 (확인: \(center.delegate === self))")
     }
+
+    private func setupCategories() {
+        let confirmAction = UNNotificationAction(
+            identifier: "confirmFocus",
+            title: "집중 중!",
+            options: .foreground
+        )
+        let category = UNNotificationCategory(
+            identifier: "focusCheck",
+            actions: [confirmAction],
+            intentIdentifiers: [],
+            options: []
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+    }
+}
+
+extension Notification.Name {
+    static let focusCheckTimedOut = Notification.Name("focusCheckTimedOut")
 }
