@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # RainDrop 배포 스크립트
-# 사용법: ./deploy.sh [--skip-build] [--no-launch]
+# 사용법: ./deploy.sh [--skip-build] [--no-launch] [--social]
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_PATH="/Applications/RainDrop.app"
@@ -13,16 +13,23 @@ TEAM_ID="3372U9TU87"
 
 SKIP_BUILD=false
 NO_LAUNCH=false
+SOCIAL_ENABLED=false
 
 for arg in "$@"; do
     case $arg in
         --skip-build) SKIP_BUILD=true ;;
         --no-launch) NO_LAUNCH=true ;;
+        --social) SOCIAL_ENABLED=true ;;
     esac
 done
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  RainDrop 배포 스크립트"
+if [ "$SOCIAL_ENABLED" = true ]; then
+    echo "  모드: 소셜 기능 포함 (entitlements + profile)"
+else
+    echo "  모드: 로컬 전용 (배포용)"
+fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Step 1: 빌드
@@ -37,47 +44,48 @@ else
     echo "[1/5] 빌드 건너뜀 (--skip-build)"
 fi
 
-# Step 2: 프로비저닝 프로파일 갱신
+# Step 2: 프로비저닝 프로파일 (소셜 기능 활성화 시에만)
 echo ""
-echo "[2/5] 프로비저닝 프로파일 갱신 중..."
+if [ "$SOCIAL_ENABLED" = true ]; then
+    echo "[2/5] 프로비저닝 프로파일 갱신 중..."
 
-# Xcode 빌드를 트리거하여 프로파일 자동 갱신 (빌드 실패해도 프로파일은 생성됨)
-cd "$SCRIPT_DIR"
-xcodebuild -project RainDrop.xcodeproj \
-    -scheme RainDrop \
-    -configuration Release \
-    -allowProvisioningUpdates \
-    -allowProvisioningDeviceRegistration \
-    build 2>&1 | grep -q "ProcessProductPackaging" || true
+    cd "$SCRIPT_DIR"
+    xcodebuild -project RainDrop.xcodeproj \
+        -scheme RainDrop \
+        -configuration Release \
+        -allowProvisioningUpdates \
+        -allowProvisioningDeviceRegistration \
+        build 2>&1 | grep -q "ProcessProductPackaging" || true
 
-# 번들 ID가 일치하는 가장 최신 프로파일 찾기
-LATEST_PROFILE=""
-PROFILES_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+    # 번들 ID가 일치하는 가장 최신 프로파일 찾기
+    LATEST_PROFILE=""
+    PROFILES_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
 
-if [ -d "$PROFILES_DIR" ]; then
-    while IFS= read -r profile; do
-        [ -z "$profile" ] && continue
-        # 프로파일 내용에서 번들 ID 확인
-        if security cms -D -i "$profile" 2>/dev/null | grep -q "$BUNDLE_ID"; then
-            LATEST_PROFILE="$profile"
-            break  # sort -rn 으로 최신순이므로 첫 번째가 최신
-        fi
-    done < <(find "$PROFILES_DIR" -name "*.provisionprofile" \
-        -exec stat -f '%m %N' {} \; 2>/dev/null | sort -rn | cut -d' ' -f2-)
+    if [ -d "$PROFILES_DIR" ]; then
+        while IFS= read -r profile; do
+            [ -z "$profile" ] && continue
+            if security cms -D -i "$profile" 2>/dev/null | grep -q "$BUNDLE_ID"; then
+                LATEST_PROFILE="$profile"
+                break
+            fi
+        done < <(find "$PROFILES_DIR" -name "*.provisionprofile" \
+            -exec stat -f '%m %N' {} \; 2>/dev/null | sort -rn | cut -d' ' -f2-)
+    fi
+
+    if [ -z "$LATEST_PROFILE" ]; then
+        echo "  ✗ $BUNDLE_ID 에 해당하는 프로비저닝 프로파일을 찾을 수 없습니다."
+        echo "    Xcode에서 Apple 계정 로그인 상태를 확인하세요."
+        exit 1
+    fi
+
+    EXPIRY=$(security cms -D -i "$LATEST_PROFILE" 2>/dev/null | \
+        grep -A1 "ExpirationDate" | grep "date" | sed 's/.*<date>\(.*\)<\/date>/\1/')
+    echo "  프로파일: $(basename "$LATEST_PROFILE")"
+    echo "  만료일: $EXPIRY"
+    echo "  ✓ 프로파일 갱신 완료"
+else
+    echo "[2/5] 프로비저닝 프로파일 건너뜀 (로컬 전용 모드)"
 fi
-
-if [ -z "$LATEST_PROFILE" ]; then
-    echo "  ✗ $BUNDLE_ID 에 해당하는 프로비저닝 프로파일을 찾을 수 없습니다."
-    echo "    Xcode에서 Apple 계정 로그인 상태를 확인하세요."
-    exit 1
-fi
-
-# 프로파일 만료일 확인
-EXPIRY=$(security cms -D -i "$LATEST_PROFILE" 2>/dev/null | \
-    grep -A1 "ExpirationDate" | grep "date" | sed 's/.*<date>\(.*\)<\/date>/\1/')
-echo "  프로파일: $(basename "$LATEST_PROFILE")"
-echo "  만료일: $EXPIRY"
-echo "  ✓ 프로파일 갱신 완료"
 
 # Step 3: 바이너리 배치
 echo ""
@@ -87,25 +95,36 @@ sleep 1
 cp "$SCRIPT_DIR/.build/release/RainDrop" "$APP_PATH/Contents/MacOS/RainDrop"
 echo "  ✓ 바이너리 복사 완료"
 
-# Step 4: 프로파일 임베드 + 코드 서명
+# Step 4: 코드 서명
 echo ""
-echo "[4/5] 프로파일 임베드 + 코드 서명 중..."
-cp "$LATEST_PROFILE" "$APP_PATH/Contents/embedded.provisionprofile"
-codesign --force --sign "$IDENTITY" \
-    --entitlements "$ENTITLEMENTS" \
-    "$APP_PATH"
-echo "  ✓ 코드 서명 완료"
+echo "[4/5] 코드 서명 중..."
+if [ "$SOCIAL_ENABLED" = true ]; then
+    cp "$LATEST_PROFILE" "$APP_PATH/Contents/embedded.provisionprofile"
+    codesign --force --sign "$IDENTITY" \
+        --entitlements "$ENTITLEMENTS" \
+        "$APP_PATH"
+    echo "  ✓ 코드 서명 완료 (entitlements + profile 포함)"
+else
+    # 프로비저닝 프로파일 제거 (이전 배포에서 남아있을 수 있음)
+    rm -f "$APP_PATH/Contents/embedded.provisionprofile"
+    codesign --force --sign "$IDENTITY" "$APP_PATH"
+    echo "  ✓ 코드 서명 완료 (단순 서명)"
+fi
 
 # Step 5: 검증
 echo ""
 echo "[5/5] 검증 중..."
-ENTITLEMENTS_OUTPUT=$(codesign -d --entitlements - "$APP_PATH" 2>&1)
-if echo "$ENTITLEMENTS_OUTPUT" | grep -q "$TEAM_ID.$BUNDLE_ID"; then
-    echo "  ✓ keychain-access-groups 확인됨"
+if [ "$SOCIAL_ENABLED" = true ]; then
+    ENTITLEMENTS_OUTPUT=$(codesign -d --entitlements - "$APP_PATH" 2>&1)
+    if echo "$ENTITLEMENTS_OUTPUT" | grep -q "$TEAM_ID.$BUNDLE_ID"; then
+        echo "  ✓ keychain-access-groups 확인됨"
+    else
+        echo "  ✗ entitlements 검증 실패! ($TEAM_ID.$BUNDLE_ID 없음)"
+        echo "$ENTITLEMENTS_OUTPUT"
+        exit 1
+    fi
 else
-    echo "  ✗ entitlements 검증 실패! ($TEAM_ID.$BUNDLE_ID 없음)"
-    echo "$ENTITLEMENTS_OUTPUT"
-    exit 1
+    codesign -v "$APP_PATH" 2>&1 && echo "  ✓ 서명 유효" || echo "  ✗ 서명 검증 실패"
 fi
 
 echo ""

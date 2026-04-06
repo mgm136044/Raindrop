@@ -5,9 +5,9 @@ struct TimerScreen: View {
     @ObservedObject var historyViewModel: HistoryViewModel
     @ObservedObject var settingsViewModel: SettingsViewModel
     @ObservedObject var shopViewModel: ShopViewModel
-    @ObservedObject var authViewModel: AuthViewModel
-    @ObservedObject var socialViewModel: SocialViewModel
-    @ObservedObject var friendsViewModel: FriendsViewModel
+    var authViewModel: AuthViewModel?
+    var socialViewModel: SocialViewModel?
+    var friendsViewModel: FriendsViewModel?
     @State private var isShowingHistory = false
     @State private var isShowingSettings = false
     @State private var isShowingShop = false
@@ -79,11 +79,15 @@ struct TimerScreen: View {
             ShopScreen(viewModel: shopViewModel)
         }
         .sheet(isPresented: $isShowingSocial) {
-            SocialScreen(
-                authViewModel: authViewModel,
-                socialViewModel: socialViewModel,
-                friendsViewModel: friendsViewModel
-            )
+            if let authVM = authViewModel,
+               let socialVM = socialViewModel,
+               let friendsVM = friendsViewModel {
+                SocialScreen(
+                    authViewModel: authVM,
+                    socialViewModel: socialVM,
+                    friendsViewModel: friendsVM
+                )
+            }
         }
     }
 
@@ -135,13 +139,15 @@ struct TimerScreen: View {
                 .background(AppColors.panelBackground)
                 .clipShape(Capsule())
 
-                Button {
-                    isShowingSocial = true
-                } label: {
-                    Image(systemName: "person.2")
-                        .font(.system(size: 16, weight: .medium))
+                if AppConstants.socialEnabled {
+                    Button {
+                        isShowingSocial = true
+                    } label: {
+                        Image(systemName: "person.2")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
 
                 Button {
                     isShowingShop = true

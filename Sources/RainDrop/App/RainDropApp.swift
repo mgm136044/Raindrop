@@ -13,7 +13,9 @@ struct RainDropApp: App {
     @StateObject private var container = AppContainer()
 
     init() {
-        FirebaseConfig.configure()
+        if AppConstants.socialEnabled {
+            FirebaseConfig.configure()
+        }
     }
 
     var body: some Scene {
