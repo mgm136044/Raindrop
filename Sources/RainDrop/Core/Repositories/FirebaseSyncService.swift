@@ -1,6 +1,9 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import os
+
+private let logger = Logger(subsystem: "com.mingyeongmin.RainDrop", category: "Sync")
 
 @MainActor
 final class FirebaseSyncService {
@@ -22,8 +25,10 @@ final class FirebaseSyncService {
         do {
             try await firestoreService.writeSession(uid: uid, session: session)
             try await incrementTotals(uid: uid, seconds: session.durationSeconds)
+            logger.notice("세션 동기화 완료: \(session.durationSeconds)초")
         } catch {
-            // 로컬이 primary — 동기화 실패는 조용히 무시
+            let nsError = error as NSError
+            logger.error("세션 동기화 실패: domain=\(nsError.domain, privacy: .public) code=\(nsError.code) — \(nsError.localizedDescription, privacy: .public)")
         }
     }
 
@@ -37,42 +42,53 @@ final class FirebaseSyncService {
                 startTime: startTime
             )
         } catch {
-            // 조용히 무시
+            let nsError = error as NSError
+            logger.error("집중 상태 업데이트 실패: domain=\(nsError.domain, privacy: .public) code=\(nsError.code) — \(nsError.localizedDescription, privacy: .public)")
         }
     }
 
     // MARK: - Private
 
-    private func incrementTotals(uid: String, seconds: Int) async throws {
-        let todayKey = dateService.dateKey(for: Date())
-        let currentWeekKey = weekKey(for: Date())
+    private nonisolated func incrementTotals(uid: String, seconds: Int) async throws {
+        let todayKey = DateService().dateKey(for: Date())
+        let currentWeekKey = DateService().weekKey(for: Date())
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(uid)
 
-        guard let profile = try await firestoreService.fetchUserProfile(uid: uid) else { return }
+        let _: Any? = try await db.runTransaction { transaction, errorPointer in
+            let snapshot: DocumentSnapshot
+            do {
+                snapshot = try transaction.getDocument(userRef)
+            } catch let fetchError as NSError {
+                errorPointer?.pointee = fetchError
+                return nil
+            }
 
-        var fields: [String: Any] = [:]
+            guard let data = snapshot.data() else { return nil }
 
-        // 일간 리셋 체크
-        if profile.lastTodayResetDateKey != todayKey {
-            fields["todayTotalSeconds"] = seconds
-            fields["lastTodayResetDateKey"] = todayKey
-        } else {
-            fields["todayTotalSeconds"] = FieldValue.increment(Int64(seconds))
+            let lastTodayKey = data["lastTodayResetDateKey"] as? String ?? ""
+            let lastWeekKey = data["lastWeekResetWeekKey"] as? String ?? ""
+            let currentTodaySeconds = data["todayTotalSeconds"] as? Int ?? 0
+            let currentWeekSeconds = data["weekTotalSeconds"] as? Int ?? 0
+
+            var fields: [String: Any] = [:]
+
+            if lastTodayKey != todayKey {
+                fields["todayTotalSeconds"] = seconds
+                fields["lastTodayResetDateKey"] = todayKey
+            } else {
+                fields["todayTotalSeconds"] = currentTodaySeconds + seconds
+            }
+
+            if lastWeekKey != currentWeekKey {
+                fields["weekTotalSeconds"] = seconds
+                fields["lastWeekResetWeekKey"] = currentWeekKey
+            } else {
+                fields["weekTotalSeconds"] = currentWeekSeconds + seconds
+            }
+
+            transaction.updateData(fields, forDocument: userRef)
+            return nil
         }
-
-        // 주간 리셋 체크
-        if profile.lastWeekResetWeekKey != currentWeekKey {
-            fields["weekTotalSeconds"] = seconds
-            fields["lastWeekResetWeekKey"] = currentWeekKey
-        } else {
-            fields["weekTotalSeconds"] = FieldValue.increment(Int64(seconds))
-        }
-
-        try await firestoreService.updateUserFields(uid: uid, fields: fields)
-    }
-
-    private func weekKey(for date: Date) -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
-        return "\(components.yearForWeekOfYear ?? 0)-W\(components.weekOfYear ?? 0)"
     }
 }

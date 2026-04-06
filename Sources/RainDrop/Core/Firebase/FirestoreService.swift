@@ -269,6 +269,7 @@ private extension FirestoreService {
         return formatter.string(from: date)
     }
 
+    /// DateService.weekKey(for:)와 동일한 로직 — fallback decoder용 static 버전
     static func weekKey(for date: Date) -> String {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)

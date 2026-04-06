@@ -37,4 +37,10 @@ struct DateService {
     func sessionTimeRange(start: Date, end: Date) -> String {
         "\(timeFormatter.string(from: start)) - \(timeFormatter.string(from: end))"
     }
+
+    func weekKey(for date: Date) -> String {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        return "\(components.yearForWeekOfYear ?? 0)-W\(components.weekOfYear ?? 0)"
+    }
 }
