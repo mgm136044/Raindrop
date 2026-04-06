@@ -16,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 struct RainDropApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var container = AppContainer()
+    @State private var showOnboarding = false
 
     init() {
         if AppConstants.socialEnabled {
@@ -36,6 +37,20 @@ struct RainDropApp: App {
                 whiteNoiseService: container.whiteNoiseService
             )
             .frame(width: 1040, height: 700)
+            .sheet(isPresented: $showOnboarding) {
+                OnboardingView {
+                    container.settingsViewModel.settings.hasSeenOnboarding = true
+                    container.settingsViewModel.save()
+                    if container.settingsViewModel.latestError == nil {
+                        showOnboarding = false
+                    }
+                }
+            }
+            .onAppear {
+                if !container.settingsViewModel.settings.hasSeenOnboarding && !showOnboarding {
+                    showOnboarding = true
+                }
+            }
         }
         .windowResizability(.contentSize)
 

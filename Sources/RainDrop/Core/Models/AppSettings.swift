@@ -9,6 +9,7 @@ struct AppSettings: Codable, Equatable, Sendable {
     var useCustomWaterColor: Bool = false
     var whiteNoiseEnabled: Bool = false
     var whiteNoiseVolume: Double = 0.5
+    var hasSeenOnboarding: Bool = false
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
 
@@ -26,6 +27,7 @@ struct AppSettings: Codable, Equatable, Sendable {
         useCustomWaterColor = try container.decodeIfPresent(Bool.self, forKey: .useCustomWaterColor) ?? false
         whiteNoiseEnabled = try container.decodeIfPresent(Bool.self, forKey: .whiteNoiseEnabled) ?? false
         whiteNoiseVolume = try container.decodeIfPresent(Double.self, forKey: .whiteNoiseVolume) ?? 0.5
+        hasSeenOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasSeenOnboarding) ?? false
     }
 
     init(
@@ -36,7 +38,8 @@ struct AppSettings: Codable, Equatable, Sendable {
         selectedSkin: BucketSkin = .wood,
         useCustomWaterColor: Bool = false,
         whiteNoiseEnabled: Bool = false,
-        whiteNoiseVolume: Double = 0.5
+        whiteNoiseVolume: Double = 0.5,
+        hasSeenOnboarding: Bool = false
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
         self.focusCheckEnabled = focusCheckEnabled
@@ -46,5 +49,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         self.useCustomWaterColor = useCustomWaterColor
         self.whiteNoiseEnabled = whiteNoiseEnabled
         self.whiteNoiseVolume = whiteNoiseVolume
+        self.hasSeenOnboarding = hasSeenOnboarding
     }
 }
