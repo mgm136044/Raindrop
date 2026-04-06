@@ -12,7 +12,7 @@ enum FirebaseConfig {
             gcmSenderID: "424510452328"
         )
         options.apiKey = "AIzaSyCJv6SNTtGY314N3DtZ97TrM4AEkcVi0ag"
-        options.projectID = "raindrop"
+        options.projectID = "raibdrop"
         options.bundleID = "com.mingyeongmin.RainDrop"
 
         FirebaseApp.configure(options: options)
