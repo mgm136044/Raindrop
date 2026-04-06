@@ -1,103 +1,88 @@
 import Foundation
+import SwiftUI
 import WebKit
 import os
 
 private let logger = Logger(subsystem: "com.mingyeongmin.RainDrop", category: "WhiteNoise")
 
+/// rainymood.com을 WKWebView로 로드하여 빗소리 백색소음을 재생.
+/// 사용자가 직접 재생 버튼을 클릭하는 방식으로 autoplay 정책을 우회.
 @MainActor
 final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate {
-    @Published private(set) var isPlaying = false
     @Published private(set) var isLoaded = false
 
-    private var webView: WKWebView?
-    private var pendingPlay = false
-    private var pendingPlayTask: Task<Void, Never>?
+    private(set) var webView: WKWebView?
 
-    private let playJS = """
+    /// CSS 주입: 불필요한 요소 숨기고 플레이어만 표시
+    private let hideCSS = """
     (function() {
-        var a = document.querySelector('audio');
-        if (!a) a = document.getElementById('player');
-        if (!a) a = document.querySelector('[id*="audio"]');
-        if (!a) a = document.querySelector('[id*="player"]');
-        if (a && a.play) { a.play(); return 'audio'; }
-        var btn = document.querySelector('.play-button, .btn-play, [class*="play"], button[aria-label*="play"], #play');
-        if (!btn) { var buttons = document.querySelectorAll('button'); for (var b of buttons) { if (b.textContent.toLowerCase().includes('play') || b.querySelector('svg')) { btn = b; break; } } }
-        if (btn) { btn.click(); return 'button'; }
-        return 'none';
+        var style = document.createElement('style');
+        style.textContent = `
+            body > *:not(#app):not(#player-container):not(.player):not(audio) { display: none !important; }
+            header, footer, nav, .social, .links, .logo, .title, .subtitle, .credits,
+            [class*="social"], [class*="header"], [class*="footer"], [class*="nav"],
+            [class*="banner"], [class*="ad"], [class*="promo"], [class*="subscribe"],
+            [class*="download"], [class*="share"], iframe { display: none !important; }
+            body { background: transparent !important; overflow: hidden !important; display: flex !important;
+                   justify-content: center !important; align-items: center !important;
+                   min-height: 100vh !important; }
+        `;
+        document.head.appendChild(style);
+        return 'css-injected';
     })()
-    """
-
-    private let pauseJS = """
-    (function() {
-        var a = document.querySelector('audio');
-        if (!a) a = document.getElementById('player');
-        if (!a) a = document.querySelector('[id*="audio"]');
-        if (!a) a = document.querySelector('[id*="player"]');
-        if (a && a.pause) { a.pause(); }
-    })()
-    """
-
-    private let volumeJS = """
-    (function(vol) {
-        var a = document.querySelector('audio');
-        if (!a) a = document.getElementById('player');
-        if (!a) a = document.querySelector('[id*="audio"]');
-        if (!a) a = document.querySelector('[id*="player"]');
-        if (a) { a.volume = vol; }
-    })
     """
 
     func setup() {
         guard webView == nil else { return }
         let config = WKWebViewConfiguration()
         config.mediaTypesRequiringUserActionForPlayback = []
-        let wv = WKWebView(frame: .zero, configuration: config)
+        let wv = WKWebView(frame: CGRect(x: 0, y: 0, width: 300, height: 200), configuration: config)
         wv.navigationDelegate = self
+        wv.isHidden = false
+        wv.setValue(false, forKey: "drawsBackground")
         wv.load(URLRequest(url: URL(string: "https://www.rainymood.com")!))
         webView = wv
         logger.notice("WKWebView 생성, rainymood.com 로딩 시작")
     }
 
-    func play() {
-        guard let webView else {
-            setup()
-            pendingPlay = true
-            return
-        }
-        if !isLoaded {
-            pendingPlay = true
-            return
-        }
-        webView.evaluateJavaScript(playJS) { [weak self] result, error in
-            Task { @MainActor in
-                if let error {
-                    logger.error("play 실패: \(error.localizedDescription, privacy: .public)")
-                    self?.isPlaying = false
-                } else {
-                    let method = result as? String ?? "unknown"
-                    logger.notice("백색소음 재생 시도: \(method, privacy: .public)")
-                    self?.isPlaying = method != "none"
-                }
-            }
-        }
-    }
-
-    func pause() {
-        pendingPlay = false
-        pendingPlayTask?.cancel()
-        pendingPlayTask = nil
-        webView?.evaluateJavaScript(pauseJS) { _, _ in }
-        isPlaying = false
-    }
-
-    /// WebView는 유지하여 재시작 시 로딩 지연 방지. 오디오만 정지.
-    func stop() {
-        pause()
-    }
-
     func setVolume(_ volume: Double) {
         let clamped = max(0, min(1, volume))
-        webView?.evaluateJavaScript("(\(volumeJS))(\(clamped))") { _, _ in }
+        let js = """
+        (function() {
+            var a = document.querySelector('audio');
+            if (!a) a = document.getElementById('player');
+            if (!a) a = document.querySelector('[id*="audio"]');
+            if (!a) a = document.querySelector('[id*="player"]');
+            if (a) { a.volume = \(clamped); }
+        })()
+        """
+        webView?.evaluateJavaScript(js) { _, _ in }
+    }
+
+    func pauseAudio() {
+        let js = """
+        (function() {
+            var a = document.querySelector('audio');
+            if (!a) a = document.getElementById('player');
+            if (!a) a = document.querySelector('[id*="audio"]');
+            if (!a) a = document.querySelector('[id*="player"]');
+            if (a && a.pause) { a.pause(); }
+        })()
+        """
+        webView?.evaluateJavaScript(js) { _, _ in }
+    }
+
+    func resumeAudio() {
+        let js = """
+        (function() {
+            var a = document.querySelector('audio');
+            if (!a) a = document.getElementById('player');
+            if (!a) a = document.querySelector('[id*="audio"]');
+            if (!a) a = document.querySelector('[id*="player"]');
+            if (a && a.play) { a.play(); }
+        })()
+        """
+        webView?.evaluateJavaScript(js) { _, _ in }
     }
 
     // MARK: - WKNavigationDelegate
@@ -107,18 +92,9 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
             self.isLoaded = true
             logger.notice("rainymood.com 로딩 완료")
 
-            // DOM 구조 디버깅
-            webView.evaluateJavaScript("document.querySelector('audio')?.src || 'no-audio-element'") { result, _ in
-                logger.notice("DOM audio src: \(result as? String ?? "nil", privacy: .public)")
-            }
-
-            if self.pendingPlay {
-                self.pendingPlay = false
-                self.pendingPlayTask = Task { @MainActor in
-                    try? await Task.sleep(for: .seconds(1.0))
-                    guard !Task.isCancelled else { return }
-                    self.play()
-                }
+            // CSS 주입으로 플레이어만 표시
+            webView.evaluateJavaScript(self.hideCSS) { result, _ in
+                logger.notice("CSS injection: \(result as? String ?? "nil", privacy: .public)")
             }
         }
     }
@@ -128,4 +104,19 @@ final class WhiteNoiseService: NSObject, ObservableObject, WKNavigationDelegate 
             logger.error("rainymood.com 로딩 실패: \(error.localizedDescription, privacy: .public)")
         }
     }
+}
+
+// MARK: - SwiftUI WebView Wrapper
+
+struct RainySoundWebView: NSViewRepresentable {
+    let whiteNoiseService: WhiteNoiseService
+
+    func makeNSView(context: Context) -> WKWebView {
+        if whiteNoiseService.webView == nil {
+            whiteNoiseService.setup()
+        }
+        return whiteNoiseService.webView ?? WKWebView()
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {}
 }

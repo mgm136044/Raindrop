@@ -8,6 +8,7 @@ struct TimerScreen: View {
     var authViewModel: AuthViewModel?
     var socialViewModel: SocialViewModel?
     var friendsViewModel: FriendsViewModel?
+    var whiteNoiseService: WhiteNoiseService?
     @State private var isShowingHistory = false
     @State private var isShowingSettings = false
     @State private var isShowingShop = false
@@ -75,7 +76,8 @@ struct TimerScreen: View {
         .sheet(isPresented: $isShowingSettings) {
             SettingsScreen(
                 viewModel: settingsViewModel,
-                totalBuckets: shopViewModel.shopState.totalBucketsEarned
+                totalBuckets: shopViewModel.shopState.totalBucketsEarned,
+                whiteNoiseService: whiteNoiseService
             )
         }
         .sheet(isPresented: $isShowingShop) {

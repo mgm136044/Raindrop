@@ -32,7 +32,8 @@ struct RainDropApp: App {
                 shopViewModel: container.shopViewModel,
                 authViewModel: container.authViewModel,
                 socialViewModel: container.socialViewModel,
-                friendsViewModel: container.friendsViewModel
+                friendsViewModel: container.friendsViewModel,
+                whiteNoiseService: container.whiteNoiseService
             )
             .frame(width: 1040, height: 700)
         }

@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
+    var whiteNoiseService: WhiteNoiseService?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -94,9 +95,21 @@ struct SettingsScreen: View {
                             Slider(value: $viewModel.settings.whiteNoiseVolume, in: 0...1, step: 0.1)
                                 .onChange(of: viewModel.settings.whiteNoiseVolume) { _ in
                                     viewModel.save()
+                                    whiteNoiseService?.setVolume(viewModel.settings.whiteNoiseVolume)
                                 }
                         }
-                        Text("rainymood.com의 빗소리를 재생합니다. 인터넷 연결이 필요합니다.")
+
+                        if let service = whiteNoiseService {
+                            RainySoundWebView(whiteNoiseService: service)
+                                .frame(height: 120)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+                                )
+                        }
+
+                        Text("위 플레이어에서 재생 버튼을 눌러주세요. 인터넷 연결이 필요합니다.")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }

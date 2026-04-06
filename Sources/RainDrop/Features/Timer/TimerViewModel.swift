@@ -112,7 +112,7 @@ final class TimerViewModel: ObservableObject {
         Task { await syncService?.setFocusing(true, startTime: now) }
         if settingsRepository.load().whiteNoiseEnabled {
             whiteNoiseService?.setVolume(settingsRepository.load().whiteNoiseVolume)
-            whiteNoiseService?.play()
+            whiteNoiseService?.resumeAudio()
         }
     }
 
@@ -121,7 +121,7 @@ final class TimerViewModel: ObservableObject {
         timerService.stop()
         timerState = .paused
         notificationService.cancelFocusChecks()
-        whiteNoiseService?.pause()
+        whiteNoiseService?.pauseAudio()
     }
 
     func resume() {
@@ -130,7 +130,7 @@ final class TimerViewModel: ObservableObject {
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
         if settingsRepository.load().whiteNoiseEnabled {
-            whiteNoiseService?.play()
+            whiteNoiseService?.resumeAudio()
         }
     }
 
@@ -138,7 +138,7 @@ final class TimerViewModel: ObservableObject {
         guard canStop else { return }
         timerService.stop()
         notificationService.cancelFocusChecks()
-        whiteNoiseService?.stop()
+        whiteNoiseService?.pauseAudio()
 
         let endTime = Date()
         let elapsed = elapsedSeconds
