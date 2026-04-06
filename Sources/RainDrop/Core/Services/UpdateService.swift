@@ -63,6 +63,22 @@ final class UpdateService: ObservableObject {
     }
 
     private nonisolated func runBrewUpgrade(brewPath: String) async -> String {
+        // 1. brew update로 tap 캐시 갱신
+        let updateProcess = Process()
+        updateProcess.executableURL = URL(fileURLWithPath: brewPath)
+        updateProcess.arguments = ["update"]
+        updateProcess.standardOutput = Pipe()
+        updateProcess.standardError = Pipe()
+
+        do {
+            try updateProcess.run()
+            updateProcess.waitUntilExit()
+            logger.notice("brew update 완료 (exit: \(updateProcess.terminationStatus))")
+        } catch {
+            logger.error("brew update 실패: \(error.localizedDescription, privacy: .public)")
+        }
+
+        // 2. brew upgrade로 실제 업그레이드
         let process = Process()
         process.executableURL = URL(fileURLWithPath: brewPath)
         process.arguments = ["upgrade", "--cask", "mgm136044/tap/raindrop"]
