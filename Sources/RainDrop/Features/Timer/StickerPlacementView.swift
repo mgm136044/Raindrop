@@ -27,12 +27,16 @@ struct BucketWithStickersView: View {
                 }
             }
             .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                guard !isDecorating else { return }
-                wobbleAngle = 6
-                withAnimation(.interpolatingSpring(stiffness: 300, damping: 8)) {
-                    wobbleAngle = 0
+            .overlay {
+                if !isDecorating {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            wobbleAngle = 6
+                            withAnimation(.interpolatingSpring(stiffness: 300, damping: 8)) {
+                                wobbleAngle = 0
+                            }
+                        }
                 }
             }
             .dropDestination(for: String.self) { items, location in
