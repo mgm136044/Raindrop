@@ -56,9 +56,9 @@ struct TimerControlsView: View {
     private func compactButton(icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundStyle(.white)
-                .frame(width: 48, height: 48)
+                .frame(width: 56, height: 56)
                 .background(color)
                 .clipShape(Circle())
         }

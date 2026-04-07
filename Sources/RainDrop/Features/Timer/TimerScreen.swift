@@ -77,7 +77,7 @@ struct TimerScreen: View {
                     .frame(height: 80)
 
                 Text(currentMotivationMessage)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(AppColors.rightPanelText.opacity(0.8))
                     .id(motivationIndex)
                     .transition(.opacity)
@@ -268,18 +268,18 @@ struct TimerScreen: View {
     private var timerDisplay: some View {
         HStack(spacing: 12) {
             Text(viewModel.timerText)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: 36, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(AppColors.primaryText)
 
             if let cycleText = viewModel.cycleText {
                 Text(cycleText)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(AppColors.accentBlue)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 10)
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
     }
@@ -289,18 +289,18 @@ struct TimerScreen: View {
     private var progressInfoPill: some View {
         HStack(spacing: 16) {
             Text(viewModel.goalText)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.secondary)
 
             Text("·")
                 .foregroundStyle(.secondary)
 
             Label("오늘 \(viewModel.todayTotalText)", systemImage: "clock.arrow.circlepath")
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(AppColors.subtitleText)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
         .background(.ultraThinMaterial)
         .clipShape(Capsule())
     }
