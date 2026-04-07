@@ -52,6 +52,54 @@ final class ShopViewModel: ObservableObject {
         saveState()
     }
 
+    // MARK: - Environment & Weather
+
+    var currentEnvironmentStage: EnvironmentStage {
+        EnvironmentStage.stage(for: shopState.totalFocusMinutes)
+    }
+
+    var currentWeather: WeatherCondition {
+        WeatherCondition.condition(for: shopState.consecutiveFocusDays)
+    }
+
+    var minutesToNextStage: Int? {
+        guard let next = currentEnvironmentStage.nextStage else { return nil }
+        return next.requiredTotalMinutes - shopState.totalFocusMinutes
+    }
+
+    func recordFocusMinutes(_ minutes: Int, dateKey: String) {
+        shopState.totalFocusMinutes += minutes
+
+        if let lastKey = shopState.lastFocusDateKey {
+            if lastKey == dateKey {
+                // Same day, no streak change
+            } else if isConsecutiveDay(lastKey: lastKey, currentKey: dateKey) {
+                shopState.consecutiveFocusDays += 1
+            } else {
+                shopState.consecutiveFocusDays = 1
+            }
+        } else {
+            shopState.consecutiveFocusDays = 1
+        }
+        shopState.lastFocusDateKey = dateKey
+
+        saveState()
+    }
+
+    private static let dateKeyFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+
+    private func isConsecutiveDay(lastKey: String, currentKey: String) -> Bool {
+        let formatter = Self.dateKeyFormatter
+        guard let lastDate = formatter.date(from: lastKey),
+              let currentDate = formatter.date(from: currentKey) else { return false }
+        let diff = Calendar.current.dateComponents([.day], from: lastDate, to: currentDate).day ?? 0
+        return diff == 1
+    }
+
     func reload() {
         shopState = repository.load()
     }

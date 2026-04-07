@@ -277,6 +277,72 @@ extension AppColors {
     static var dropGradientTopColor: Color { dropGradientTop }
     static var dropGradientBottomColor: Color { dropGradientBottom }
 
+    // MARK: - Sky Gradient (progress-based)
+
+    static var skyDawnTop: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.18, green: 0.14, blue: 0.25, alpha: 1.0)
+                : NSColor(red: 0.98, green: 0.92, blue: 0.85, alpha: 1.0)
+        })
+    }
+
+    static var skyDawnBottom: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.22, green: 0.16, blue: 0.12, alpha: 1.0)
+                : NSColor(red: 0.95, green: 0.88, blue: 0.78, alpha: 1.0)
+        })
+    }
+
+    static var skyGatheringTop: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.12, green: 0.14, blue: 0.22, alpha: 1.0)
+                : NSColor(red: 0.82, green: 0.88, blue: 0.94, alpha: 1.0)
+        })
+    }
+
+    static var skyGatheringBottom: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.10, green: 0.12, blue: 0.20, alpha: 1.0)
+                : NSColor(red: 0.78, green: 0.85, blue: 0.92, alpha: 1.0)
+        })
+    }
+
+    static var skyStormTop: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.08, green: 0.10, blue: 0.18, alpha: 1.0)
+                : NSColor(red: 0.65, green: 0.72, blue: 0.82, alpha: 1.0)
+        })
+    }
+
+    static var skyStormBottom: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.06, green: 0.08, blue: 0.15, alpha: 1.0)
+                : NSColor(red: 0.60, green: 0.68, blue: 0.78, alpha: 1.0)
+        })
+    }
+
+    static var skyClearingTop: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.20, green: 0.18, blue: 0.10, alpha: 1.0)
+                : NSColor(red: 1.0, green: 0.95, blue: 0.82, alpha: 1.0)
+        })
+    }
+
+    static var skyClearingBottom: Color {
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+                ? NSColor(red: 0.15, green: 0.12, blue: 0.08, alpha: 1.0)
+                : NSColor(red: 0.98, green: 0.90, blue: 0.72, alpha: 1.0)
+        })
+    }
+
     static var cloudColor: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua

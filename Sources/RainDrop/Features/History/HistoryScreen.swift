@@ -2,8 +2,9 @@ import SwiftUI
 
 struct HistoryScreen: View {
     @ObservedObject var viewModel: HistoryViewModel
+    var skin: BucketSkin = .wood
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab: HistoryTab = .calendar
+    @State private var selectedTab: HistoryTab = .monthly
 
     var body: some View {
         NavigationStack {
@@ -44,7 +45,8 @@ struct HistoryScreen: View {
 
             if !viewModel.isEmpty {
                 Picker("", selection: $selectedTab) {
-                    Text("달력").tag(HistoryTab.calendar)
+                    Text("월간").tag(HistoryTab.monthly)
+                    Text("주간").tag(HistoryTab.weekly)
                     Text("세션 기록").tag(HistoryTab.sessions)
                 }
                 .pickerStyle(.segmented)
@@ -61,11 +63,22 @@ struct HistoryScreen: View {
     private var tabContent: some View {
         ScrollView {
             switch selectedTab {
-            case .calendar:
+            case .monthly:
                 CalendarHeatmapView(
                     dailyData: viewModel.dailyTotals,
                     dateService: viewModel.dateService,
-                    dailyBucketCounts: viewModel.dailyBucketCounts
+                    dailyBucketCounts: viewModel.dailyBucketCounts,
+                    skin: skin
+                )
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+
+            case .weekly:
+                WeeklyDensityView(
+                    dailyData: viewModel.dailyTotals,
+                    dailyBucketCounts: viewModel.dailyBucketCounts,
+                    dateService: viewModel.dateService,
+                    skin: skin
                 )
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
@@ -143,6 +156,7 @@ struct HistoryScreen: View {
 // MARK: - Tab Enum
 
 private enum HistoryTab: String, CaseIterable {
-    case calendar
+    case monthly
+    case weekly
     case sessions
 }

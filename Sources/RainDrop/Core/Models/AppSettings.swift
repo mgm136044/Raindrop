@@ -10,13 +10,13 @@ struct AppSettings: Codable, Equatable, Sendable {
     var whiteNoiseEnabled: Bool = false
     var whiteNoiseVolume: Double = 0.5
     var hasSeenOnboarding: Bool = false
+    var waterColorEvolution: Bool = false
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
 
     static let `default` = AppSettings()
     static let storageFilename = "app_settings.json"
 
-    // 기존 JSON 파일에 infinityModeEnabled 키가 없어도 정상 디코딩
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         sessionGoalMinutes = try container.decodeIfPresent(Int.self, forKey: .sessionGoalMinutes) ?? 25
@@ -28,6 +28,7 @@ struct AppSettings: Codable, Equatable, Sendable {
         whiteNoiseEnabled = try container.decodeIfPresent(Bool.self, forKey: .whiteNoiseEnabled) ?? false
         whiteNoiseVolume = try container.decodeIfPresent(Double.self, forKey: .whiteNoiseVolume) ?? 0.5
         hasSeenOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasSeenOnboarding) ?? false
+        waterColorEvolution = try container.decodeIfPresent(Bool.self, forKey: .waterColorEvolution) ?? false
     }
 
     init(
@@ -39,7 +40,8 @@ struct AppSettings: Codable, Equatable, Sendable {
         useCustomWaterColor: Bool = false,
         whiteNoiseEnabled: Bool = false,
         whiteNoiseVolume: Double = 0.5,
-        hasSeenOnboarding: Bool = false
+        hasSeenOnboarding: Bool = false,
+        waterColorEvolution: Bool = false
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
         self.focusCheckEnabled = focusCheckEnabled
@@ -50,5 +52,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         self.whiteNoiseEnabled = whiteNoiseEnabled
         self.whiteNoiseVolume = whiteNoiseVolume
         self.hasSeenOnboarding = hasSeenOnboarding
+        self.waterColorEvolution = waterColorEvolution
     }
 }

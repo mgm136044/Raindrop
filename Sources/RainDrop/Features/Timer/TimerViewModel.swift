@@ -15,6 +15,7 @@ final class TimerViewModel: ObservableObject {
     @Published private(set) var cycleCount: Int = 0
     @Published private(set) var isCycleDraining: Bool = false
     @Published private(set) var lastCycleCount: Int = 0
+    @Published private(set) var isOverflowing: Bool = false
 
     private let timerService: TimerService
     private let repository: FocusSessionRepositoryProtocol
@@ -76,6 +77,17 @@ final class TimerViewModel: ObservableObject {
 
     var isRunning: Bool {
         timerState == .running
+    }
+
+    var waterLevelDescription: String {
+        switch currentProgress {
+        case 0..<0.05: return "바닥"
+        case 0.05..<0.3: return "조금"
+        case 0.3..<0.55: return "반쯤"
+        case 0.55..<0.85: return "많이"
+        case 0.85..<1.0: return "거의 가득"
+        default: return "가득!"
+        }
     }
 
     var canStart: Bool {
@@ -153,6 +165,7 @@ final class TimerViewModel: ObservableObject {
             cycleCount = 0
             isCycleDraining = false
             isDraining = true
+            triggerOverflow()
         }
 
         guard let startTime = sessionStartTime, elapsed > 0 else { return }
@@ -173,6 +186,7 @@ final class TimerViewModel: ObservableObject {
                 shopViewModel.earnBucket()
             }
 
+            shopViewModel.recordFocusMinutes(elapsed / 60, dateKey: session.dateKey)
             loadTodayTotal()
 
             Task {
@@ -187,6 +201,7 @@ final class TimerViewModel: ObservableObject {
     func finishDraining() {
         currentProgress = 0
         isDraining = false
+        clearOverflow()
     }
 
     func finishCycleDraining() {
@@ -196,6 +211,19 @@ final class TimerViewModel: ObservableObject {
         let elapsedInCycle = elapsedSeconds % goal
         currentProgress = Double(elapsedInCycle) / Double(goal)
         isCycleDraining = false
+        clearOverflow()
+    }
+
+    func triggerOverflow() {
+        isOverflowing = true
+        Task {
+            try? await Task.sleep(for: .seconds(3.0))
+            isOverflowing = false
+        }
+    }
+
+    private func clearOverflow() {
+        isOverflowing = false
     }
 
     func resetCompletionStateIfNeeded() {
@@ -217,6 +245,7 @@ final class TimerViewModel: ObservableObject {
                 if elapsedInCycle == 0 && !self.isCycleDraining {
                     self.currentProgress = 1.0
                     self.isCycleDraining = true
+                    self.triggerOverflow()
                 } else if !self.isCycleDraining {
                     self.currentProgress = Double(elapsedInCycle) / Double(goal)
                 }

@@ -4,9 +4,12 @@ struct BucketView: View {
     let progress: Double
     let skin: BucketSkin
     let useCustomWaterColor: Bool
+    var intensity: Double = 0.5
+    var waterColorOverride: (top: Color, bottom: Color)?
     @State private var waveOffset: Double = 0
 
     private var waterGradientTop: Color {
+        if let override = waterColorOverride { return override.top }
         if useCustomWaterColor && skin.hasCustomWaterColor {
             return skin.customWaterGradientTop
         }
@@ -14,6 +17,7 @@ struct BucketView: View {
     }
 
     private var waterGradientBottom: Color {
+        if let override = waterColorOverride { return override.bottom }
         if useCustomWaterColor && skin.hasCustomWaterColor {
             return skin.customWaterGradientBottom
         }
@@ -30,13 +34,13 @@ struct BucketView: View {
                 BucketShape()
                     .fill(skin.bucketFill)
 
-                // Water with wave animation (two layers for depth)
-                WaterWaveShape(progress: progress, waveOffset: waveOffset + 0.3, waveHeight: 4)
+                // Water layer 1 (back, softer)
+                WaterSurfaceShape(progress: progress, waveOffset: waveOffset + 0.3, intensity: intensity, layer: .back)
                     .fill(
                         LinearGradient(
                             colors: [
-                                waterGradientTop.opacity(0.5),
-                                waterGradientBottom.opacity(0.5)
+                                waterGradientTop.opacity(0.45),
+                                waterGradientBottom.opacity(0.45)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -44,7 +48,8 @@ struct BucketView: View {
                     )
                     .mask(BucketShape().scale(0.86))
 
-                WaterWaveShape(progress: progress, waveOffset: waveOffset, waveHeight: 6)
+                // Water layer 2 (front, primary)
+                WaterSurfaceShape(progress: progress, waveOffset: waveOffset, intensity: intensity, layer: .front)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -57,6 +62,13 @@ struct BucketView: View {
                     )
                     .mask(BucketShape().scale(0.86))
 
+                // Surface highlight (light reflection)
+                if progress > 0.05 {
+                    WaterSurfaceHighlight(progress: progress, waveOffset: waveOffset, intensity: intensity)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 1.5)
+                        .mask(BucketShape().scale(0.86))
+                }
+
                 // Metal bands
                 BucketBand(verticalFraction: 0.30)
                     .stroke(skin.bandColor, lineWidth: 2.5)
@@ -67,7 +79,7 @@ struct BucketView: View {
                 BucketShape()
                     .stroke(skin.bucketStroke, lineWidth: 5)
 
-                // Rim (thick top edge)
+                // Rim
                 BucketRim()
                     .stroke(skin.bucketStroke, style: StrokeStyle(lineWidth: 7, lineCap: .round))
 
@@ -86,9 +98,111 @@ struct BucketView: View {
     }
 }
 
+// MARK: - Multi-wave Water Surface
+
+enum WaterLayer {
+    case front, back
+}
+
+struct WaterSurfaceShape: Shape {
+    var progress: Double
+    var waveOffset: Double
+    var intensity: Double
+    var layer: WaterLayer
+
+    var animatableData: AnimatablePair<Double, Double> {
+        get { AnimatablePair(progress, waveOffset) }
+        set {
+            progress = newValue.first
+            waveOffset = newValue.second
+        }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let clampedProgress = min(max(progress, 0), 1.0)
+        let waterTop = rect.maxY - (rect.height * 0.80 * clampedProgress)
+        let hasWave = clampedProgress >= 0.05
+
+        var path = Path()
+        path.move(to: CGPoint(x: 0, y: waterTop))
+
+        let intensityClamped = min(max(intensity, 0), 1)
+
+        // Primary wave
+        let primaryAmp = hasWave ? (4.0 + intensityClamped * 4.0) : 0
+        let primaryWL = rect.width / 1.5
+        // Secondary wave (higher frequency, lower amplitude)
+        let secondaryAmp = hasWave ? (1.5 + intensityClamped * 2.0) : 0
+        let secondaryWL = rect.width / 3.0
+        // Tertiary wave (micro-ripples)
+        let tertiaryAmp = hasWave ? (0.5 + intensityClamped * 1.0) : 0
+        let tertiaryWL = rect.width / 8.0
+
+        let phaseShift: Double = layer == .back ? 0.3 : 0
+
+        for x in stride(from: 0, through: rect.width, by: 2) {
+            let primary = sin(((x / primaryWL) + waveOffset + phaseShift) * 2 * .pi) * primaryAmp
+            let secondary = sin(((x / secondaryWL) + waveOffset * 1.3 + phaseShift) * 2 * .pi) * secondaryAmp
+            let tertiary = sin(((x / tertiaryWL) + waveOffset * 2.1) * 2 * .pi) * tertiaryAmp
+
+            let y = waterTop + primary + secondary + tertiary
+            path.addLine(to: CGPoint(x: x, y: y))
+        }
+
+        path.addLine(to: CGPoint(x: rect.width, y: rect.maxY))
+        path.addLine(to: CGPoint(x: 0, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+}
+
+// MARK: - Surface Highlight (light reflection line)
+
+private struct WaterSurfaceHighlight: Shape {
+    var progress: Double
+    var waveOffset: Double
+    var intensity: Double
+
+    var animatableData: AnimatablePair<Double, Double> {
+        get { AnimatablePair(progress, waveOffset) }
+        set {
+            progress = newValue.first
+            waveOffset = newValue.second
+        }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let clampedProgress = min(max(progress, 0), 1.0)
+        let waterTop = rect.maxY - (rect.height * 0.80 * clampedProgress)
+        let intensityClamped = min(max(intensity, 0), 1)
+
+        let primaryAmp = (4.0 + intensityClamped * 4.0)
+        let primaryWL = rect.width / 1.5
+        let secondaryAmp = (1.5 + intensityClamped * 2.0)
+        let secondaryWL = rect.width / 3.0
+
+        var path = Path()
+        var started = false
+
+        for x in stride(from: 0, through: rect.width, by: 2) {
+            let primary = sin(((x / primaryWL) + waveOffset) * 2 * .pi) * primaryAmp
+            let secondary = sin(((x / secondaryWL) + waveOffset * 1.3) * 2 * .pi) * secondaryAmp
+            let y = waterTop + primary + secondary - 1
+
+            if !started {
+                path.move(to: CGPoint(x: x, y: y))
+                started = true
+            } else {
+                path.addLine(to: CGPoint(x: x, y: y))
+            }
+        }
+        return path
+    }
+}
+
 // MARK: - Bucket Shape (rounded barrel)
 
-private struct BucketShape: Shape {
+struct BucketShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
 
@@ -103,35 +217,28 @@ private struct BucketShape: Shape {
         let bottomRight = CGPoint(x: rect.maxX - bottomInset, y: bottomY)
         let bottomLeft = CGPoint(x: bottomInset, y: bottomY)
 
-        // Barrel bulge control: sides bow outward slightly
         let bulgeFactor = rect.width * 0.025
         let midY = (topY + bottomY) / 2
 
         path.move(to: topLeft)
-        // Top edge
         path.addLine(to: topRight)
-        // Right side with slight barrel curve
         path.addCurve(
             to: CGPoint(x: bottomRight.x - cornerRadius, y: bottomY - cornerRadius),
             control1: CGPoint(x: topRight.x + bulgeFactor, y: topY + (bottomY - topY) * 0.33),
             control2: CGPoint(x: bottomRight.x + bulgeFactor * 0.5, y: midY + (bottomY - topY) * 0.2)
         )
-        // Bottom-right corner
         path.addQuadCurve(
             to: CGPoint(x: bottomRight.x - cornerRadius * 1.5, y: bottomY),
             control: bottomRight
         )
-        // Bottom edge with subtle round
         path.addQuadCurve(
             to: CGPoint(x: bottomLeft.x + cornerRadius * 1.5, y: bottomY),
             control: CGPoint(x: rect.midX, y: bottomY + rect.height * 0.025)
         )
-        // Bottom-left corner
         path.addQuadCurve(
             to: CGPoint(x: bottomLeft.x + cornerRadius, y: bottomY - cornerRadius),
             control: bottomLeft
         )
-        // Left side with barrel curve
         path.addCurve(
             to: topLeft,
             control1: CGPoint(x: bottomLeft.x - bulgeFactor * 0.5, y: midY + (bottomY - topY) * 0.2),
@@ -142,9 +249,9 @@ private struct BucketShape: Shape {
     }
 }
 
-// MARK: - Bucket Rim (thick top edge)
+// MARK: - Bucket Rim
 
-private struct BucketRim: Shape {
+struct BucketRim: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let topY = rect.minY + rect.height * 0.06
@@ -159,7 +266,7 @@ private struct BucketRim: Shape {
 
 // MARK: - Metal Bands
 
-private struct BucketBand: Shape {
+struct BucketBand: Shape {
     let verticalFraction: Double
 
     func path(in rect: CGRect) -> Path {
@@ -171,7 +278,6 @@ private struct BucketBand: Shape {
         let topInset = rect.width * 0.14
         let bottomInset = rect.width * 0.08
         let xInset = topInset + (bottomInset - topInset) * verticalFraction
-        // Inset bands slightly so they don't stick out past the bucket outline
         let bandInset = rect.width * 0.02
 
         path.move(to: CGPoint(x: xInset + bandInset, y: y))
@@ -185,7 +291,7 @@ private struct BucketBand: Shape {
 
 // MARK: - Handle
 
-private struct BucketHandleShape: Shape {
+struct BucketHandleShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.addArc(
@@ -195,44 +301,6 @@ private struct BucketHandleShape: Shape {
             endAngle: .degrees(-15),
             clockwise: false
         )
-        return path
-    }
-}
-
-// MARK: - Water Wave Shape
-
-private struct WaterWaveShape: Shape {
-    var progress: Double
-    var waveOffset: Double
-    var waveHeight: Double
-
-    var animatableData: AnimatablePair<Double, Double> {
-        get { AnimatablePair(progress, waveOffset) }
-        set {
-            progress = newValue.first
-            waveOffset = newValue.second
-        }
-    }
-
-    func path(in rect: CGRect) -> Path {
-        let clampedProgress = min(max(progress, 0), 1.0)
-        let waterTop = rect.maxY - (rect.height * 0.80 * clampedProgress)
-        let effectiveWaveHeight = clampedProgress < 0.05 ? 0 : waveHeight
-
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: waterTop))
-
-        let wavelength = rect.width / 1.5
-        for x in stride(from: 0, through: rect.width, by: 1) {
-            let relativeX = x / wavelength
-            let sine = sin((relativeX + waveOffset) * 2 * .pi)
-            let y = waterTop + sine * effectiveWaveHeight
-            path.addLine(to: CGPoint(x: x, y: y))
-        }
-
-        path.addLine(to: CGPoint(x: rect.width, y: rect.maxY))
-        path.addLine(to: CGPoint(x: 0, y: rect.maxY))
-        path.closeSubpath()
         return path
     }
 }

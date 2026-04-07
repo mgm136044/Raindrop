@@ -16,7 +16,6 @@ struct TimerScreen: View {
     @State private var isShowingWhiteNoise = false
     @State private var isDecorating = false
     @State private var motivationIndex = 0
-    @State private var displayProgress: Double = 0
 
     private static let runningMessages = [
         "물방울이 떨어지는 중",
@@ -38,38 +37,130 @@ struct TimerScreen: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [
-                    AppColors.backgroundGradientTop,
-                    AppColors.backgroundGradientBottom
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+            // Layer 0: Dynamic sky background
+            SkyBackgroundView(
+                progress: viewModel.currentProgress,
+                isRunning: viewModel.isRunning,
+                isOverflowing: viewModel.isOverflowing
             )
-            .ignoresSafeArea()
 
-            VStack(spacing: 28) {
-                header
+            // Layer 1: Scene (cloud + rain + bucket) — 화면 중앙, 주인공
+            TimerSceneView(
+                viewModel: viewModel,
+                skin: settingsViewModel.settings.selectedSkin,
+                useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor,
+                dropGradientTop: effectiveDropGradientTop,
+                dropGradientBottom: effectiveDropGradientBottom,
+                placements: shopViewModel.shopState.placements,
+                isDecorating: isDecorating,
+                onAddPlacement: { placement in
+                    shopViewModel.addPlacement(placement)
+                },
+                onRemovePlacement: { id in
+                    shopViewModel.removePlacement(id: id)
+                },
+                purchasedItems: shopViewModel.shopState.purchasedItemIDs,
+                environmentStage: shopViewModel.currentEnvironmentStage,
+                weatherCondition: shopViewModel.currentWeather,
+                waterColorOverride: effectiveWaterColorOverride
+            )
 
-                HStack(spacing: 24) {
-                    leftPanel
-                    rightPanel
+            // Layer 2: Header overlay — 상단
+            VStack {
+                headerOverlay
+                Spacer()
+            }
+
+            // Layer 3: Motivation + progress text — 씬 위쪽
+            VStack {
+                Spacer()
+                    .frame(height: 80)
+
+                Text(currentMotivationMessage)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AppColors.rightPanelText.opacity(0.8))
+                    .id(motivationIndex)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.4), value: motivationIndex)
+                    .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
+                        pickRandomMessage()
+                    }
+                    .onChange(of: viewModel.isRunning) { _ in
+                        pickRandomMessage()
+                    }
+
+                Spacer()
+            }
+
+            // Layer 4: Bottom controls + info
+            VStack {
+                Spacer()
+
+                // Progress & cycle info
+                progressInfoPill
+
+                Spacer()
+                    .frame(height: 12)
+
+                // Timer text — 보조 역할로 축소
+                timerDisplay
+
+                Spacer()
+                    .frame(height: 16)
+
+                // Controls — 하단 중앙
+                TimerControlsView(
+                    canStart: viewModel.canStart,
+                    canPause: viewModel.canPause,
+                    canResume: viewModel.canResume,
+                    canStop: viewModel.canStop,
+                    onStart: {
+                        viewModel.resetCompletionStateIfNeeded()
+                        viewModel.start()
+                    },
+                    onPause: viewModel.pause,
+                    onResume: viewModel.resume,
+                    onStop: viewModel.stop,
+                    isCompact: viewModel.isRunning
+                )
+                .opacity(viewModel.isRunning ? 0.7 : 1.0)
+                .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
+
+                Spacer()
+                    .frame(height: 24)
+            }
+
+            // Layer 5: Sticker palette overlay (꾸미기 모드)
+            if isDecorating {
+                VStack {
+                    Spacer()
+                    stickerPalette
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 16)
                 }
+            }
+
+            // Layer 6: Error & completion banner
+            VStack {
+                Spacer()
 
                 if let error = viewModel.latestError {
                     Text(error)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.red)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 8)
                 }
 
                 if let session = viewModel.lastCompletedSession {
                     completionBanner(session)
+                        .padding(.horizontal, 32)
+                        .padding(.bottom, 20)
                 }
             }
-            .padding(32)
         }
         .sheet(isPresented: $isShowingHistory) {
-            HistoryScreen(viewModel: historyViewModel)
+            HistoryScreen(viewModel: historyViewModel, skin: settingsViewModel.settings.selectedSkin)
                 .onAppear {
                     historyViewModel.load()
                 }
@@ -77,7 +168,8 @@ struct TimerScreen: View {
         .sheet(isPresented: $isShowingSettings) {
             SettingsScreen(
                 viewModel: settingsViewModel,
-                totalBuckets: shopViewModel.shopState.totalBucketsEarned
+                totalBuckets: shopViewModel.shopState.totalBucketsEarned,
+                shopViewModel: shopViewModel
             )
         }
         .sheet(isPresented: $isShowingShop) {
@@ -104,304 +196,116 @@ struct TimerScreen: View {
         }
     }
 
-    private var currentMotivationMessage: String {
-        if viewModel.isRunning {
-            return Self.runningMessages[motivationIndex % Self.runningMessages.count]
-        } else {
-            return Self.idleMessages[motivationIndex % Self.idleMessages.count]
-        }
-    }
+    // MARK: - Header Overlay
 
-    private func pickRandomMessage() {
-        let count = viewModel.isRunning
-            ? Self.runningMessages.count
-            : Self.idleMessages.count
-        var next = Int.random(in: 0..<count)
-        // 같은 메시지 연속 방지
-        if next == motivationIndex % count, count > 1 {
-            next = (next + 1) % count
-        }
-        motivationIndex = next
-    }
-
-    private var effectiveDropGradientTop: Color {
-        let skin = settingsViewModel.settings.selectedSkin
-        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
-            return skin.customDropGradientTop
-        }
-        return AppColors.dropGradientTopColor
-    }
-
-    private var effectiveDropGradientBottom: Color {
-        let skin = settingsViewModel.settings.selectedSkin
-        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
-            return skin.customDropGradientBottom
-        }
-        return AppColors.dropGradientBottomColor
-    }
-
-    private var header: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("RainDrop")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppColors.titleText)
-
-                Text("집중이 쌓일수록 물방울이 양동이를 채웁니다.")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+    private var headerOverlay: some View {
+        HStack(alignment: .center) {
+            Text("RainDrop")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(AppColors.titleText)
 
             Spacer()
 
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 // Balance display
                 HStack(spacing: 4) {
                     Text("🪣")
-                        .font(.system(size: 14))
+                        .font(.system(size: 12))
                     Text("\(shopViewModel.balance)")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(AppColors.accentBlue)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(AppColors.panelBackground)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(.ultraThinMaterial)
                 .clipShape(Capsule())
 
                 if AppConstants.socialEnabled {
-                    Button {
-                        isShowingSocial = true
-                    } label: {
-                        Image(systemName: "person.2")
-                            .font(.system(size: 16, weight: .medium))
-                    }
-                    .buttonStyle(.bordered)
+                    headerButton(icon: "person.2") { isShowingSocial = true }
                 }
 
-                Button {
-                    isShowingShop = true
-                } label: {
-                    Image(systemName: "bag")
-                        .font(.system(size: 16, weight: .medium))
-                }
-                .buttonStyle(.bordered)
-
-                Button {
-                    isShowingSettings = true
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 16, weight: .medium))
-                }
-                .buttonStyle(.bordered)
+                headerButton(icon: "bag") { isShowingShop = true }
+                headerButton(icon: "gearshape") { isShowingSettings = true }
 
                 if whiteNoiseService != nil {
-                    Button {
-                        isShowingWhiteNoise = true
-                    } label: {
-                        Image(systemName: "cloud.rain")
-                            .font(.system(size: 16, weight: .medium))
-                    }
-                    .buttonStyle(.bordered)
+                    headerButton(icon: "cloud.rain") { isShowingWhiteNoise = true }
                 }
 
-                Button("히스토리 보기") {
+                if !shopViewModel.shopState.purchasedItemIDs.isEmpty {
+                    headerButton(
+                        icon: isDecorating ? "checkmark" : "paintbrush",
+                        tint: isDecorating ? .green : nil
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isDecorating.toggle()
+                        }
+                    }
+                }
+
+                Button {
                     historyViewModel.load()
                     isShowingHistory = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 12, weight: .medium))
+                        Text("히스토리")
+                            .font(.system(size: 12, weight: .medium))
+                    }
                 }
                 .buttonStyle(.borderedProminent)
+                .controlSize(.small)
                 .tint(AppColors.buttonTint)
             }
         }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial)
     }
 
-    private var leftPanel: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("현재 세션")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.secondary)
+    // MARK: - Timer Display
 
-                Text(viewModel.timerText)
-                    .font(.system(size: 58, weight: .heavy, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(AppColors.primaryText)
+    private var timerDisplay: some View {
+        HStack(spacing: 12) {
+            Text(viewModel.timerText)
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(AppColors.primaryText)
 
-                Text(viewModel.goalText)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.secondary)
-
-                if let cycleText = viewModel.cycleText {
-                    Text(cycleText)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppColors.accentBlue)
-                }
+            if let cycleText = viewModel.cycleText {
+                Text(cycleText)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(AppColors.accentBlue)
             }
-
-            VStack(alignment: .leading, spacing: 12) {
-                Label("오늘 누적 \(viewModel.todayTotalText)", systemImage: "clock.arrow.circlepath")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(AppColors.subtitleText)
-
-                ProgressView(value: viewModel.currentProgress)
-                    .tint(AppColors.accentBlue)
-            }
-
-            TimerControlsView(
-                canStart: viewModel.canStart,
-                canPause: viewModel.canPause,
-                canResume: viewModel.canResume,
-                canStop: viewModel.canStop,
-                onStart: {
-                    viewModel.resetCompletionStateIfNeeded()
-                    viewModel.start()
-                },
-                onPause: viewModel.pause,
-                onResume: viewModel.resume,
-                onStop: viewModel.stop
-            )
-
-            Spacer()
-
-            Text("v\(AppConstants.appVersion)")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary.opacity(0.5))
         }
-        .padding(28)
-        .frame(width: 440, alignment: .topLeading)
-        .frame(maxHeight: .infinity)
-        .background(AppColors.panelBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .shadow(color: AppColors.panelShadow, radius: 18, y: 10)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(.ultraThinMaterial)
+        .clipShape(Capsule())
     }
 
-    private var rightPanel: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            AppColors.rightPanelGradientTop,
-                            AppColors.rightPanelGradientBottom
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+    // MARK: - Progress Info Pill
 
-            VStack(spacing: 14) {
-                HStack {
-                    Text(currentMotivationMessage)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AppColors.rightPanelText)
-                        .contentTransition(.opacity)
-                        .animation(.easeInOut(duration: 0.4), value: motivationIndex)
-                        .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
-                            pickRandomMessage()
-                        }
-                        .onChange(of: viewModel.isRunning) { _ in
-                            pickRandomMessage()
-                        }
+    private var progressInfoPill: some View {
+        HStack(spacing: 16) {
+            Text(viewModel.goalText)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
 
-                    Spacer()
+            Text("·")
+                .foregroundStyle(.secondary)
 
-                    if !shopViewModel.shopState.purchasedItemIDs.isEmpty {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                isDecorating.toggle()
-                            }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: isDecorating ? "checkmark" : "paintbrush")
-                                    .font(.system(size: 12, weight: .medium))
-                                Text(isDecorating ? "완료" : "꾸미기")
-                                    .font(.system(size: 12, weight: .medium))
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(isDecorating ? .green : AppColors.accentBlue)
-                    }
-                }
-
-                ZStack {
-                    ZStack(alignment: .top) {
-                        CloudView(isVisible: viewModel.isRunning)
-                            .frame(width: 220, height: 60)
-                            .offset(y: -40)
-
-                        RainParticleView(
-                            isAnimating: viewModel.isRunning,
-                            dropGradientTop: effectiveDropGradientTop,
-                            dropGradientBottom: effectiveDropGradientBottom
-                        )
-                        .frame(width: 220, height: 300)
-                    }
-                    .frame(width: 300, height: 300)
-
-                    BucketWithStickersView(
-                        progress: displayProgress,
-                        skin: settingsViewModel.settings.selectedSkin,
-                        useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor,
-                        placements: shopViewModel.shopState.placements,
-                        isDecorating: isDecorating,
-                        onAddPlacement: { placement in
-                            shopViewModel.addPlacement(placement)
-                        },
-                        onRemovePlacement: { id in
-                            shopViewModel.removePlacement(id: id)
-                        },
-                        purchasedItems: shopViewModel.shopState.purchasedItemIDs
-                    )
-                    .frame(width: 300, height: 280)
-                    .padding(.top, 48)
-                    .onChange(of: viewModel.currentProgress) { newValue in
-                        if !viewModel.isDraining && !viewModel.isCycleDraining {
-                            displayProgress = newValue
-                        }
-                    }
-                    .onChange(of: viewModel.isDraining) { draining in
-                        if draining {
-                            withAnimation(.easeIn(duration: 1.2)) {
-                                displayProgress = 0
-                            }
-                            Task {
-                                try? await Task.sleep(for: .seconds(1.3))
-                                viewModel.finishDraining()
-                            }
-                        }
-                    }
-                    .onChange(of: viewModel.isCycleDraining) { draining in
-                        if draining {
-                            displayProgress = 1.0
-                            withAnimation(.easeIn(duration: 1.2)) {
-                                displayProgress = 0
-                            }
-                            Task {
-                                try? await Task.sleep(for: .seconds(1.3))
-                                viewModel.finishCycleDraining()
-                            }
-                        }
-                    }
-                }
-
-                if let cycleText = viewModel.cycleText {
-                    Text("\(Int(displayProgress * 100))% 채움 · \(cycleText)")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(AppColors.progressText)
-                } else {
-                    Text("\(Int(displayProgress * 100))% 채움")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(AppColors.progressText)
-                }
-
-                if isDecorating {
-                    stickerPalette
-                }
-            }
-            .padding(24)
+            Label("오늘 \(viewModel.todayTotalText)", systemImage: "clock.arrow.circlepath")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(AppColors.subtitleText)
         }
-        .frame(maxHeight: .infinity)
-        .shadow(color: AppColors.rightPanelShadow, radius: 18, y: 10)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
+        .background(.ultraThinMaterial)
+        .clipShape(Capsule())
     }
+
+    // MARK: - Sticker Palette
 
     private var stickerPalette: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -422,7 +326,12 @@ struct TimerScreen: View {
                 }
             }
         }
+        .padding(12)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
+
+    // MARK: - Completion Banner
 
     private func completionBanner(_ session: FocusSession) -> some View {
         HStack {
@@ -456,7 +365,60 @@ struct TimerScreen: View {
             .buttonStyle(.bordered)
         }
         .padding(18)
-        .background(AppColors.bannerBackground)
+        .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
+    // MARK: - Helpers
+
+    private func headerButton(icon: String, tint: Color? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(tint ?? AppColors.primaryText)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+    }
+
+    private var currentMotivationMessage: String {
+        if viewModel.isRunning {
+            return Self.runningMessages[motivationIndex % Self.runningMessages.count]
+        } else {
+            return Self.idleMessages[motivationIndex % Self.idleMessages.count]
+        }
+    }
+
+    private func pickRandomMessage() {
+        let count = viewModel.isRunning
+            ? Self.runningMessages.count
+            : Self.idleMessages.count
+        var next = Int.random(in: 0..<count)
+        if next == motivationIndex % count, count > 1 {
+            next = (next + 1) % count
+        }
+        motivationIndex = next
+    }
+
+    private var effectiveWaterColorOverride: (top: Color, bottom: Color)? {
+        guard settingsViewModel.settings.waterColorEvolution else { return nil }
+        let colors = WaterColorProgression.colors(for: shopViewModel.shopState.totalFocusMinutes)
+        return (colors.top, colors.bottom)
+    }
+
+    private var effectiveDropGradientTop: Color {
+        let skin = settingsViewModel.settings.selectedSkin
+        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customDropGradientTop
+        }
+        return AppColors.dropGradientTopColor
+    }
+
+    private var effectiveDropGradientBottom: Color {
+        let skin = settingsViewModel.settings.selectedSkin
+        if settingsViewModel.settings.useCustomWaterColor && skin.hasCustomWaterColor {
+            return skin.customDropGradientBottom
+        }
+        return AppColors.dropGradientBottomColor
     }
 }

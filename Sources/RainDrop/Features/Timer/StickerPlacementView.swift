@@ -4,6 +4,8 @@ struct BucketWithStickersView: View {
     let progress: Double
     let skin: BucketSkin
     let useCustomWaterColor: Bool
+    var intensity: Double = 0.5
+    var waterColorOverride: (top: Color, bottom: Color)?
     let placements: [StickerPlacement]
     let isDecorating: Bool
     let onAddPlacement: (StickerPlacement) -> Void
@@ -15,7 +17,7 @@ struct BucketWithStickersView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                BucketView(progress: progress, skin: skin, useCustomWaterColor: useCustomWaterColor)
+                BucketView(progress: progress, skin: skin, useCustomWaterColor: useCustomWaterColor, intensity: intensity, waterColorOverride: waterColorOverride)
 
                 // Sticker overlays
                 ForEach(placements) { placement in

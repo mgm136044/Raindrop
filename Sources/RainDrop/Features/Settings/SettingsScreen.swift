@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
+    var shopViewModel: ShopViewModel?
     @Environment(\.dismiss) private var dismiss
     @State private var showOnboarding = false
     @State private var showPatchNotes = false
@@ -84,7 +85,49 @@ struct SettingsScreen: View {
                     }
                 }
 
-                Section("양동이 스킨") {
+                // 성장 현황
+                if let shop = shopViewModel {
+                    Section("성장 현황") {
+                        HStack {
+                            Text("환경")
+                            Spacer()
+                            Text("\(shop.currentEnvironmentStage.emoji) \(shop.currentEnvironmentStage.displayName)")
+                                .foregroundStyle(AppColors.accentBlue)
+                        }
+
+                        if let minutesLeft = shop.minutesToNextStage {
+                            HStack {
+                                Text("다음 단계까지")
+                                Spacer()
+                                Text("\(minutesLeft)분")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        HStack {
+                            Text("날씨")
+                            Spacer()
+                            Text("\(shop.currentWeather.emoji) \(shop.currentWeather.displayName)")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack {
+                            Text("연속 집중일수")
+                            Spacer()
+                            Text("\(shop.shopState.consecutiveFocusDays)일")
+                                .foregroundStyle(AppColors.accentBlue)
+                        }
+
+                        HStack {
+                            Text("총 집중 시간")
+                            Spacer()
+                            Text(TimeFormatter.compactDuration(from: shop.shopState.totalFocusMinutes * 60))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
+                Section("환경 선택") {
                     ForEach(BucketSkin.allCases, id: \.self) { skin in
                         let unlocked = skin.isUnlocked(totalBuckets: totalBuckets)
                         Button {
@@ -129,7 +172,15 @@ struct SettingsScreen: View {
                         .disabled(!unlocked)
                     }
 
-                    if viewModel.settings.selectedSkin.hasCustomWaterColor {
+                    Toggle("물 색상 자연 진화", isOn: $viewModel.settings.waterColorEvolution)
+                        .onChange(of: viewModel.settings.waterColorEvolution) { _ in
+                            viewModel.save()
+                        }
+                    Text("집중 시간이 쌓일수록 물의 색이 깊어집니다.")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+
+                    if !viewModel.settings.waterColorEvolution && viewModel.settings.selectedSkin.hasCustomWaterColor {
                         Toggle("스킨 색 물 사용", isOn: $viewModel.settings.useCustomWaterColor)
                             .onChange(of: viewModel.settings.useCustomWaterColor) { _ in
                                 viewModel.save()

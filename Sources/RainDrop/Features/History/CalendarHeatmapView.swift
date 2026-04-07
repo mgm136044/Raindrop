@@ -4,6 +4,7 @@ struct CalendarHeatmapView: View {
     let dailyData: [String: Int]
     let dateService: DateService
     let dailyBucketCounts: [String: Int]
+    var skin: BucketSkin = .wood
     @State private var selectedDay: CalendarDay?
     @State private var displayedMonth: Date = {
         let comps = Calendar.current.dateComponents([.year, .month], from: Date())
