@@ -10,6 +10,10 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.2.0", date: "2026.04.09", changes: [
+            "물 파도 애니메이션 부드러움 개선 (GPU 렌더링 최적화)",
+            "배경 회색 타원 구름 제거 (Apple 디자인 정리)",
+        ]),
         PatchNote(version: "2.1.1", date: "2026.04.08", changes: [
             "wave 애니메이션 간헐적 멈춤 수정 (animatableData 격리)",
         ]),
