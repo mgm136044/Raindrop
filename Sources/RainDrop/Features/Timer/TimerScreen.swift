@@ -14,7 +14,7 @@ struct TimerScreen: View {
     @State private var isShowingShop = false
     @State private var isShowingSocial = false
     @State private var isShowingWhiteNoise = false
-    @State private var isDecorating = false
+    @State private var isShowingStickerEditor = false
     @State private var motivationIndex = 0
 
     private static let runningMessages = [
@@ -52,14 +52,6 @@ struct TimerScreen: View {
                 dropGradientTop: effectiveDropGradientTop,
                 dropGradientBottom: effectiveDropGradientBottom,
                 placements: shopViewModel.shopState.placements,
-                isDecorating: isDecorating,
-                onAddPlacement: { placement in
-                    shopViewModel.addPlacement(placement)
-                },
-                onRemovePlacement: { id in
-                    shopViewModel.removePlacement(id: id)
-                },
-                purchasedItems: shopViewModel.shopState.purchasedItemIDs,
                 environmentStage: shopViewModel.currentEnvironmentStage,
                 weatherCondition: shopViewModel.currentWeather,
                 waterColorOverride: effectiveWaterColorOverride
@@ -130,17 +122,7 @@ struct TimerScreen: View {
                     .frame(height: 24)
             }
 
-            // Layer 5: Sticker palette overlay (꾸미기 모드)
-            if isDecorating {
-                VStack {
-                    Spacer()
-                    stickerPalette
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 16)
-                }
-            }
-
-            // Layer 6: Error & completion banner
+            // Layer 5: Error & completion banner
             VStack {
                 Spacer()
 
@@ -185,6 +167,13 @@ struct TimerScreen: View {
                     friendsViewModel: friendsVM
                 )
             }
+        }
+        .sheet(isPresented: $isShowingStickerEditor) {
+            StickerEditorScreen(
+                shopViewModel: shopViewModel,
+                skin: settingsViewModel.settings.selectedSkin,
+                useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor
+            )
         }
         .sheet(isPresented: $isShowingWhiteNoise) {
             if let service = whiteNoiseService {
@@ -232,13 +221,8 @@ struct TimerScreen: View {
                 }
 
                 if !shopViewModel.shopState.purchasedItemIDs.isEmpty {
-                    headerButton(
-                        icon: isDecorating ? "checkmark" : "paintbrush",
-                        tint: isDecorating ? .green : nil
-                    ) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isDecorating.toggle()
-                        }
+                    headerButton(icon: "paintbrush") {
+                        isShowingStickerEditor = true
                     }
                 }
 
@@ -306,30 +290,6 @@ struct TimerScreen: View {
     }
 
     // MARK: - Sticker Palette
-
-    private var stickerPalette: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("스티커를 양동이 위로 드래그하세요")
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(.secondary)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(ShopCatalog.allItems.filter { shopViewModel.isPurchased($0) }) { item in
-                        Text(item.emoji)
-                            .font(.system(size: 28))
-                            .padding(6)
-                            .background(AppColors.panelBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .draggable(item.id)
-                    }
-                }
-            }
-        }
-        .padding(12)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-    }
 
     // MARK: - Completion Banner
 

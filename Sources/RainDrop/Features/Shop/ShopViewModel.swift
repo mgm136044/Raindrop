@@ -47,6 +47,18 @@ final class ShopViewModel: ObservableObject {
         saveState()
     }
 
+    func updatePlacementPosition(id: UUID, relativeX: Double, relativeY: Double) {
+        guard let index = shopState.placements.firstIndex(where: { $0.id == id }) else { return }
+        shopState.placements[index].relativeX = min(max(relativeX, 0.05), 0.95)
+        shopState.placements[index].relativeY = min(max(relativeY, 0.05), 0.95)
+        saveState()
+    }
+
+    func removeAllPlacements() {
+        shopState.placements.removeAll()
+        saveState()
+    }
+
     func earnBucket() {
         shopState.totalBucketsEarned += 1
         saveState()

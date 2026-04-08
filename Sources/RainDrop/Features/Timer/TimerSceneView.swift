@@ -7,10 +7,6 @@ struct TimerSceneView: View {
     let dropGradientTop: Color
     let dropGradientBottom: Color
     let placements: [StickerPlacement]
-    let isDecorating: Bool
-    let onAddPlacement: (StickerPlacement) -> Void
-    let onRemovePlacement: (UUID) -> Void
-    let purchasedItems: Set<String>
     var environmentStage: EnvironmentStage = .barren
     var weatherCondition: WeatherCondition = .cloudy
     var waterColorOverride: (top: Color, bottom: Color)?
@@ -56,11 +52,7 @@ struct TimerSceneView: View {
                 useCustomWaterColor: useCustomWaterColor,
                 intensity: intensity,
                 waterColorOverride: waterColorOverride,
-                placements: placements,
-                isDecorating: isDecorating,
-                onAddPlacement: onAddPlacement,
-                onRemovePlacement: onRemovePlacement,
-                purchasedItems: purchasedItems
+                placements: placements
             )
             .frame(width: 340, height: 320)
             .padding(.top, 56)
