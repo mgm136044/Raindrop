@@ -196,7 +196,7 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 ### Animation Layers (TimerSceneView depth order)
 1. EnvironmentView (grass/flowers/trees -- behind bucket)
 2. WeatherOverlayView (ambient clouds/rain -- behind bucket)
-3. CloudView + RainParticleView (session-active rain -- above environment)
+3. RainParticleView (session-active rain -- above environment)
 4. BucketWithStickersView (center hero)
 5. OverflowAnimationView (celebration sparkles)
 6. WaterSplashView (surface splash particles)

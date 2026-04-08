@@ -48,7 +48,7 @@ struct WhiteNoiseScreen: View {
                                 .frame(height: 120)
                         }
 
-                        Text("위 플레이어에서 재생 버튼을 눌러주세요. 인터넷 연결이 필요합니다.")
+                        Text("위 플레이어에서 재생 버튼을 눌러주세요. 인터넷 연결이 필요합니다.\n재생 버튼이 보이지 않으면 플레이어를 우클릭하여 '페이지 리로드'를 선택하세요.")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }

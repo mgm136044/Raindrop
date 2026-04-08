@@ -64,6 +64,7 @@ struct RainDropApp: App {
                         showOnboarding = false
                     }
                 }
+                .id(showOnboarding)
             }
             .onAppear {
                 if !container.settingsViewModel.settings.hasSeenOnboarding && !showOnboarding {

@@ -7,6 +7,8 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showOnboarding = false
     @State private var showPatchNotes = false
+    @FocusState private var goalFieldFocused: Bool
+    @FocusState private var intervalFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,16 +34,14 @@ struct SettingsScreen: View {
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 60)
                                 .multilineTextAlignment(.trailing)
+                                .focused($goalFieldFocused)
+                                .onSubmit { clampAndSaveGoal() }
                         }
                         Text("분")
                             .foregroundStyle(.secondary)
                     }
-                    .onChange(of: viewModel.settings.sessionGoalMinutes) { _,newValue in
-                        let clamped = max(1, min(120, newValue))
-                        if clamped != newValue {
-                            viewModel.settings.sessionGoalMinutes = clamped
-                        }
-                        viewModel.save()
+                    .onChange(of: goalFieldFocused) { _,focused in
+                        if !focused { clampAndSaveGoal() }
                     }
 
                     if viewModel.settings.infinityModeEnabled {
@@ -49,7 +49,7 @@ struct SettingsScreen: View {
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     } else {
-                        Text("1 ~ 120분")
+                        Text("25 ~ 120분")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
@@ -69,15 +69,13 @@ struct SettingsScreen: View {
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 60)
                                 .multilineTextAlignment(.trailing)
+                                .focused($intervalFieldFocused)
+                                .onSubmit { clampAndSaveInterval() }
                             Text("분")
                                 .foregroundStyle(.secondary)
                         }
-                        .onChange(of: viewModel.settings.focusCheckIntervalMinutes) { _,newValue in
-                            let clamped = max(1, min(60, newValue))
-                            if clamped != newValue {
-                                viewModel.settings.focusCheckIntervalMinutes = clamped
-                            }
-                            viewModel.save()
+                        .onChange(of: intervalFieldFocused) { _,focused in
+                            if !focused { clampAndSaveInterval() }
                         }
                         Text("1 ~ 60분")
                             .font(.caption)
@@ -212,12 +210,25 @@ struct SettingsScreen: View {
                 OnboardingView {
                     showOnboarding = false
                 }
+                .id(showOnboarding)  // 매번 새 인스턴스로 상태 초기화
             }
             .sheet(isPresented: $showPatchNotes) {
                 PatchNotesView()
             }
         }
         .frame(minWidth: 420, minHeight: 320)
+    }
+
+    // MARK: - Validation Helpers
+
+    private func clampAndSaveGoal() {
+        viewModel.settings.sessionGoalMinutes = max(25, min(120, viewModel.settings.sessionGoalMinutes))
+        viewModel.save()
+    }
+
+    private func clampAndSaveInterval() {
+        viewModel.settings.focusCheckIntervalMinutes = max(1, min(60, viewModel.settings.focusCheckIntervalMinutes))
+        viewModel.save()
     }
 
     private var header: some View {
