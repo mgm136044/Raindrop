@@ -88,37 +88,33 @@ struct SkyBackgroundView: View {
 
 private struct DeepOceanParticleView: View {
     @State private var particles: [OceanBubble] = []
+    @State private var tick: Int = 0
 
     private let bubbleCount = 15
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
-            Canvas { context, size in
-                for bubble in particles {
-                    let x = bubble.x * size.width
-                    let y = bubble.y * size.height
-                    let r = bubble.radius
+        Canvas { context, size in
+            for bubble in particles {
+                let x = bubble.x * size.width
+                let y = bubble.y * size.height
+                let r = bubble.radius
 
-                    let rect = CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)
-                    context.fill(
-                        Circle().path(in: rect),
-                        with: .color(.white.opacity(bubble.opacity))
-                    )
+                let rect = CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)
+                context.fill(
+                    Circle().path(in: rect),
+                    with: .color(.white.opacity(bubble.opacity))
+                )
 
-                    // 작은 하이라이트
-                    let hlRect = CGRect(x: x - r * 0.3, y: y - r * 0.3, width: r * 0.6, height: r * 0.6)
-                    context.fill(
-                        Circle().path(in: hlRect),
-                        with: .color(.white.opacity(bubble.opacity * 0.5))
-                    )
-                }
-            }
-            .onChange(of: timeline.date) { _,_ in
-                updateBubbles()
+                let hlRect = CGRect(x: x - r * 0.3, y: y - r * 0.3, width: r * 0.6, height: r * 0.6)
+                context.fill(
+                    Circle().path(in: hlRect),
+                    with: .color(.white.opacity(bubble.opacity * 0.5))
+                )
             }
         }
         .onAppear {
             initBubbles()
+            startTimer()
         }
     }
 
@@ -127,11 +123,19 @@ private struct DeepOceanParticleView: View {
             OceanBubble(
                 x: Double.random(in: 0.05...0.95),
                 y: Double.random(in: 0.0...1.0),
-                speed: Double.random(in: 0.0008...0.003),
-                radius: Double.random(in: 1.5...4.0),
-                opacity: Double.random(in: 0.04...0.12),
-                drift: Double.random(in: -0.0003...0.0003)
+                speed: Double.random(in: 0.001...0.004),
+                radius: Double.random(in: 2.0...5.0),
+                opacity: Double.random(in: 0.06...0.18),
+                drift: Double.random(in: -0.0004...0.0004)
             )
+        }
+    }
+
+    private func startTimer() {
+        Timer.scheduledTimer(withTimeInterval: 1.0 / 15.0, repeats: true) { _ in
+            Task { @MainActor in
+                updateBubbles()
+            }
         }
     }
 
@@ -141,14 +145,14 @@ private struct DeepOceanParticleView: View {
             updated[i].y -= updated[i].speed
             updated[i].x += updated[i].drift
 
-            if updated[i].y < -0.05 {
+            if updated[i].y < -0.05 || updated[i].x < -0.05 || updated[i].x > 1.05 {
                 updated[i] = OceanBubble(
                     x: Double.random(in: 0.05...0.95),
                     y: 1.05,
-                    speed: Double.random(in: 0.0008...0.003),
-                    radius: Double.random(in: 1.5...4.0),
-                    opacity: Double.random(in: 0.04...0.12),
-                    drift: Double.random(in: -0.0003...0.0003)
+                    speed: Double.random(in: 0.001...0.004),
+                    radius: Double.random(in: 2.0...5.0),
+                    opacity: Double.random(in: 0.06...0.18),
+                    drift: Double.random(in: -0.0004...0.0004)
                 )
             }
         }
