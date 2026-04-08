@@ -112,14 +112,11 @@ struct WaterSurfaceShape: Shape {
     var layer: WaterLayer
     var tiltAngle: Double = 0
 
-    // tiltAngle은 animatableData에서 제외 — 부모 뷰의 .animation(value:)가 보간 담당
-    // waveOffset의 repeat-forever 애니메이션이 방해받지 않도록
-    var animatableData: AnimatablePair<Double, Double> {
-        get { AnimatablePair(progress, waveOffset) }
-        set {
-            progress = newValue.first
-            waveOffset = newValue.second
-        }
+    // animatableData에는 waveOffset만 — repeat-forever 애니메이션의 유일한 소유자
+    // progress와 tiltAngle은 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
+    var animatableData: Double {
+        get { waveOffset }
+        set { waveOffset = newValue }
     }
 
     func path(in rect: CGRect) -> Path {
@@ -177,12 +174,9 @@ private struct WaterSurfaceHighlight: Shape {
     var intensity: Double
     var tiltAngle: Double = 0
 
-    var animatableData: AnimatablePair<Double, Double> {
-        get { AnimatablePair(progress, waveOffset) }
-        set {
-            progress = newValue.first
-            waveOffset = newValue.second
-        }
+    var animatableData: Double {
+        get { waveOffset }
+        set { waveOffset = newValue }
     }
 
     func path(in rect: CGRect) -> Path {

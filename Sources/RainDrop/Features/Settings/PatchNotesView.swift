@@ -10,6 +10,9 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.1.1", date: "2026.04.08", changes: [
+            "wave 애니메이션 간헐적 멈춤 수정 (animatableData 격리)",
+        ]),
         PatchNote(version: "2.1.0", date: "2026.04.08", changes: [
             "Apple 디자인 철학 적용 — 단일 악센트 블루, 순수 검정 배경",
             "macOS 26 Liquid Glass 전면 적용 (버튼, 헤더, 필, 배너)",
