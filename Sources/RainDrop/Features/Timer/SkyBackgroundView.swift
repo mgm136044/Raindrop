@@ -56,7 +56,7 @@ struct SkyBackgroundView: View {
             )
             .ignoresSafeArea()
 
-            if backgroundTheme != .defaultTheme {
+            if backgroundTheme == .deepOcean {
                 DeepOceanParticleView()
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
@@ -65,6 +65,7 @@ struct SkyBackgroundView: View {
         .animation(.easeInOut(duration: 2.0), value: progress)
         .animation(.easeInOut(duration: 1.5), value: isOverflowing)
         .animation(.easeInOut(duration: 1.0), value: isRunning)
+        .animation(.easeInOut(duration: 1.5), value: backgroundTheme)
     }
 
     private func blend(_ a: Color, _ b: Color, t: Double) -> Color {
