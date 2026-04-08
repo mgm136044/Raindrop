@@ -35,12 +35,21 @@ struct SkyBackgroundView: View {
         }
     }
 
+    private var effectiveTop: Color {
+        if !isRunning { return backgroundTheme.idleTop }
+        if backgroundTheme == .defaultTheme { return skyTop }
+        return blend(skyTop, backgroundTheme.idleTop, t: 0.3)
+    }
+
+    private var effectiveBottom: Color {
+        if !isRunning { return backgroundTheme.idleBottom }
+        if backgroundTheme == .defaultTheme { return skyBottom }
+        return blend(skyBottom, backgroundTheme.idleBottom, t: 0.3)
+    }
+
     var body: some View {
         LinearGradient(
-            colors: [
-                isRunning ? skyTop : backgroundTheme.idleTop,
-                isRunning ? skyBottom : backgroundTheme.idleBottom
-            ],
+            colors: [effectiveTop, effectiveBottom],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

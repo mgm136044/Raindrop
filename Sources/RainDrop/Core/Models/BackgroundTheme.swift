@@ -34,8 +34,8 @@ enum BackgroundTheme: String, Codable, CaseIterable, Sendable {
         case .deepOcean:
             return Color(nsColor: NSColor(name: nil) { appearance in
                 appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                    ? NSColor(red: 0.04, green: 0.09, blue: 0.16, alpha: 1)  // #0a1628
-                    : NSColor(red: 0.91, green: 0.96, blue: 0.97, alpha: 1)  // #e8f4f8
+                    ? NSColor(red: 0.05, green: 0.12, blue: 0.23, alpha: 1)  // #0c1e3a
+                    : NSColor(red: 0.88, green: 0.94, blue: 0.97, alpha: 1)  // #e0f0f8
             })
         }
     }
@@ -48,8 +48,8 @@ enum BackgroundTheme: String, Codable, CaseIterable, Sendable {
         case .deepOcean:
             return Color(nsColor: NSColor(name: nil) { appearance in
                 appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                    ? NSColor(red: 0.05, green: 0.13, blue: 0.22, alpha: 1)  // #0d2137
-                    : NSColor(red: 0.82, green: 0.92, blue: 0.96, alpha: 1)  // #d0eaf5
+                    ? NSColor(red: 0.08, green: 0.18, blue: 0.31, alpha: 1)  // #142d4f
+                    : NSColor(red: 0.78, green: 0.90, blue: 0.96, alpha: 1)  // #c7e5f5
             })
         }
     }
