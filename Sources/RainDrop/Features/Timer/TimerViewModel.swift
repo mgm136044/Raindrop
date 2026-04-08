@@ -10,7 +10,7 @@ final class TimerViewModel: ObservableObject {
     @Published private(set) var isDraining: Bool = false
     @Published private(set) var lastCompletedSession: FocusSession?
     @Published private(set) var latestError: String?
-    @Published private(set) var sessionGoalSeconds: Int = AppConstants.sessionGoalSeconds
+    @Published private(set) var sessionGoalSeconds: Int = 25 * 60
     @Published private(set) var isInfinityMode: Bool = false
     @Published private(set) var cycleCount: Int = 0
     @Published private(set) var isCycleDraining: Bool = false
@@ -208,6 +208,7 @@ final class TimerViewModel: ObservableObject {
         cycleCount += 1
         shopViewModel.earnBucket()
         let goal = activeGoalSeconds
+        guard goal > 0 else { return }
         let elapsedInCycle = elapsedSeconds % goal
         currentProgress = Double(elapsedInCycle) / Double(goal)
         isCycleDraining = false
@@ -240,6 +241,7 @@ final class TimerViewModel: ObservableObject {
 
             if self.activeInfinityMode {
                 let goal = self.activeGoalSeconds
+                guard goal > 0 else { return }
                 let elapsedInCycle = self.elapsedSeconds % goal
 
                 if elapsedInCycle == 0 && !self.isCycleDraining {

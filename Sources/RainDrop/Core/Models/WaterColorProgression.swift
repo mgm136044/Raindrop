@@ -36,7 +36,4 @@ enum WaterColorProgression {
         }
     }
 
-    static var stageName: [String] {
-        ["연한 파랑", "파랑", "깊은 파랑", "틸", "사파이어"]
-    }
 }

@@ -130,32 +130,6 @@ enum AppColors {
         })
     }
 
-    // MARK: - Bucket
-
-    static var bucketFill: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.18, green: 0.22, blue: 0.30, alpha: 0.72)
-                : NSColor(white: 1.0, alpha: 0.72)
-        })
-    }
-
-    static var bucketStroke: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.45, green: 0.55, blue: 0.65, alpha: 1.0)
-                : NSColor(red: 0.25, green: 0.38, blue: 0.48, alpha: 1.0)
-        })
-    }
-
-    static var bucketHandle: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.50, green: 0.56, blue: 0.64, alpha: 1.0)
-                : NSColor(red: 0.35, green: 0.42, blue: 0.48, alpha: 1.0)
-        })
-    }
-
     // MARK: - Water
 
     static var waterGradientTop: Color {
@@ -191,14 +165,6 @@ enum AppColors {
     }
 
     // MARK: - Completion Banner & History
-
-    static var bannerBackground: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.14, green: 0.18, blue: 0.26, alpha: 0.92)
-                : NSColor(white: 1.0, alpha: 0.90)
-        })
-    }
 
     static var bannerTitle: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
@@ -250,23 +216,6 @@ enum AppColors {
         })
     }
 
-    // MARK: - Shadow
-
-    static var panelShadow: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(white: 0.0, alpha: 0.30)
-                : NSColor(white: 0.0, alpha: 0.06)
-        })
-    }
-
-    static var rightPanelShadow: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(white: 0.0, alpha: 0.25)
-                : NSColor(white: 0.0, alpha: 0.05)
-        })
-    }
 }
 
 // MARK: - SwiftUI Color Accessors (for BucketSkin)

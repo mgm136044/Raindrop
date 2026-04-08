@@ -31,10 +31,6 @@ final class HistoryViewModel: ObservableObject {
         Dictionary(uniqueKeysWithValues: summaries.map { ($0.dateKey, $0.totalSeconds) })
     }
 
-    var sessionGoalSeconds: Int {
-        settingsRepository.load().sessionGoalSeconds
-    }
-
     /// 세션별 goalSeconds 기준으로 일별 양동이 수 계산
     /// goalSeconds가 nil인 세션(무한 모드)은 양동이 카운트에서 제외
     var dailyBucketCounts: [String: Int] {

@@ -116,11 +116,16 @@ struct WeeklyDensityView: View {
         }
     }
 
+    private static let weekRangeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "ko_KR")
+        f.dateFormat = "M/d"
+        return f
+    }()
+
     private var weekRangeText: String {
         guard let first = weekDays.first, let last = weekDays.last else { return "" }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "M/d"
-        return "\(formatter.string(from: first.date)) ~ \(formatter.string(from: last.date))"
+        let f = Self.weekRangeFormatter
+        return "\(f.string(from: first.date)) ~ \(f.string(from: last.date))"
     }
 }
