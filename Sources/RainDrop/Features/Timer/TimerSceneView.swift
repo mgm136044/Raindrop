@@ -44,6 +44,7 @@ struct TimerSceneView: View {
                 .frame(width: 260, height: 360)
             }
             .frame(width: 340, height: 360)
+            .allowsHitTesting(false)
 
             // Bucket + Stickers
             BucketWithStickersView(
@@ -72,13 +73,14 @@ struct TimerSceneView: View {
             )
             .frame(width: 340, height: 320)
             .padding(.top, 56)
+            .allowsHitTesting(false)
         }
-        .onChange(of: viewModel.currentProgress) { newValue in
+        .onChange(of: viewModel.currentProgress) { _,newValue in
             if !viewModel.isDraining && !viewModel.isCycleDraining {
                 displayProgress = newValue
             }
         }
-        .onChange(of: viewModel.isDraining) { draining in
+        .onChange(of: viewModel.isDraining) { _,draining in
             if draining {
                 withAnimation(.easeIn(duration: 1.2)) {
                     displayProgress = 0
@@ -89,7 +91,7 @@ struct TimerSceneView: View {
                 }
             }
         }
-        .onChange(of: viewModel.isCycleDraining) { draining in
+        .onChange(of: viewModel.isCycleDraining) { _,draining in
             if draining {
                 displayProgress = 1.0
                 withAnimation(.easeIn(duration: 1.2)) {

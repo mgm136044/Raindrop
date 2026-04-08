@@ -12,7 +12,7 @@ The visual language is rooted in nature: rain, water, clouds, sky. Progress is n
 - macOS native (SwiftUI) with full dark/light mode support -- dark mode is the primary experience
 - Bucket-as-hero layout: ZStack overlay structure with the bucket scene centered, UI floating above
 - Nature-driven feedback: rain intensity, sky color, water level all respond to focus progress (0.0-1.0)
-- `.ultraThinMaterial` overlays for all floating UI -- header, timer pill, controls, info pill
+- `.glassEffect(.regular)` overlays for all floating UI -- header, timer pill, controls, info pill
 - Continuous ambient animation even at idle (gentle wave ripples in bucket)
 - Celebration moments: golden sparkle burst when bucket overflows, sky clears to warm tones
 - 6-tier bucket skin system (Wood -> Iron -> Platinum -> Gold -> Diamond -> Rainbow) as progression milestones
@@ -37,7 +37,7 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 - **Panel Background**: Dark `rgba(0.14, 0.16, 0.22, 0.85)` / Light `rgba(1.0, 1.0, 1.0, 0.82)`
 - **Right Panel Top**: Dark `rgba(0.12, 0.15, 0.22, 0.95)` / Light `rgba(1.0, 1.0, 1.0, 0.95)`
 - **Right Panel Bottom**: Dark `rgb(0.10, 0.16, 0.26)` / Light `rgb(0.83, 0.93, 0.99)`
-- **Floating UI**: `.ultraThinMaterial` (system vibrancy)
+- **Floating UI**: `.glassEffect(.regular)` (system vibrancy)
 
 ### Text
 - **Primary**: Dark `rgb(0.92, 0.94, 0.97)` / Light `rgb(0.08, 0.18, 0.31)`
@@ -112,23 +112,23 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 - Plain button style
 
 **Header Buttons**:
-- `.bordered` style, `.controlSize(.small)`
+- `.glass` style, `.controlSize(.small)`
 - SF Symbol icon, 14pt medium
 - Bordered prominent for "히스토리" with accent tint
 
 ### Floating Pills (Timer, Info, Balance)
-- Background: `.ultraThinMaterial`
+- Background: `.glassEffect(.regular)`
 - Shape: `Capsule()`
 - Padding: 20-24h, 8-10v
 - Text centered
 
 ### Modal Headers (History, Settings, Shop, Sticker Editor)
 - Background: `historyHeaderBackground` color
-- Layout: Title + subtitle left, close button right (`.borderedProminent`)
+- Layout: Title + subtitle left, close button right (`.glassProminent`)
 - Padding: 20h, 18 top, 12 bottom
 
 ### Completion Banner
-- Background: `.ultraThinMaterial`
+- Background: `.glassEffect(.regular)`
 - Shape: RoundedRectangle(18, continuous)
 - Content: Session info left, close button right
 - Padding: 18 all
@@ -166,7 +166,7 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 ### Main Screen (ZStack layers, bottom to top)
 1. SkyBackgroundView (full bleed, ignoresSafeArea)
 2. TimerSceneView (centered, contains environment + weather + cloud + rain + bucket + splash + overflow)
-3. Header overlay (top, .ultraThinMaterial, 24h padding)
+3. Header overlay (top, .glassEffect(.regular), 24h padding)
 4. Motivation text (below header)
 5. Bottom stack: progress pill, timer pill, controls
 6. Error/completion banner (bottom)
@@ -190,7 +190,7 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 ## 6. Depth & Elevation
 
 ### Material Layers
-- `.ultraThinMaterial`: All floating UI overlays (header, pills, banners, sticker palette)
+- `.glassEffect(.regular)`: All floating UI overlays (header, pills, banners, sticker palette)
 - Solid colors: Only for modal backgrounds and bucket rendering
 
 ### Animation Layers (TimerSceneView depth order)
@@ -213,7 +213,7 @@ All colors are dynamic, responding to system appearance (dark/light mode). Dark 
 - Keep animations subtle and continuous -- the screen should feel alive, not busy
 - Maintain nature metaphor consistency: rain, water, sky, weather, environment
 - Use Korean for all user-facing strings
-- Use `.ultraThinMaterial` for any floating UI over the scene
+- Use `.glassEffect(.regular)` for any floating UI over the scene
 - Use `Capsule()` for inline info displays
 - Keep dark mode as the primary design target
 
@@ -265,7 +265,7 @@ Water:          rgb(77, 166, 230) to rgb(26, 89, 191)
 > Create a SwiftUI sheet view with historyHeaderBackground header (title + subtitle left, "닫기" borderedProminent button right), padding 20h/18top/12bottom. Content below in ScrollView. Min frame 480x400. All text in Korean.
 
 **To generate a new floating pill:**
-> Create an HStack with .ultraThinMaterial background, Capsule() clip shape, padding 16-20h and 6-8v. Text 12-14pt medium, secondary color. Place in bottom area of main ZStack.
+> Create an HStack with .glassEffect(.regular) background, Capsule() clip shape, padding 16-20h and 6-8v. Text 12-14pt medium, secondary color. Place in bottom area of main ZStack.
 
 **To generate a new particle system:**
 > Use Canvas + TimelineView(.animation(minimumInterval: 1.0/30.0)). Store particles in @State array. Update on timeline change. Use deterministic randomness for initial positions (sin/cos with index seed). Support intensity: Double parameter (0-1) to scale count/speed/size.

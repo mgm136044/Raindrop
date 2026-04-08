@@ -17,7 +17,7 @@ struct HistoryScreen: View {
                     tabContent
                 }
             }
-            .navigationTitle("집중 히스토리")
+            .toolbar(.hidden)
         }
         .frame(minWidth: 620, minHeight: 580)
     }
@@ -25,22 +25,17 @@ struct HistoryScreen: View {
     // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("집중 히스토리")
-                        .font(.system(size: 24, weight: .bold))
-                    Text("저장된 세션을 날짜별로 확인합니다.")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.secondary)
-                }
+        VStack(spacing: 10) {
+            ZStack {
+                Text("히스토리")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AppColors.primaryText)
 
-                Spacer()
-
-                Button("닫기") {
-                    dismiss()
+                HStack {
+                    Spacer()
+                    Button("완료") { dismiss() }
+                        .buttonStyle(.glass)
                 }
-                .buttonStyle(.borderedProminent)
             }
 
             if !viewModel.isEmpty {
@@ -52,10 +47,10 @@ struct HistoryScreen: View {
                 .pickerStyle(.segmented)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .glassEffect(.regular)
     }
 
     // MARK: - Tab Content
@@ -145,7 +140,7 @@ struct HistoryScreen: View {
 
             if let error = viewModel.latestError {
                 Text(error)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(AppColors.danger)
             }
         }
         .frame(maxWidth: .infinity)

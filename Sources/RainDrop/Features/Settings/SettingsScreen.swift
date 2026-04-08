@@ -15,7 +15,7 @@ struct SettingsScreen: View {
             Form {
                 Section("집중 목표") {
                     Toggle("무한 모드 (∞)", isOn: $viewModel.settings.infinityModeEnabled)
-                        .onChange(of: viewModel.settings.infinityModeEnabled) { _ in
+                        .onChange(of: viewModel.settings.infinityModeEnabled) { _,_ in
                             viewModel.save()
                         }
 
@@ -24,7 +24,7 @@ struct SettingsScreen: View {
                         Spacer()
                         if viewModel.settings.infinityModeEnabled {
                             Text("∞")
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 24, weight: .semibold))
                                 .foregroundStyle(.secondary)
                                 .frame(width: 60, alignment: .trailing)
                         } else {
@@ -36,7 +36,7 @@ struct SettingsScreen: View {
                         Text("분")
                             .foregroundStyle(.secondary)
                     }
-                    .onChange(of: viewModel.settings.sessionGoalMinutes) { newValue in
+                    .onChange(of: viewModel.settings.sessionGoalMinutes) { _,newValue in
                         let clamped = max(1, min(120, newValue))
                         if clamped != newValue {
                             viewModel.settings.sessionGoalMinutes = clamped
@@ -57,7 +57,7 @@ struct SettingsScreen: View {
 
                 Section("집중 감시 알림") {
                     Toggle("집중 확인 알림", isOn: $viewModel.settings.focusCheckEnabled)
-                        .onChange(of: viewModel.settings.focusCheckEnabled) { _ in
+                        .onChange(of: viewModel.settings.focusCheckEnabled) { _,_ in
                             viewModel.save()
                         }
 
@@ -72,7 +72,7 @@ struct SettingsScreen: View {
                             Text("분")
                                 .foregroundStyle(.secondary)
                         }
-                        .onChange(of: viewModel.settings.focusCheckIntervalMinutes) { newValue in
+                        .onChange(of: viewModel.settings.focusCheckIntervalMinutes) { _,newValue in
                             let clamped = max(1, min(60, newValue))
                             if clamped != newValue {
                                 viewModel.settings.focusCheckIntervalMinutes = clamped
@@ -138,7 +138,7 @@ struct SettingsScreen: View {
                         } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: viewModel.settings.selectedSkin == skin ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(viewModel.settings.selectedSkin == skin ? .blue : .secondary)
+                                    .foregroundStyle(viewModel.settings.selectedSkin == skin ? AppColors.accent : .secondary)
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     HStack {
@@ -173,7 +173,7 @@ struct SettingsScreen: View {
                     }
 
                     Toggle("물 색상 자연 진화", isOn: $viewModel.settings.waterColorEvolution)
-                        .onChange(of: viewModel.settings.waterColorEvolution) { _ in
+                        .onChange(of: viewModel.settings.waterColorEvolution) { _,_ in
                             viewModel.save()
                         }
                     Text("집중 시간이 쌓일수록 물의 색이 깊어집니다.")
@@ -182,7 +182,7 @@ struct SettingsScreen: View {
 
                     if !viewModel.settings.waterColorEvolution && viewModel.settings.selectedSkin.hasCustomWaterColor {
                         Toggle("스킨 색 물 사용", isOn: $viewModel.settings.useCustomWaterColor)
-                            .onChange(of: viewModel.settings.useCustomWaterColor) { _ in
+                            .onChange(of: viewModel.settings.useCustomWaterColor) { _,_ in
                                 viewModel.save()
                             }
                         Text("물과 물방울의 색을 스킨 색상에 맞춥니다.")
@@ -203,7 +203,7 @@ struct SettingsScreen: View {
                 if let error = viewModel.latestError {
                     Section {
                         Text(error)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(AppColors.danger)
                     }
                 }
             }
@@ -221,25 +221,19 @@ struct SettingsScreen: View {
     }
 
     private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("설정")
-                    .font(.system(size: 24, weight: .bold))
-                Text("집중 목표와 알림을 설정합니다.")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+        ZStack {
+            Text("설정")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColors.primaryText)
 
-            Spacer()
-
-            Button("닫기") {
-                dismiss()
+            HStack {
+                Spacer()
+                Button("완료") { dismiss() }
+                    .buttonStyle(.glass)
             }
-            .buttonStyle(.borderedProminent)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(.regular)
     }
 }

@@ -11,7 +11,7 @@ struct FriendRequestsScreen: View {
                     .font(.system(size: 20, weight: .bold))
                 Spacer()
                 Button("닫기") { dismiss() }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
             }
 
             if viewModel.incomingRequests.isEmpty {
@@ -37,14 +37,14 @@ struct FriendRequestsScreen: View {
                             Button("수락") {
                                 viewModel.acceptRequest(request)
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.glassProminent)
                             .tint(.green)
                             .controlSize(.small)
 
                             Button("거절") {
                                 viewModel.rejectRequest(request)
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.glass)
                             .controlSize(.small)
                         }
                     }
@@ -55,7 +55,7 @@ struct FriendRequestsScreen: View {
             if let error = viewModel.errorMessage {
                 Text(error)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(AppColors.danger)
             }
         }
         .padding(20)

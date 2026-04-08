@@ -2,223 +2,137 @@ import SwiftUI
 import AppKit
 
 enum AppColors {
-    // MARK: - Backgrounds
+    // MARK: - Background (Apple Binary: pure black / light gray)
 
-    static var backgroundGradientTop: Color {
+    static var background: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.10, green: 0.12, blue: 0.18, alpha: 1.0)
-                : NSColor(red: 0.96, green: 0.98, blue: 0.99, alpha: 1.0)
+                ? NSColor(red: 0, green: 0, blue: 0, alpha: 1)           // #000000
+                : NSColor(red: 0.96, green: 0.96, blue: 0.97, alpha: 1)  // #f5f5f7
         })
     }
 
-    static var backgroundGradientBottom: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.08, green: 0.10, blue: 0.16, alpha: 1.0)
-                : NSColor(red: 0.88, green: 0.94, blue: 0.98, alpha: 1.0)
-        })
-    }
-
-    // MARK: - Panels
-
-    static var panelBackground: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.14, green: 0.16, blue: 0.22, alpha: 0.85)
-                : NSColor(white: 1.0, alpha: 0.82)
-        })
-    }
-
-    static var rightPanelGradientTop: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.12, green: 0.15, blue: 0.22, alpha: 0.95)
-                : NSColor(white: 1.0, alpha: 0.95)
-        })
-    }
-
-    static var rightPanelGradientBottom: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.10, green: 0.16, blue: 0.26, alpha: 1.0)
-                : NSColor(red: 0.83, green: 0.93, blue: 0.99, alpha: 1.0)
-        })
-    }
-
-    // MARK: - Text
+    // MARK: - Text (Apple Hierarchy)
 
     static var primaryText: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.92, green: 0.94, blue: 0.97, alpha: 1.0)
-                : NSColor(red: 0.08, green: 0.18, blue: 0.31, alpha: 1.0)
+                ? NSColor(white: 1, alpha: 1)                             // #ffffff
+                : NSColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1)  // #1d1d1f
         })
     }
 
-    static var titleText: Color {
+    static var secondaryText: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.85, green: 0.90, blue: 0.98, alpha: 1.0)
-                : NSColor(red: 0.10, green: 0.20, blue: 0.33, alpha: 1.0)
+                ? NSColor(white: 1, alpha: 0.60)
+                : NSColor(white: 0, alpha: 0.48)
         })
     }
 
-    static var subtitleText: Color {
+    static var tertiaryText: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.55, green: 0.62, blue: 0.72, alpha: 1.0)
-                : NSColor(red: 0.16, green: 0.34, blue: 0.55, alpha: 1.0)
+                ? NSColor(white: 1, alpha: 0.35)
+                : NSColor(white: 0, alpha: 0.25)
         })
     }
 
-    static var rightPanelText: Color {
+    // MARK: - Accent (Single Color: Apple Blue)
+
+    static var accent: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.70, green: 0.80, blue: 0.92, alpha: 1.0)
-                : NSColor(red: 0.13, green: 0.28, blue: 0.46, alpha: 1.0)
+                ? NSColor(red: 0.16, green: 0.59, blue: 1, alpha: 1)     // #2997ff
+                : NSColor(red: 0, green: 0.44, blue: 0.89, alpha: 1)     // #0071e3
         })
     }
 
-    static var progressText: Color {
+    static var danger: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.50, green: 0.75, blue: 0.95, alpha: 1.0)
-                : NSColor(red: 0.10, green: 0.43, blue: 0.68, alpha: 1.0)
+                ? NSColor(red: 1, green: 0.27, blue: 0.23, alpha: 1)     // #ff453a
+                : NSColor(red: 1, green: 0.23, blue: 0.19, alpha: 1)     // #ff3b30
         })
     }
 
-    // MARK: - Accent & Buttons
+    // MARK: - Surface
 
-    static var accentBlue: Color {
+    static var surface: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.25, green: 0.60, blue: 0.95, alpha: 1.0)
-                : NSColor(red: 0.12, green: 0.55, blue: 0.88, alpha: 1.0)
+                ? NSColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1)  // #1c1c1e
+                : NSColor(white: 1, alpha: 1)                             // #ffffff
         })
     }
 
-    static var buttonTint: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.22, green: 0.55, blue: 0.88, alpha: 1.0)
-                : NSColor(red: 0.14, green: 0.45, blue: 0.75, alpha: 1.0)
-        })
-    }
+    // MARK: - Legacy Aliases (backward compatibility)
 
-    static var startButton: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.20, green: 0.58, blue: 0.92, alpha: 1.0)
-                : NSColor(red: 0.12, green: 0.55, blue: 0.88, alpha: 1.0)
-        })
-    }
+    static var backgroundGradientTop: Color { background }
+    static var backgroundGradientBottom: Color { background }
+    static var titleText: Color { primaryText }
+    static var subtitleText: Color { secondaryText }
+    static var rightPanelText: Color { secondaryText }
+    static var progressText: Color { accent }
+    static var accentBlue: Color { accent }
+    static var buttonTint: Color { accent }
+    static var startButton: Color { accent }
+    static var pauseButton: Color { accent }
+    static var stopButton: Color { danger }
+    static var bannerTitle: Color { accent }
+    static var panelBackground: Color { surface }
+    static var rightPanelGradientTop: Color { background }
+    static var rightPanelGradientBottom: Color { background }
+    static var historyHeaderBackground: Color { surface }
+    static var historySessionTime: Color { accent }
+    static var historyIcon: Color { accent }
+    static var calendarEmptyCell: Color { surface }
+    static var calendarEmptyCellBorder: Color { tertiaryText }
 
-    static var pauseButton: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.35, green: 0.55, blue: 0.78, alpha: 1.0)
-                : NSColor(red: 0.28, green: 0.50, blue: 0.72, alpha: 1.0)
-        })
-    }
-
-    static var stopButton: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.90, green: 0.45, blue: 0.32, alpha: 1.0)
-                : NSColor(red: 0.86, green: 0.42, blue: 0.28, alpha: 1.0)
-        })
-    }
-
-    // MARK: - Water
+    // MARK: - Water (Natural colors preserved)
 
     static var waterGradientTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.30, green: 0.65, blue: 0.90, alpha: 1.0)
-                : NSColor(red: 0.39, green: 0.79, blue: 0.97, alpha: 1.0)
+                ? NSColor(red: 0.30, green: 0.65, blue: 0.90, alpha: 1)
+                : NSColor(red: 0.39, green: 0.79, blue: 0.97, alpha: 1)
         })
     }
 
     static var waterGradientBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.10, green: 0.35, blue: 0.75, alpha: 1.0)
-                : NSColor(red: 0.14, green: 0.48, blue: 0.91, alpha: 1.0)
+                ? NSColor(red: 0.10, green: 0.35, blue: 0.75, alpha: 1)
+                : NSColor(red: 0.14, green: 0.48, blue: 0.91, alpha: 1)
         })
     }
 
     static var dropGradientTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.50, green: 0.78, blue: 1.0, alpha: 1.0)
-                : NSColor(red: 0.65, green: 0.89, blue: 1.0, alpha: 1.0)
+                ? NSColor(red: 0.50, green: 0.78, blue: 1.0, alpha: 1)
+                : NSColor(red: 0.65, green: 0.89, blue: 1.0, alpha: 1)
         })
     }
 
     static var dropGradientBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.12, green: 0.45, blue: 0.85, alpha: 1.0)
-                : NSColor(red: 0.18, green: 0.58, blue: 0.95, alpha: 1.0)
+                ? NSColor(red: 0.12, green: 0.45, blue: 0.85, alpha: 1)
+                : NSColor(red: 0.18, green: 0.58, blue: 0.95, alpha: 1)
         })
     }
 
-    // MARK: - Completion Banner & History
-
-    static var bannerTitle: Color {
+    static var cloudColor: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.55, green: 0.80, blue: 1.0, alpha: 1.0)
-                : NSColor(red: 0.05, green: 0.34, blue: 0.57, alpha: 1.0)
+                ? NSColor(white: 1, alpha: 1)
+                : NSColor(white: 0.4, alpha: 1)
         })
     }
-
-    static var historyHeaderBackground: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.12, green: 0.14, blue: 0.20, alpha: 0.85)
-                : NSColor(white: 1.0, alpha: 0.70)
-        })
-    }
-
-    static var historySessionTime: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.45, green: 0.72, blue: 0.95, alpha: 1.0)
-                : NSColor(red: 0.10, green: 0.39, blue: 0.62, alpha: 1.0)
-        })
-    }
-
-    static var historyIcon: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.30, green: 0.60, blue: 0.88, alpha: 1.0)
-                : NSColor(red: 0.18, green: 0.52, blue: 0.82, alpha: 1.0)
-        })
-    }
-
-    // MARK: - Calendar Heatmap
-
-    static var calendarEmptyCell: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.18, green: 0.22, blue: 0.28, alpha: 1.0)
-                : NSColor(red: 0.90, green: 0.92, blue: 0.95, alpha: 1.0)
-        })
-    }
-
-    static var calendarEmptyCellBorder: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(white: 1.0, alpha: 0.08)
-                : NSColor(white: 0.0, alpha: 0.12)
-        })
-    }
-
 }
 
-// MARK: - SwiftUI Color Accessors (for BucketSkin)
+// MARK: - Accessors
 
 extension AppColors {
     static var waterGradientTopColor: Color { waterGradientTop }
@@ -226,77 +140,69 @@ extension AppColors {
     static var dropGradientTopColor: Color { dropGradientTop }
     static var dropGradientBottomColor: Color { dropGradientBottom }
 
-    // MARK: - Sky Gradient (progress-based)
+    // MARK: - Sky Gradients (session progress)
 
     static var skyDawnTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.18, green: 0.14, blue: 0.25, alpha: 1.0)
-                : NSColor(red: 0.98, green: 0.92, blue: 0.85, alpha: 1.0)
+                ? NSColor(red: 0.08, green: 0.06, blue: 0.12, alpha: 1)
+                : NSColor(red: 0.96, green: 0.92, blue: 0.88, alpha: 1)
         })
     }
 
     static var skyDawnBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.22, green: 0.16, blue: 0.12, alpha: 1.0)
-                : NSColor(red: 0.95, green: 0.88, blue: 0.78, alpha: 1.0)
+                ? NSColor(red: 0.06, green: 0.04, blue: 0.04, alpha: 1)
+                : NSColor(red: 0.94, green: 0.90, blue: 0.84, alpha: 1)
         })
     }
 
     static var skyGatheringTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.12, green: 0.14, blue: 0.22, alpha: 1.0)
-                : NSColor(red: 0.82, green: 0.88, blue: 0.94, alpha: 1.0)
+                ? NSColor(red: 0.04, green: 0.04, blue: 0.08, alpha: 1)
+                : NSColor(red: 0.85, green: 0.88, blue: 0.92, alpha: 1)
         })
     }
 
     static var skyGatheringBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.10, green: 0.12, blue: 0.20, alpha: 1.0)
-                : NSColor(red: 0.78, green: 0.85, blue: 0.92, alpha: 1.0)
+                ? NSColor(red: 0.02, green: 0.02, blue: 0.06, alpha: 1)
+                : NSColor(red: 0.82, green: 0.86, blue: 0.90, alpha: 1)
         })
     }
 
     static var skyStormTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.08, green: 0.10, blue: 0.18, alpha: 1.0)
-                : NSColor(red: 0.65, green: 0.72, blue: 0.82, alpha: 1.0)
+                ? NSColor(red: 0.02, green: 0.02, blue: 0.04, alpha: 1)
+                : NSColor(red: 0.70, green: 0.74, blue: 0.80, alpha: 1)
         })
     }
 
     static var skyStormBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.06, green: 0.08, blue: 0.15, alpha: 1.0)
-                : NSColor(red: 0.60, green: 0.68, blue: 0.78, alpha: 1.0)
+                ? NSColor(red: 0, green: 0, blue: 0.02, alpha: 1)
+                : NSColor(red: 0.65, green: 0.70, blue: 0.76, alpha: 1)
         })
     }
 
     static var skyClearingTop: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.20, green: 0.18, blue: 0.10, alpha: 1.0)
-                : NSColor(red: 1.0, green: 0.95, blue: 0.82, alpha: 1.0)
+                ? NSColor(red: 0.10, green: 0.08, blue: 0.04, alpha: 1)
+                : NSColor(red: 1, green: 0.96, blue: 0.88, alpha: 1)
         })
     }
 
     static var skyClearingBottom: Color {
         Color(nsColor: NSColor(name: nil) { appearance in
             appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(red: 0.15, green: 0.12, blue: 0.08, alpha: 1.0)
-                : NSColor(red: 0.98, green: 0.90, blue: 0.72, alpha: 1.0)
-        })
-    }
-
-    static var cloudColor: Color {
-        Color(nsColor: NSColor(name: nil) { appearance in
-            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-                ? NSColor(white: 1.0, alpha: 1.0)
-                : NSColor(red: 0.55, green: 0.62, blue: 0.72, alpha: 1.0)
+                ? NSColor(red: 0.06, green: 0.04, blue: 0.02, alpha: 1)
+                : NSColor(red: 0.98, green: 0.92, blue: 0.80, alpha: 1)
         })
     }
 }

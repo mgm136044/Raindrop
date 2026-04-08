@@ -46,14 +46,14 @@ struct OverflowAnimationView: View {
                         )
                     }
                 }
-                .onChange(of: timeline.date) { _ in
+                .onChange(of: timeline.date) { _,_ in
                     updateSparkles()
                 }
             }
             .allowsHitTesting(false)
         }
         .opacity(opacity)
-        .onChange(of: isActive) { active in
+        .onChange(of: isActive) { _,active in
             if active {
                 spawnBurst()
                 withAnimation(.easeIn(duration: 0.3)) {

@@ -7,9 +7,12 @@ struct OnboardingFillScene: View {
     @State private var progress: Double = 0
     @State private var showCoin = false
     @State private var showText = false
+    @State private var wobbleAngle: Double = 0
 
     var body: some View {
-        ZStack {
+        VStack(spacing: 24) {
+            Spacer()
+
             // Rain + Cloud + Bucket
             ZStack {
                 if isRunning {
@@ -31,47 +34,58 @@ struct OnboardingFillScene: View {
                     progress: progress,
                     skin: .wood,
                     useCustomWaterColor: false,
-                    intensity: 0.5
+                    intensity: 0.5,
+                    tiltAngle: wobbleAngle
                 )
                 .frame(width: 160, height: 150)
+                .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
+                .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
+
+                // Coin animation
+                if showCoin {
+                    Text("🪣 +1")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(AppColors.accent)
+                        .offset(y: -100)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .frame(height: 220)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                wobbleAngle = 6
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    wobbleAngle = 0
+                }
             }
 
-            // Coin animation
-            if showCoin {
-                Text("🪣 +1")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.green)
-                    .offset(y: -100)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+            Spacer()
 
             // Bottom UI
-            VStack {
-                Spacer()
-
-                if !isRunning && !showText {
-                    Button("집중 시작") {
-                        startFilling()
-                    }
-                    .buttonStyle(PrimaryButtonStyle(color: AppColors.startButton))
+            if !isRunning && !showText {
+                Button("집중 시작") {
+                    startFilling()
                 }
+                .buttonStyle(PrimaryButtonStyle(color: AppColors.accent))
+            }
 
-                if showText {
+            if showText {
+                VStack(spacing: 20) {
                     Text("집중이 쌓이면 양동이가 채워집니다")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.titleText)
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppColors.primaryText)
                         .transition(.opacity)
-
-                    Spacer().frame(height: 20)
 
                     Button("다음") {
                         onNext()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(AppColors.accentBlue)
+                    .buttonStyle(.glassProminent)
+                    .tint(AppColors.accent)
                 }
             }
-            .padding(.bottom, 24)
+
+            Spacer()
+                .frame(height: 24)
         }
     }
 

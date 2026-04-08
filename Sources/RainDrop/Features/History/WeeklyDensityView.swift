@@ -45,7 +45,7 @@ struct WeeklyDensityView: View {
                 } label: {
                     Image(systemName: "chevron.left")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
                 .disabled(weekOffset <= -12)
 
                 Spacer()
@@ -62,7 +62,7 @@ struct WeeklyDensityView: View {
                 } label: {
                     Image(systemName: "chevron.right")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
                 .disabled(weekOffset >= 0)
             }
             .padding(.horizontal, 16)
@@ -73,7 +73,8 @@ struct WeeklyDensityView: View {
                     VStack(spacing: 6) {
                         MiniBucketView(
                             fillRatio: animatedFill ? day.fillRatio : 0,
-                            skin: skin
+                            skin: skin,
+                            tappable: true
                         )
                         .frame(width: 52, height: 52)
 
@@ -106,7 +107,7 @@ struct WeeklyDensityView: View {
                 animatedFill = true
             }
         }
-        .onChange(of: weekOffset) { _ in
+        .onChange(of: weekOffset) { _,_ in
             Task {
                 try? await Task.sleep(for: .milliseconds(100))
                 withAnimation(.easeOut(duration: 0.8)) {

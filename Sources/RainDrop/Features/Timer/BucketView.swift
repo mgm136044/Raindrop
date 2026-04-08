@@ -6,6 +6,7 @@ struct BucketView: View {
     let useCustomWaterColor: Bool
     var intensity: Double = 0.5
     var waterColorOverride: (top: Color, bottom: Color)?
+    var tiltAngle: Double = 0
     @State private var waveOffset: Double = 0
 
     private var waterGradientTop: Color {
@@ -35,7 +36,7 @@ struct BucketView: View {
                     .fill(skin.bucketFill)
 
                 // Water layer 1 (back, softer)
-                WaterSurfaceShape(progress: progress, waveOffset: waveOffset + 0.3, intensity: intensity, layer: .back)
+                WaterSurfaceShape(progress: progress, waveOffset: waveOffset + 0.3, intensity: intensity, layer: .back, tiltAngle: tiltAngle)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -49,7 +50,7 @@ struct BucketView: View {
                     .mask(BucketShape().scale(0.86))
 
                 // Water layer 2 (front, primary)
-                WaterSurfaceShape(progress: progress, waveOffset: waveOffset, intensity: intensity, layer: .front)
+                WaterSurfaceShape(progress: progress, waveOffset: waveOffset, intensity: intensity, layer: .front, tiltAngle: tiltAngle)
                     .fill(
                         LinearGradient(
                             colors: [
@@ -64,7 +65,7 @@ struct BucketView: View {
 
                 // Surface highlight (light reflection)
                 if progress > 0.05 {
-                    WaterSurfaceHighlight(progress: progress, waveOffset: waveOffset, intensity: intensity)
+                    WaterSurfaceHighlight(progress: progress, waveOffset: waveOffset, intensity: intensity, tiltAngle: tiltAngle)
                         .stroke(Color.white.opacity(0.15), lineWidth: 1.5)
                         .mask(BucketShape().scale(0.86))
                 }
@@ -109,7 +110,10 @@ struct WaterSurfaceShape: Shape {
     var waveOffset: Double
     var intensity: Double
     var layer: WaterLayer
+    var tiltAngle: Double = 0
 
+    // tiltAngle은 animatableData에서 제외 — 부모 뷰의 .animation(value:)가 보간 담당
+    // waveOffset의 repeat-forever 애니메이션이 방해받지 않도록
     var animatableData: AnimatablePair<Double, Double> {
         get { AnimatablePair(progress, waveOffset) }
         set {
@@ -131,21 +135,30 @@ struct WaterSurfaceShape: Shape {
         // Primary wave
         let primaryAmp = hasWave ? (4.0 + intensityClamped * 4.0) : 0
         let primaryWL = rect.width / 1.5
-        // Secondary wave (higher frequency, lower amplitude)
+        // Secondary wave
         let secondaryAmp = hasWave ? (1.5 + intensityClamped * 2.0) : 0
         let secondaryWL = rect.width / 3.0
-        // Tertiary wave (micro-ripples)
+        // Tertiary wave
         let tertiaryAmp = hasWave ? (0.5 + intensityClamped * 1.0) : 0
         let tertiaryWL = rect.width / 8.0
 
         let phaseShift: Double = layer == .back ? 0.3 : 0
+
+        // Tilt: water sloshes opposite to bucket tilt (inertia)
+        // tiltAngle in degrees → convert to slope across bucket width
+        let slopeFactor = max(-1, min(1, -tiltAngle / 8.0))  // clamp: 8° tilt = full slope
+        let maxSlosh = rect.height * 0.06 * min(clampedProgress + 0.2, 1.0)
 
         for x in stride(from: 0, through: rect.width, by: 2) {
             let primary = sin(((x / primaryWL) + waveOffset + phaseShift) * 2 * .pi) * primaryAmp
             let secondary = sin(((x / secondaryWL) + waveOffset * 1.3 + phaseShift) * 2 * .pi) * secondaryAmp
             let tertiary = sin(((x / tertiaryWL) + waveOffset * 2.1) * 2 * .pi) * tertiaryAmp
 
-            let y = waterTop + primary + secondary + tertiary
+            // Linear slope: left side goes up when tilting right (positive angle)
+            let normalizedX = (x / rect.width) - 0.5  // -0.5 to +0.5
+            let slosh = normalizedX * slopeFactor * maxSlosh * 2
+
+            let y = waterTop + primary + secondary + tertiary + slosh
             path.addLine(to: CGPoint(x: x, y: y))
         }
 
@@ -162,6 +175,7 @@ private struct WaterSurfaceHighlight: Shape {
     var progress: Double
     var waveOffset: Double
     var intensity: Double
+    var tiltAngle: Double = 0
 
     var animatableData: AnimatablePair<Double, Double> {
         get { AnimatablePair(progress, waveOffset) }
@@ -181,13 +195,18 @@ private struct WaterSurfaceHighlight: Shape {
         let secondaryAmp = (1.5 + intensityClamped * 2.0)
         let secondaryWL = rect.width / 3.0
 
+        let slopeFactor = max(-1, min(1, -tiltAngle / 8.0))
+        let maxSlosh = rect.height * 0.06 * min(clampedProgress + 0.2, 1.0)
+
         var path = Path()
         var started = false
 
         for x in stride(from: 0, through: rect.width, by: 2) {
             let primary = sin(((x / primaryWL) + waveOffset) * 2 * .pi) * primaryAmp
             let secondary = sin(((x / secondaryWL) + waveOffset * 1.3) * 2 * .pi) * secondaryAmp
-            let y = waterTop + primary + secondary - 1
+            let normalizedX = (x / rect.width) - 0.5
+            let slosh = normalizedX * slopeFactor * maxSlosh * 2
+            let y = waterTop + primary + secondary + slosh - 1
 
             if !started {
                 path.move(to: CGPoint(x: x, y: y))

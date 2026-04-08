@@ -39,7 +39,7 @@ struct ProfileSetupScreen: View {
                         .frame(maxWidth: 280)
                         .padding(.vertical, 8)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glassProminent)
                 .tint(AppColors.accentBlue)
                 .disabled(!isValid || authViewModel.isLoading)
 
@@ -51,7 +51,7 @@ struct ProfileSetupScreen: View {
                 if let error = authViewModel.errorMessage {
                     Text(error)
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(AppColors.danger)
                 }
             }
 

@@ -89,7 +89,7 @@ struct SocialScreen: View {
                         Image(systemName: "person.badge.plus")
                             .font(.system(size: 14, weight: .medium))
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
 
                     Button {
                         authViewModel.signOut()
@@ -97,12 +97,12 @@ struct SocialScreen: View {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
                             .font(.system(size: 14, weight: .medium))
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                 }
             }
 
             Button("닫기") { dismiss() }
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
         }
         .padding(16)
     }
@@ -128,7 +128,7 @@ struct SocialScreen: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "bolt.fill")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColors.accent)
                 Text("지금 집중 중인 친구")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(AppColors.titleText)
@@ -158,7 +158,7 @@ struct SocialScreen: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "trophy.fill")
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(AppColors.accent)
                 Text("랭킹")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(AppColors.titleText)
@@ -219,6 +219,6 @@ struct SocialScreen: View {
                 }
             }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.glass)
     }
 }

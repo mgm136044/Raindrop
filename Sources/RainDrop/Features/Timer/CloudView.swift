@@ -102,7 +102,7 @@ struct CloudView: View {
             }
         }
         .opacity(cloudOpacity * baseOpacity)
-        .onChange(of: isVisible) { visible in
+        .onChange(of: isVisible) { _,visible in
             if visible {
                 withAnimation(.easeIn(duration: 1.5)) {
                     cloudOpacity = 1.0

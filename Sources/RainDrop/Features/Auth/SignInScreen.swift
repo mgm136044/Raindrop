@@ -41,7 +41,7 @@ struct SignInScreen: View {
                 .frame(maxWidth: 280)
                 .padding(.vertical, 10)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.glassProminent)
             .tint(.black)
             .disabled(authViewModel.isLoading)
 
@@ -87,7 +87,7 @@ struct SignInScreen: View {
                     .frame(maxWidth: 280)
                     .padding(.vertical, 10)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glassProminent)
                 .tint(AppColors.accentBlue)
                 .disabled(!isFormValid || authViewModel.isLoading)
 
@@ -107,7 +107,7 @@ struct SignInScreen: View {
             if let error = authViewModel.errorMessage {
                 Text(error)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(AppColors.danger)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 300)
             }

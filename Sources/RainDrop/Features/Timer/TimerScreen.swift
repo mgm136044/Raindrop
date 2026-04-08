@@ -69,15 +69,15 @@ struct TimerScreen: View {
                     .frame(height: 80)
 
                 Text(currentMotivationMessage)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(AppColors.rightPanelText.opacity(0.8))
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(AppColors.secondaryText)
                     .id(motivationIndex)
                     .transition(.opacity)
                     .animation(.easeInOut(duration: 0.4), value: motivationIndex)
                     .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
                         pickRandomMessage()
                     }
-                    .onChange(of: viewModel.isRunning) { _ in
+                    .onChange(of: viewModel.isRunning) { _,_ in
                         pickRandomMessage()
                     }
 
@@ -88,17 +88,11 @@ struct TimerScreen: View {
             VStack {
                 Spacer()
 
-                // Progress & cycle info
-                progressInfoPill
+                // Timer + info combined
+                timerInfoCapsule
 
                 Spacer()
-                    .frame(height: 12)
-
-                // Timer text — 보조 역할로 축소
-                timerDisplay
-
-                Spacer()
-                    .frame(height: 16)
+                    .frame(height: 20)
 
                 // Controls — 하단 중앙
                 TimerControlsView(
@@ -129,7 +123,7 @@ struct TimerScreen: View {
                 if let error = viewModel.latestError {
                     Text(error)
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(AppColors.danger)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 8)
                 }
@@ -191,7 +185,7 @@ struct TimerScreen: View {
         HStack(alignment: .center) {
             HStack(spacing: 6) {
                 Text("RainDrop")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppColors.titleText)
 
                 Text("v\(AppConstants.appVersion)")
@@ -204,17 +198,16 @@ struct TimerScreen: View {
 
             HStack(spacing: 8) {
                 // Balance display
-                HStack(spacing: 4) {
+                HStack(spacing: 5) {
                     Text("🪣")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                     Text("\(shopViewModel.balance)")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(AppColors.accentBlue)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(AppColors.accent)
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(.ultraThinMaterial)
-                .clipShape(Capsule())
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .glassEffect(.regular, in: Capsule())
 
                 if AppConstants.socialEnabled {
                     headerButton(icon: "person.2") { isShowingSocial = true }
@@ -244,56 +237,51 @@ struct TimerScreen: View {
                             .font(.system(size: 12, weight: .medium))
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .tint(AppColors.buttonTint)
+                .buttonStyle(.glassProminent)
+                .controlSize(.regular)
             }
         }
         .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial)
+        .padding(.vertical, 14)
+        .glassEffect(.regular, in: .rect(cornerRadii: .init(bottomLeading: 20, bottomTrailing: 20)))
     }
 
-    // MARK: - Timer Display
+    // MARK: - Timer + Info Combined Capsule
 
-    private var timerDisplay: some View {
-        HStack(spacing: 12) {
-            Text(viewModel.timerText)
-                .font(.system(size: 36, weight: .bold, design: .rounded))
-                .monospacedDigit()
-                .foregroundStyle(AppColors.primaryText)
+    private var timerInfoCapsule: some View {
+        VStack(spacing: 2) {
+            // Timer
+            HStack(spacing: 8) {
+                Text(viewModel.timerText)
+                    .font(.system(size: viewModel.isRunning ? 32 : 44, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(AppColors.primaryText)
 
-            if let cycleText = viewModel.cycleText {
-                Text(cycleText)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppColors.accentBlue)
+                if let cycleText = viewModel.cycleText {
+                    Text(cycleText)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AppColors.accent)
+                }
+            }
+
+            // Info line (compact)
+            HStack(spacing: 8) {
+                Text(viewModel.goalText)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(AppColors.tertiaryText)
+
+                Text("·")
+                    .foregroundStyle(AppColors.tertiaryText)
+
+                Text("오늘 \(viewModel.todayTotalText)")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(AppColors.tertiaryText)
             }
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 10)
-        .background(.ultraThinMaterial)
-        .clipShape(Capsule())
-    }
-
-    // MARK: - Progress Info Pill
-
-    private var progressInfoPill: some View {
-        HStack(spacing: 16) {
-            Text(viewModel.goalText)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.secondary)
-
-            Text("·")
-                .foregroundStyle(.secondary)
-
-            Label("오늘 \(viewModel.todayTotalText)", systemImage: "clock.arrow.circlepath")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(AppColors.subtitleText)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 8)
-        .background(.ultraThinMaterial)
-        .clipShape(Capsule())
+        .glassEffect(viewModel.isRunning ? .clear : .regular, in: Capsule())
+        .animation(.easeInOut(duration: 0.5), value: viewModel.isRunning)
     }
 
     // MARK: - Sticker Palette
@@ -311,11 +299,11 @@ struct TimerScreen: View {
                     if viewModel.isInfinityMode && viewModel.lastCycleCount > 0 {
                         Text("🪣 +\(viewModel.lastCycleCount)")
                             .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(AppColors.accent)
                     } else if !viewModel.isInfinityMode && session.durationSeconds >= viewModel.sessionGoalSeconds {
                         Text("🪣 +1")
                             .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(.green)
+                            .foregroundStyle(AppColors.accent)
                     }
                 }
 
@@ -329,11 +317,10 @@ struct TimerScreen: View {
             Button("닫기") {
                 viewModel.resetCompletionStateIfNeeded()
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
         }
         .padding(18)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     // MARK: - Helpers
@@ -344,8 +331,8 @@ struct TimerScreen: View {
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(tint ?? AppColors.primaryText)
         }
-        .buttonStyle(.bordered)
-        .controlSize(.small)
+        .buttonStyle(.glass)
+        .controlSize(.regular)
     }
 
     private var currentMotivationMessage: String {

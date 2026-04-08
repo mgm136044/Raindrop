@@ -10,6 +10,16 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.1.0", date: "2026.04.08", changes: [
+            "Apple 디자인 철학 적용 — 단일 악센트 블루, 순수 검정 배경",
+            "macOS 26 Liquid Glass 전면 적용 (버튼, 헤더, 필, 배너)",
+            "모달 헤더 Apple 스타일 — 중앙 타이틀 + 완료 버튼",
+            "양동이 탭 시 물 물리 반응 (관성 슬로싱)",
+            "모든 양동이에 인터랙션 적용 (메인, 주간, 스티커 편집, 온보딩)",
+            "타이머+정보 필 통합 캡슐 (세션 중 Glass.clear)",
+            "deprecated onChange API 전체 마이그레이션",
+            "색상 시스템 간소화 (30개 → 8개 코어 + 레거시 별칭)",
+        ]),
         PatchNote(version: "2.0.3", date: "2026.04.08", changes: [
             "업데이트 무한 루프 수정 (앱 버전 불일치 해소)",
             "업데이트 시 brew 미설치 감지 + 에러 알림",
@@ -136,25 +146,19 @@ struct PatchNotesView: View {
     }
 
     private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("패치노트")
-                    .font(.system(size: 24, weight: .bold))
-                Text("버전별 업데이트 내역")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+        ZStack {
+            Text("패치노트")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColors.primaryText)
 
-            Spacer()
-
-            Button("닫기") {
-                dismiss()
+            HStack {
+                Spacer()
+                Button("닫기") { dismiss() }
+                    .buttonStyle(.glass)
             }
-            .buttonStyle(.borderedProminent)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(.regular)
     }
 }

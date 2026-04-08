@@ -32,33 +32,27 @@ struct StickerEditorScreen: View {
     // MARK: - Header
 
     private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("스티커 편집")
-                    .font(.system(size: 20, weight: .bold))
-                Text("스티커를 추가하거나 제거할 수 있습니다.")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+        ZStack {
+            Text("스티커 편집")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColors.primaryText)
 
-            Spacer()
-
-            Button("완료") {
-                dismiss()
+            HStack {
+                Spacer()
+                Button("완료") { dismiss() }
+                    .buttonStyle(.glass)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(AppColors.accentBlue)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(.regular)
     }
 
     // MARK: - Bucket Preview
 
     private let bucketPreviewWidth: CGFloat = 220
     private let bucketPreviewHeight: CGFloat = 200
+    @State private var wobbleAngle: Double = 0
 
     private var bucketPreview: some View {
         ZStack {
@@ -70,7 +64,7 @@ struct StickerEditorScreen: View {
 
             GeometryReader { geometry in
                 ZStack {
-                    BucketView(progress: 0.5, skin: skin, useCustomWaterColor: useCustomWaterColor)
+                    BucketView(progress: 0.5, skin: skin, useCustomWaterColor: useCustomWaterColor, tiltAngle: wobbleAngle)
                         .frame(width: bucketPreviewWidth, height: bucketPreviewHeight)
 
                     ForEach(shopViewModel.shopState.placements) { placement in
@@ -92,7 +86,15 @@ struct StickerEditorScreen: View {
                     }
                 }
                 .frame(width: bucketPreviewWidth, height: bucketPreviewHeight)
+                .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
+                .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                .onTapGesture {
+                    wobbleAngle = 6
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        wobbleAngle = 0
+                    }
+                }
             }
 
             // Hint
@@ -167,7 +169,7 @@ struct StickerEditorScreen: View {
                     } label: {
                         Text("전체 삭제")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(.red)
+                            .foregroundStyle(AppColors.danger)
                     }
                     .buttonStyle(.plain)
                 }
@@ -204,9 +206,9 @@ struct StickerEditorScreen: View {
                                 } label: {
                                     Image(systemName: "trash")
                                         .font(.system(size: 12))
-                                        .foregroundStyle(.red)
+                                        .foregroundStyle(AppColors.danger)
                                 }
-                                .buttonStyle(.bordered)
+                                .buttonStyle(.glass)
                                 .controlSize(.small)
                             }
                         }

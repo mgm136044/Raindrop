@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "RainDrop",
     platforms: [
-        .macOS(.v13),
+        .macOS(.v26),
     ],
     products: [
         .executable(name: "RainDrop", targets: ["RainDrop"]),

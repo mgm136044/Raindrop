@@ -68,7 +68,7 @@ struct RainParticleView: View {
                     )
                 }
             }
-            .onChange(of: timeline.date) { _ in
+            .onChange(of: timeline.date) { _,_ in
                 updateParticles()
             }
         }
@@ -77,7 +77,7 @@ struct RainParticleView: View {
                 initializeParticles()
             }
         }
-        .onChange(of: isAnimating) { animating in
+        .onChange(of: isAnimating) { _,animating in
             if animating {
                 initializeParticles()
             } else {

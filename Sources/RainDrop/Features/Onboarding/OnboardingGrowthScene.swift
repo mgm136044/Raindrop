@@ -8,47 +8,45 @@ struct OnboardingGrowthScene: View {
     private let stages: [EnvironmentStage] = [.barren, .grass, .flowers, .trees, .forest, .lake]
 
     var body: some View {
-        ZStack {
-            // Environment evolution
-            EnvironmentView(stage: currentStage)
-                .frame(width: 300, height: 200)
+        VStack(spacing: 24) {
+            Spacer()
 
             // Stage indicator
-            VStack {
-                HStack(spacing: 8) {
-                    ForEach(stages, id: \.rawValue) { stage in
-                        Text(stage.emoji)
-                            .font(.system(size: 20))
-                            .opacity(stage.rawValue <= currentStage.rawValue ? 1.0 : 0.3)
-                            .scaleEffect(stage == currentStage ? 1.2 : 1.0)
-                            .animation(.spring(response: 0.3), value: currentStage)
-                    }
+            HStack(spacing: 8) {
+                ForEach(stages, id: \.rawValue) { stage in
+                    Text(stage.emoji)
+                        .font(.system(size: 20))
+                        .opacity(stage.rawValue <= currentStage.rawValue ? 1.0 : 0.3)
+                        .scaleEffect(stage == currentStage ? 1.2 : 1.0)
+                        .animation(.spring(response: 0.3), value: currentStage)
                 }
-                .padding(.top, 20)
-
-                Spacer()
             }
 
-            // Bottom
-            VStack {
-                Spacer()
+            // Environment evolution
+            EnvironmentView(stage: currentStage)
+                .frame(width: 300, height: 160)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
 
-                if showText {
+            Spacer()
+
+            // Bottom text + button
+            if showText {
+                VStack(spacing: 20) {
                     Text("매일의 집중이 당신만의 세계를 만듭니다")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.titleText)
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppColors.primaryText)
                         .transition(.opacity)
-
-                    Spacer().frame(height: 20)
 
                     Button("시작하기") {
                         onComplete()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(AppColors.accentBlue)
+                    .buttonStyle(.glassProminent)
+                    .tint(AppColors.accent)
                 }
             }
-            .padding(.bottom, 24)
+
+            Spacer()
+                .frame(height: 24)
         }
         .onAppear {
             animateStages()

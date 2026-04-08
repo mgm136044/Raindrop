@@ -20,39 +20,20 @@ struct ShopScreen: View {
     }
 
     private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("상점")
-                    .font(.system(size: 24, weight: .bold))
-                Text("양동이를 채워서 스티커를 모으세요!")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+        ZStack {
+            Text("상점")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColors.primaryText)
 
-            Spacer()
-
-            HStack(spacing: 6) {
-                Text("🪣")
-                    .font(.system(size: 18))
-                Text("\(viewModel.balance)")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(AppColors.accentBlue)
+            HStack {
+                Spacer()
+                Button("완료") { dismiss() }
+                    .buttonStyle(.glass)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(AppColors.panelBackground)
-            .clipShape(Capsule())
-
-            Button("닫기") {
-                dismiss()
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.leading, 8)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(.regular)
     }
 
     private var categoryPicker: some View {
@@ -61,7 +42,7 @@ struct ShopScreen: View {
                 Button(category) {
                     selectedCategory = category
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
                 .tint(selectedCategory == category ? AppColors.accentBlue : .secondary)
             }
             Spacer()
@@ -111,10 +92,10 @@ struct ShopItemCard: View {
             if isPurchased {
                 Text("보유 중")
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(AppColors.accent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 5)
-                    .background(Color.green.opacity(0.12))
+                    .background(AppColors.accent.opacity(0.12))
                     .clipShape(Capsule())
             } else {
                 Button {
@@ -129,8 +110,8 @@ struct ShopItemCard: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 5)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(canAfford ? AppColors.accentBlue : .gray)
+                .buttonStyle(.glassProminent)
+                .tint(canAfford ? AppColors.accent : AppColors.tertiaryText)
                 .disabled(!canAfford)
             }
         }
@@ -140,7 +121,7 @@ struct ShopItemCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(isPurchased ? Color.green.opacity(0.3) : Color.clear, lineWidth: 2)
+                .stroke(isPurchased ? AppColors.accent.opacity(0.3) : Color.clear, lineWidth: 2)
         )
     }
 }

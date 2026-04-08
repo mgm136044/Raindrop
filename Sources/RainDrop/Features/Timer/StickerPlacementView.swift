@@ -13,7 +13,7 @@ struct BucketWithStickersView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                BucketView(progress: progress, skin: skin, useCustomWaterColor: useCustomWaterColor, intensity: intensity, waterColorOverride: waterColorOverride)
+                BucketView(progress: progress, skin: skin, useCustomWaterColor: useCustomWaterColor, intensity: intensity, waterColorOverride: waterColorOverride, tiltAngle: wobbleAngle)
 
                 // Sticker overlays (read-only)
                 ForEach(placements) { placement in
@@ -29,10 +29,11 @@ struct BucketWithStickersView: View {
                 }
             }
             .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
+            .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
             .contentShape(Rectangle())
             .onTapGesture {
                 wobbleAngle = 6
-                withAnimation(.interpolatingSpring(stiffness: 300, damping: 8)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     wobbleAngle = 0
                 }
             }

@@ -51,8 +51,7 @@ struct RainDropApp: App {
                                 .foregroundStyle(.white)
                         }
                         .padding(24)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 12))
                     }
                     .ignoresSafeArea()
                 }
@@ -88,7 +87,7 @@ struct RainDropApp: App {
                     Text("v\(version) 버전이 출시되었습니다.\n업데이트 하시겠습니까?")
                 }
             }
-            .onChange(of: container.updateService.updateResult) { result in
+            .onChange(of: container.updateService.updateResult) { _,result in
                 if result != nil {
                     showUpdateResult = true
                 }

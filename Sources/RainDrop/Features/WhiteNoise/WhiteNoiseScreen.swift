@@ -12,7 +12,7 @@ struct WhiteNoiseScreen: View {
             Form {
                 Section {
                     Toggle("빗소리 백색소음", isOn: $viewModel.settings.whiteNoiseEnabled)
-                        .onChange(of: viewModel.settings.whiteNoiseEnabled) { enabled in
+                        .onChange(of: viewModel.settings.whiteNoiseEnabled) { _,enabled in
                             viewModel.save()
                             if !enabled {
                                 whiteNoiseService.teardown()
@@ -25,7 +25,7 @@ struct WhiteNoiseScreen: View {
                         HStack {
                             Text("볼륨")
                             Slider(value: $viewModel.settings.whiteNoiseVolume, in: 0...1, step: 0.1)
-                                .onChange(of: viewModel.settings.whiteNoiseVolume) { _ in
+                                .onChange(of: viewModel.settings.whiteNoiseVolume) { _,_ in
                                     viewModel.save()
                                     whiteNoiseService.setVolume(viewModel.settings.whiteNoiseVolume)
                                 }
@@ -65,25 +65,19 @@ struct WhiteNoiseScreen: View {
     }
 
     private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("백색소음")
-                    .font(.system(size: 24, weight: .bold))
-                Text("빗소리로 집중력을 높여보세요.")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
+        ZStack {
+            Text("백색소음")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(AppColors.primaryText)
 
-            Spacer()
-
-            Button("닫기") {
-                dismiss()
+            HStack {
+                Spacer()
+                Button("완료") { dismiss() }
+                    .buttonStyle(.glass)
             }
-            .buttonStyle(.borderedProminent)
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 12)
-        .background(AppColors.historyHeaderBackground)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .glassEffect(.regular)
     }
 }

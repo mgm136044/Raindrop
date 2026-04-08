@@ -18,7 +18,7 @@ struct FriendSearchScreen: View {
                     .font(.system(size: 20, weight: .bold))
                 Spacer()
                 Button("닫기") { dismiss() }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
             }
 
             Picker("검색 방식", selection: $searchMode) {
@@ -43,7 +43,7 @@ struct FriendSearchScreen: View {
                         viewModel.searchByInviteCode(searchText)
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glassProminent)
                 .tint(AppColors.accentBlue)
                 .disabled(searchText.trimmingCharacters(in: .whitespaces).isEmpty)
             }
@@ -70,7 +70,7 @@ struct FriendSearchScreen: View {
                         Button("친구 요청") {
                             viewModel.sendRequest(to: user)
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(.glassProminent)
                         .tint(AppColors.accentBlue)
                         .controlSize(.small)
                     }
@@ -81,7 +81,7 @@ struct FriendSearchScreen: View {
             if let error = viewModel.errorMessage {
                 Text(error)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(AppColors.danger)
             }
         }
         .padding(20)

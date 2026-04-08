@@ -9,10 +9,8 @@ struct PrimaryButtonStyle: ButtonStyle {
             .foregroundStyle(.white)
             .padding(.horizontal, 18)
             .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(color.opacity(configuration.isPressed ? 0.82 : 1.0))
-            )
+            .glassEffect(Glass.regular.tint(color), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .opacity(configuration.isPressed ? 0.85 : 1.0)
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
     }
 }
