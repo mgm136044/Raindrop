@@ -28,7 +28,7 @@ final class ShopViewModel: ObservableObject {
     }
 
     func selectBackground(_ theme: BackgroundTheme) {
-        guard theme == .defaultTheme || shopState.purchasedItemIDs.contains(theme.shopItemID ?? "") else { return }
+        guard theme == .defaultTheme || isDeveloperMode || shopState.purchasedItemIDs.contains(theme.shopItemID ?? "") else { return }
         shopState.selectedBackgroundID = theme.shopItemID
         saveState()
     }
