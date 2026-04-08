@@ -10,6 +10,12 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.3.1", date: "2026.04.09", changes: [
+            "깊은 바다 배경 거품 애니메이션 수정 및 가시성 향상",
+            "배경 테마 적용 시 부드러운 전환 애니메이션 추가",
+            "타이머 실행 중에도 배경 테마 반영 (30% 블렌딩)",
+            "개발자 모드 추가 (설정 → 기타)",
+        ]),
         PatchNote(version: "2.3.0", date: "2026.04.09", changes: [
             "프리미엄 바다 스티커 5종 추가 (돌고래, 해파리, 고래, 산호초, 문어)",
             "배경 꾸미기 기능 도입 — 양동이 코인으로 배경 구매/적용",
