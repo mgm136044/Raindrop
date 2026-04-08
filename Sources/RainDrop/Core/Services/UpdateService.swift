@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import os
 
@@ -48,64 +49,53 @@ final class UpdateService: ObservableObject {
     }
 
     func performUpdate() {
-        isUpdating = true
-        updateResult = nil
-
         let brewPath = FileManager.default.fileExists(atPath: "/opt/homebrew/bin/brew")
             ? "/opt/homebrew/bin/brew"
             : "/usr/local/bin/brew"
 
-        Task.detached { [weak self] in
-            let result = Self.runBrewUpgrade(brewPath: brewPath)
-            await MainActor.run {
-                self?.updateResult = result
-                self?.isUpdating = false
-            }
-        }
-    }
+        // 임시 스크립트 파일 생성 → nohup으로 완전 분리 실행
+        let scriptContent = """
+        #!/bin/zsh
+        sleep 2
+        \(brewPath) update 2>/dev/null
+        \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>/dev/null
+        sleep 1
+        open /Applications/RainDrop.app
+        rm -f /tmp/raindrop_update.sh
+        """
 
-    private nonisolated static func runBrewUpgrade(brewPath: String) -> String {
-        // 1. brew update로 tap 캐시 갱신
-        let updateProcess = Process()
-        updateProcess.executableURL = URL(fileURLWithPath: brewPath)
-        updateProcess.arguments = ["update"]
-        updateProcess.standardOutput = Pipe()
-        updateProcess.standardError = Pipe()
+        let scriptPath = "/tmp/raindrop_update.sh"
 
         do {
-            try updateProcess.run()
-            updateProcess.waitUntilExit()
-            logger.notice("brew update 완료 (exit: \(updateProcess.terminationStatus))")
+            try scriptContent.write(toFile: scriptPath, atomically: true, encoding: .utf8)
+            try FileManager.default.setAttributes(
+                [.posixPermissions: 0o755],
+                ofItemAtPath: scriptPath
+            )
         } catch {
-            logger.error("brew update 실패: \(error.localizedDescription, privacy: .public)")
+            logger.error("스크립트 파일 생성 실패: \(error.localizedDescription, privacy: .public)")
+            updateResult = "업데이트 준비 실패"
+            return
         }
 
-        // 2. brew upgrade로 실제 업그레이드
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: brewPath)
-        process.arguments = ["upgrade", "--cask", "mgm136044/tap/raindrop"]
-
-        let outPipe = Pipe()
-        process.standardOutput = outPipe
-        process.standardError = outPipe
+        // nohup + & 로 완전히 분리된 프로세스로 실행
+        let launcher = Process()
+        launcher.executableURL = URL(fileURLWithPath: "/bin/zsh")
+        launcher.arguments = ["-c", "nohup \(scriptPath) > /dev/null 2>&1 &"]
+        launcher.standardOutput = FileHandle.nullDevice
+        launcher.standardError = FileHandle.nullDevice
 
         do {
-            try process.run()
-            process.waitUntilExit()
+            try launcher.run()
+            launcher.waitUntilExit()
+            logger.notice("업데이트 스크립트 분리 실행됨, 앱 종료 중...")
 
-            let data = outPipe.fileHandleForReading.readDataToEndOfFile()
-            let output = String(data: data, encoding: .utf8) ?? ""
-
-            if process.terminationStatus == 0 {
-                logger.notice("brew upgrade 성공")
-                return "업데이트 완료! 앱을 재시작해주세요."
-            } else {
-                logger.error("brew upgrade 실패: \(output, privacy: .public)")
-                return "업데이트 실패: \(output)"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                NSApplication.shared.terminate(nil)
             }
         } catch {
-            logger.error("brew 실행 실패: \(error.localizedDescription, privacy: .public)")
-            return "업데이트 실행 실패: \(error.localizedDescription)"
+            logger.error("업데이트 스크립트 실행 실패: \(error.localizedDescription, privacy: .public)")
+            updateResult = "업데이트 실행 실패: \(error.localizedDescription)"
         }
     }
 
