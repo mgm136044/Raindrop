@@ -70,7 +70,14 @@ final class UpdateService: ObservableObject {
         #!/bin/zsh
         sleep 2
         \(brewPath) update 2>/dev/null
+        # upgrade 시도, 실패하면 reinstall 시도
         if \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+            sleep 1
+            open /Applications/RainDrop.app
+        elif \(brewPath) reinstall --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+            sleep 1
+            open /Applications/RainDrop.app
+        elif \(brewPath) install --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
             sleep 1
             open /Applications/RainDrop.app
         else
