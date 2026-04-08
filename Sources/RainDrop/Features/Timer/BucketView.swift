@@ -91,6 +91,7 @@ struct BucketView: View {
                     .offset(y: -height * 0.30)
             }
         }
+        .drawingGroup()
         .onAppear {
             withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 waveOffset = 1.0

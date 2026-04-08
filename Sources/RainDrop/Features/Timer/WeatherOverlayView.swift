@@ -27,21 +27,7 @@ struct WeatherOverlayView: View {
     }
 
     private func ambientClouds(opacity: Double, count: Int) -> some View {
-        ZStack {
-            ForEach(0..<count, id: \.self) { i in
-                let w = 60.0 + abs(sin(Double(i) * 3.1)) * 60.0
-                let h = 15.0 + abs(cos(Double(i) * 2.3)) * 15.0
-                Ellipse()
-                    .fill(AppColors.cloudColor.opacity(opacity))
-                    .frame(width: w, height: h)
-                    .offset(
-                        x: CGFloat(i * 80 - count * 40),
-                        y: CGFloat(i * 12 - 20)
-                    )
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(.top, 20)
+        EmptyView()
     }
 
     private func ambientRain(count: Int, opacity: Double) -> some View {
