@@ -10,6 +10,21 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.0.3", date: "2026.04.08", changes: [
+            "업데이트 무한 루프 수정 (앱 버전 불일치 해소)",
+            "업데이트 시 brew 미설치 감지 + 에러 알림",
+            "업데이트 실패 시 macOS 알림으로 안내",
+            "업데이트 중 로딩 오버레이 정상 표시",
+        ]),
+        PatchNote(version: "2.0.2", date: "2026.04.08", changes: [
+            "스티커 시스템 재구축 — 별도 편집 화면으로 분리",
+            "스티커 배치: 팔레트에서 탭으로 추가",
+            "스티커 삭제: 리스트에서 개별/전체 삭제",
+            "스티커 위치: 프리뷰에서 드래그로 조정",
+        ]),
+        PatchNote(version: "2.0.1", date: "2026.04.07", changes: [
+            "타이머 UI 텍스트/버튼 크기 확대 (가독성 향상)",
+        ]),
         PatchNote(version: "2.0.0", date: "2026.04.07", changes: [
             "\"채움으로 삶의 밀도를 기록한다\" — 전면 UI/UX 개편",
             "양동이 중심 레이아웃 (ZStack 오버레이 구조)",

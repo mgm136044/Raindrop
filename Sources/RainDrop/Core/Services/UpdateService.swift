@@ -11,7 +11,12 @@ final class UpdateService: ObservableObject {
     @Published var isUpdating = false
     @Published var updateResult: String?
 
+    private var hasChecked = false
+
     func checkForUpdate() async {
+        guard !hasChecked else { return }
+        hasChecked = true
+
         guard let url = URL(string: AppConstants.githubReleasesAPI) else { return }
 
         do {
@@ -49,18 +54,28 @@ final class UpdateService: ObservableObject {
     }
 
     func performUpdate() {
-        let brewPath = FileManager.default.fileExists(atPath: "/opt/homebrew/bin/brew")
-            ? "/opt/homebrew/bin/brew"
-            : "/usr/local/bin/brew"
+        let brewPath: String
+        if FileManager.default.fileExists(atPath: "/opt/homebrew/bin/brew") {
+            brewPath = "/opt/homebrew/bin/brew"
+        } else if FileManager.default.fileExists(atPath: "/usr/local/bin/brew") {
+            brewPath = "/usr/local/bin/brew"
+        } else {
+            updateResult = "Homebrew가 설치되어 있지 않습니다.\n터미널에서 brew install --cask mgm136044/tap/raindrop 으로 업데이트해주세요."
+            return
+        }
 
-        // 임시 스크립트 파일 생성 → nohup으로 완전 분리 실행
+        isUpdating = true
+
         let scriptContent = """
         #!/bin/zsh
         sleep 2
         \(brewPath) update 2>/dev/null
-        \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>/dev/null
-        sleep 1
-        open /Applications/RainDrop.app
+        if \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+            sleep 1
+            open /Applications/RainDrop.app
+        else
+            osascript -e 'display notification "업데이트에 실패했습니다. 터미널에서 수동으로 진행해주세요." with title "RainDrop"'
+        fi
         rm -f /tmp/raindrop_update.sh
         """
 
@@ -74,11 +89,11 @@ final class UpdateService: ObservableObject {
             )
         } catch {
             logger.error("스크립트 파일 생성 실패: \(error.localizedDescription, privacy: .public)")
+            isUpdating = false
             updateResult = "업데이트 준비 실패"
             return
         }
 
-        // nohup + & 로 완전히 분리된 프로세스로 실행
         let launcher = Process()
         launcher.executableURL = URL(fileURLWithPath: "/bin/zsh")
         launcher.arguments = ["-c", "nohup \(scriptPath) > /dev/null 2>&1 &"]
@@ -88,6 +103,14 @@ final class UpdateService: ObservableObject {
         do {
             try launcher.run()
             launcher.waitUntilExit()
+
+            guard launcher.terminationStatus == 0 else {
+                logger.error("런처 종료 코드: \(launcher.terminationStatus)")
+                isUpdating = false
+                updateResult = "업데이트 스크립트 실행 실패"
+                return
+            }
+
             logger.notice("업데이트 스크립트 분리 실행됨, 앱 종료 중...")
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -95,6 +118,7 @@ final class UpdateService: ObservableObject {
             }
         } catch {
             logger.error("업데이트 스크립트 실행 실패: \(error.localizedDescription, privacy: .public)")
+            isUpdating = false
             updateResult = "업데이트 실행 실패: \(error.localizedDescription)"
         }
     }

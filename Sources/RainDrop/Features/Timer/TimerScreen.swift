@@ -189,9 +189,16 @@ struct TimerScreen: View {
 
     private var headerOverlay: some View {
         HStack(alignment: .center) {
-            Text("RainDrop")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(AppColors.titleText)
+            HStack(spacing: 6) {
+                Text("RainDrop")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.titleText)
+
+                Text("v\(AppConstants.appVersion)")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary.opacity(0.6))
+                    .offset(y: 2)
+            }
 
             Spacer()
 
