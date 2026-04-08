@@ -4,6 +4,7 @@ import Foundation
 final class ShopViewModel: ObservableObject {
     @Published private(set) var shopState: ShopState
     @Published private(set) var latestError: String?
+    @Published var isDeveloperMode: Bool = false
 
     private let repository: ShopRepositoryProtocol
 
@@ -18,16 +19,39 @@ final class ShopViewModel: ObservableObject {
 
     var categories: [String] { ShopCatalog.categories }
 
+    var selectedBackground: BackgroundTheme {
+        BackgroundTheme.theme(for: shopState.selectedBackgroundID)
+    }
+
     func items(for category: String) -> [ShopItem] {
         catalog.filter { $0.category == category }
     }
 
+    func selectBackground(_ theme: BackgroundTheme) {
+        guard theme == .defaultTheme || shopState.purchasedItemIDs.contains(theme.shopItemID ?? "") else { return }
+        shopState.selectedBackgroundID = theme.shopItemID
+        saveState()
+    }
+
+    func isBackgroundSelected(_ item: ShopItem) -> Bool {
+        shopState.selectedBackgroundID == item.id
+    }
+
     func isPurchased(_ item: ShopItem) -> Bool {
-        shopState.purchasedItemIDs.contains(item.id)
+        isDeveloperMode || shopState.purchasedItemIDs.contains(item.id)
+    }
+
+    /// 스티커 전용 — 배경 아이템 제외
+    var purchasedStickerIDs: Set<String> {
+        let bgIDs = Set(BackgroundTheme.allCases.compactMap(\.shopItemID))
+        if isDeveloperMode {
+            return Set(ShopCatalog.allItems.map(\.id)).subtracting(bgIDs)
+        }
+        return shopState.purchasedItemIDs.subtracting(bgIDs)
     }
 
     func canAfford(_ item: ShopItem) -> Bool {
-        shopState.balance >= item.price
+        isDeveloperMode || shopState.balance >= item.price
     }
 
     func purchase(_ item: ShopItem) {

@@ -11,6 +11,7 @@ struct AppSettings: Codable, Equatable, Sendable {
     var whiteNoiseVolume: Double = 0.5
     var hasSeenOnboarding: Bool = false
     var waterColorEvolution: Bool = false
+    var developerMode: Bool = false
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
 
@@ -29,6 +30,7 @@ struct AppSettings: Codable, Equatable, Sendable {
         whiteNoiseVolume = try container.decodeIfPresent(Double.self, forKey: .whiteNoiseVolume) ?? 0.5
         hasSeenOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasSeenOnboarding) ?? false
         waterColorEvolution = try container.decodeIfPresent(Bool.self, forKey: .waterColorEvolution) ?? false
+        developerMode = try container.decodeIfPresent(Bool.self, forKey: .developerMode) ?? false
     }
 
     init(
@@ -41,7 +43,8 @@ struct AppSettings: Codable, Equatable, Sendable {
         whiteNoiseEnabled: Bool = false,
         whiteNoiseVolume: Double = 0.5,
         hasSeenOnboarding: Bool = false,
-        waterColorEvolution: Bool = false
+        waterColorEvolution: Bool = false,
+        developerMode: Bool = false
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
         self.focusCheckEnabled = focusCheckEnabled
@@ -53,5 +56,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         self.whiteNoiseVolume = whiteNoiseVolume
         self.hasSeenOnboarding = hasSeenOnboarding
         self.waterColorEvolution = waterColorEvolution
+        self.developerMode = developerMode
     }
 }

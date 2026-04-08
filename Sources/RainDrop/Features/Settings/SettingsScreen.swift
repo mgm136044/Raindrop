@@ -7,6 +7,7 @@ struct SettingsScreen: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showOnboarding = false
     @State private var showPatchNotes = false
+    @State private var devCode = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -197,6 +198,33 @@ struct SettingsScreen: View {
                     }
                     Button("온보딩 다시 보기") {
                         showOnboarding = true
+                    }
+
+                    if viewModel.settings.developerMode {
+                        HStack {
+                            Image(systemName: "hammer.fill")
+                                .foregroundStyle(AppColors.accent)
+                            Text("개발자 모드 활성화됨")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(AppColors.accent)
+                        }
+                    } else {
+                        HStack {
+                            Text("개발자 코드")
+                                .font(.system(size: 13))
+                            Spacer()
+                            SecureField("코드 입력", text: $devCode)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 100)
+                                .onSubmit {
+                                    if devCode == "0530" {
+                                        viewModel.settings.developerMode = true
+                                        shopViewModel?.isDeveloperMode = true
+                                        viewModel.save()
+                                    }
+                                    devCode = ""
+                                }
+                        }
                     }
                 }
 

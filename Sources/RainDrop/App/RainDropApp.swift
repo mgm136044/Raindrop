@@ -69,6 +69,7 @@ struct RainDropApp: App {
                 if !container.settingsViewModel.settings.hasSeenOnboarding && !showOnboarding {
                     showOnboarding = true
                 }
+                container.shopViewModel.isDeveloperMode = container.settingsViewModel.settings.developerMode
             }
             .task {
                 await container.updateService.checkForUpdate()

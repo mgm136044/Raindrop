@@ -41,7 +41,8 @@ struct TimerScreen: View {
             SkyBackgroundView(
                 progress: viewModel.currentProgress,
                 isRunning: viewModel.isRunning,
-                isOverflowing: viewModel.isOverflowing
+                isOverflowing: viewModel.isOverflowing,
+                backgroundTheme: shopViewModel.selectedBackground
             )
 
             // Layer 1: Scene (cloud + rain + bucket) — 화면 중앙, 주인공
@@ -220,7 +221,7 @@ struct TimerScreen: View {
                     headerButton(icon: "cloud.rain") { isShowingWhiteNoise = true }
                 }
 
-                if !shopViewModel.shopState.purchasedItemIDs.isEmpty {
+                if !shopViewModel.purchasedStickerIDs.isEmpty {
                     headerButton(icon: "paintbrush") {
                         isShowingStickerEditor = true
                     }

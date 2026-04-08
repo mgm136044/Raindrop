@@ -8,6 +8,7 @@ struct ShopState: Codable, Equatable, Sendable {
     var totalFocusMinutes: Int = 0
     var consecutiveFocusDays: Int = 0
     var lastFocusDateKey: String?
+    var selectedBackgroundID: String?
 
     var balance: Int { totalBucketsEarned - totalBucketsSpent }
 
@@ -24,6 +25,7 @@ struct ShopState: Codable, Equatable, Sendable {
         totalFocusMinutes = try container.decodeIfPresent(Int.self, forKey: .totalFocusMinutes) ?? 0
         consecutiveFocusDays = try container.decodeIfPresent(Int.self, forKey: .consecutiveFocusDays) ?? 0
         lastFocusDateKey = try container.decodeIfPresent(String.self, forKey: .lastFocusDateKey)
+        selectedBackgroundID = try container.decodeIfPresent(String.self, forKey: .selectedBackgroundID)
     }
 }
 

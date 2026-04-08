@@ -10,6 +10,11 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.3.0", date: "2026.04.09", changes: [
+            "프리미엄 바다 스티커 5종 추가 (돌고래, 해파리, 고래, 산호초, 문어)",
+            "배경 꾸미기 기능 도입 — 양동이 코인으로 배경 구매/적용",
+            "깊은 바다 배경 테마 추가",
+        ]),
         PatchNote(version: "2.2.0", date: "2026.04.09", changes: [
             "물 파도 애니메이션 부드러움 개선 (GPU 렌더링 최적화)",
             "배경 회색 타원 구름 제거 (Apple 디자인 정리)",

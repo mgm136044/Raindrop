@@ -5,6 +5,7 @@ struct SkyBackgroundView: View {
     let progress: Double
     let isRunning: Bool
     let isOverflowing: Bool
+    var backgroundTheme: BackgroundTheme = .defaultTheme
 
     private var skyTop: Color {
         if isOverflowing {
@@ -37,8 +38,8 @@ struct SkyBackgroundView: View {
     var body: some View {
         LinearGradient(
             colors: [
-                isRunning ? skyTop : AppColors.backgroundGradientTop,
-                isRunning ? skyBottom : AppColors.backgroundGradientBottom
+                isRunning ? skyTop : backgroundTheme.idleTop,
+                isRunning ? skyBottom : backgroundTheme.idleBottom
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing

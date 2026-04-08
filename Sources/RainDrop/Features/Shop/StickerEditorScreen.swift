@@ -120,7 +120,7 @@ struct StickerEditorScreen: View {
                 .padding(.horizontal, 12)
                 .padding(.top, 10)
 
-            let purchased = ShopCatalog.allItems.filter { shopViewModel.isPurchased($0) }
+            let purchased = ShopCatalog.allItems.filter { shopViewModel.isPurchased($0) && $0.category != "배경" }
 
             if purchased.isEmpty {
                 VStack(spacing: 8) {
