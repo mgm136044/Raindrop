@@ -13,7 +13,6 @@ struct RainParticleView: View {
     let dropGradientTop: Color
     let dropGradientBottom: Color
     var intensity: Double = 0.5
-    var waterLevel: Double = 0
 
     @State private var particles: [RainParticle] = []
 
@@ -39,28 +38,12 @@ struct RainParticleView: View {
         return lo...hi
     }
 
-    /// 비가 멈추는 y 좌표 (normalized 0-1, rain frame 기준)
-    /// 양동이 물 수면 위치를 rain frame 좌표로 매핑
-    private var rainStopY: Double {
-        // Rain frame 360px, Bucket 320px + 56pt offset
-        // 물 수면 = bucket top + bucketHeight * (1 - 0.80 * progress)
-        // Rain 좌표 = scene 좌표 / rain 높이
-        let bucketTopInScene: Double = 56.0 / 360.0  // ≈ 0.156
-        let bucketFractionInRain: Double = 320.0 / 360.0  // ≈ 0.889
-        let waterSurfaceInBucket = 1.0 - 0.80 * min(max(waterLevel, 0), 1)
-        return bucketTopInScene + bucketFractionInRain * waterSurfaceInBucket
-    }
-
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
             Canvas { context, size in
-                let stopPixelY = rainStopY * size.height
-
                 for particle in particles {
                     let x = particle.x * size.width
                     let y = particle.y * size.height
-                    guard y < stopPixelY else { continue }
-
                     let dropSize = particle.size
 
                     let rect = CGRect(
@@ -121,7 +104,6 @@ struct RainParticleView: View {
         guard isAnimating else { return }
 
         var updated = particles
-        let stopY = rainStopY
 
         // Adjust particle count gradually
         let target = desiredCount
@@ -138,8 +120,7 @@ struct RainParticleView: View {
         for i in updated.indices {
             updated[i].y += updated[i].speed
 
-            // 물 수면에 도달하거나 화면 밖으로 나가면 리셋
-            if updated[i].y > stopY || updated[i].y > 1.1 {
+            if updated[i].y > 1.1 {
                 updated[i] = makeParticle(yRange: -0.2...(-0.05))
             }
         }

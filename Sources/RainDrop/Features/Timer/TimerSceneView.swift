@@ -29,15 +29,21 @@ struct TimerSceneView: View {
                 .frame(width: 400, height: 400)
                 .allowsHitTesting(false)
 
-            // Rain layer
-            RainParticleView(
-                isAnimating: viewModel.isRunning,
-                dropGradientTop: dropGradientTop,
-                dropGradientBottom: dropGradientBottom,
-                intensity: max(intensity, 0.15),
-                waterLevel: displayProgress
-            )
-            .frame(width: 260, height: 360)
+            // Cloud + Rain layer
+            ZStack(alignment: .top) {
+                CloudView(isVisible: viewModel.isRunning, intensity: intensity)
+                    .frame(width: 260, height: 70)
+                    .offset(y: -50)
+
+                RainParticleView(
+                    isAnimating: viewModel.isRunning,
+                    dropGradientTop: dropGradientTop,
+                    dropGradientBottom: dropGradientBottom,
+                    intensity: max(intensity, 0.15)
+                )
+                .frame(width: 260, height: 360)
+            }
+            .frame(width: 340, height: 360)
             .allowsHitTesting(false)
 
             // Bucket + Stickers

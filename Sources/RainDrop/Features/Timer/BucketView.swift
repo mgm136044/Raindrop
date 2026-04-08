@@ -91,7 +91,6 @@ struct BucketView: View {
                     .offset(y: -height * 0.30)
             }
         }
-        .drawingGroup()
         .onAppear {
             withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
                 waveOffset = 1.0
@@ -113,6 +112,8 @@ struct WaterSurfaceShape: Shape {
     var layer: WaterLayer
     var tiltAngle: Double = 0
 
+    // animatableData에는 waveOffset만 — repeat-forever 애니메이션의 유일한 소유자
+    // progress와 tiltAngle은 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
     var animatableData: Double {
         get { waveOffset }
         set { waveOffset = newValue }

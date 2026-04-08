@@ -13,9 +13,13 @@ struct OnboardingFillScene: View {
         VStack(spacing: 24) {
             Spacer()
 
-            // Rain + Bucket
+            // Rain + Cloud + Bucket
             ZStack {
                 if isRunning {
+                    CloudView(isVisible: true, intensity: 0.5)
+                        .frame(width: 140, height: 40)
+                        .offset(y: -80)
+
                     RainParticleView(
                         isAnimating: true,
                         dropGradientTop: AppColors.dropGradientTopColor,
