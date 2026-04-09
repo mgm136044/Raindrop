@@ -56,7 +56,7 @@ struct RainDropApp: App {
                     .ignoresSafeArea()
                 }
             }
-            .sheet(isPresented: $showOnboarding) {
+            .overlayModal(isPresented: $showOnboarding) {
                 OnboardingView {
                     container.settingsViewModel.settings.hasSeenOnboarding = true
                     container.settingsViewModel.save()

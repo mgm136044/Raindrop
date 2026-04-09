@@ -143,23 +143,23 @@ struct TimerScreen: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowingHistory) {
+        .overlayModal(isPresented: $isShowingHistory) {
             HistoryScreen(viewModel: historyViewModel, skin: settingsViewModel.settings.selectedSkin)
                 .onAppear {
                     historyViewModel.load()
                 }
         }
-        .sheet(isPresented: $isShowingSettings) {
+        .overlayModal(isPresented: $isShowingSettings) {
             SettingsScreen(
                 viewModel: settingsViewModel,
                 totalBuckets: shopViewModel.shopState.totalBucketsEarned,
                 shopViewModel: shopViewModel
             )
         }
-        .sheet(isPresented: $isShowingShop) {
+        .overlayModal(isPresented: $isShowingShop) {
             ShopScreen(viewModel: shopViewModel)
         }
-        .sheet(isPresented: $isShowingSocial) {
+        .overlayModal(isPresented: $isShowingSocial) {
             if let authVM = authViewModel,
                let socialVM = socialViewModel,
                let friendsVM = friendsViewModel {
@@ -170,14 +170,14 @@ struct TimerScreen: View {
                 )
             }
         }
-        .sheet(isPresented: $isShowingStickerEditor) {
+        .overlayModal(isPresented: $isShowingStickerEditor) {
             StickerEditorScreen(
                 shopViewModel: shopViewModel,
                 skin: settingsViewModel.settings.selectedSkin,
                 useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor
             )
         }
-        .sheet(isPresented: $isShowingWhiteNoise) {
+        .overlayModal(isPresented: $isShowingWhiteNoise) {
             if let service = whiteNoiseService {
                 WhiteNoiseScreen(
                     viewModel: settingsViewModel,

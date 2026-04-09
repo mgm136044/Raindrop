@@ -35,10 +35,10 @@ struct SocialScreen: View {
                 endPoint: .bottomTrailing
             )
         )
-        .sheet(isPresented: $isShowingFriendSearch) {
+        .overlayModal(isPresented: $isShowingFriendSearch) {
             FriendSearchScreen(viewModel: friendsViewModel)
         }
-        .sheet(isPresented: $isShowingFriendRequests) {
+        .overlayModal(isPresented: $isShowingFriendRequests) {
             FriendRequestsScreen(viewModel: friendsViewModel)
         }
         .onAppear {
