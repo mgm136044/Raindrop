@@ -74,19 +74,19 @@ struct SkyBackgroundView: View {
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: progress) { _ in
+        .onChange(of: progress) { _,_ in
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: isRunning) { _ in
+        .onChange(of: isRunning) { _,_ in
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: isOverflowing) { _ in
+        .onChange(of: isOverflowing) { _,_ in
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: backgroundTheme) { _ in
+        .onChange(of: backgroundTheme) { _,_ in
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }

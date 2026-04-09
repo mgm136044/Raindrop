@@ -108,6 +108,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     func cancelFocusChecks() {
         let ids = (1...20).map { "focusCheck-\($0)" }
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+        focusCheckTimeoutWork?.cancel()
+        focusCheckTimeoutWork = nil
     }
 
     /// 배너 알림이 가능한 상태인지 확인

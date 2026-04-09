@@ -10,6 +10,13 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.4.0", date: "2026.04.09", changes: [
+            "성능 최적화 — 파도 렌더링 80% 가속 (sin 룩업 테이블)",
+            "설정 디스크 읽기 캐싱 (세션당 5~7회 → 0회)",
+            "비 파티클 메모리 할당 80배 감소",
+            "배경 색상 계산 최적화",
+            "집중 확인 알림 세션 중 재활성화 지원",
+        ]),
         PatchNote(version: "2.3.1", date: "2026.04.09", changes: [
             "깊은 바다 배경 거품 애니메이션 수정 및 가시성 향상",
             "배경 테마 적용 시 부드러운 전환 애니메이션 추가",

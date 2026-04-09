@@ -51,6 +51,7 @@ final class TimerViewModel: ObservableObject {
         self.whiteNoiseService = whiteNoiseService
         loadSettings()
         loadTodayTotal()
+        cleanupStaleNotifications()
         observeSessionChanges()
         observeSettingsChanges()
         observeFocusCheckTimeout()
@@ -267,26 +268,35 @@ final class TimerViewModel: ObservableObject {
 
         Task {
             let granted = await notificationService.requestPermission()
-            if granted {
-                notificationService.scheduleFocusChecks(
-                    intervalMinutes: settings.focusCheckIntervalMinutes
-                )
-            }
+            guard granted, cachedSettings.focusCheckEnabled else { return }
+            notificationService.scheduleFocusChecks(
+                intervalMinutes: cachedSettings.focusCheckIntervalMinutes
+            )
         }
     }
 
     private func loadSettings() {
         let previousFocusCheckEnabled = cachedSettings.focusCheckEnabled
+        let previousInterval = cachedSettings.focusCheckIntervalMinutes
         let settings = settingsRepository.load()
         cachedSettings = settings
         sessionGoalSeconds = settings.sessionGoalSeconds
         isInfinityMode = settings.infinityModeEnabled
 
-        // 알림 토글 변경 시 처리
+        // 알림 토글/간격 변경 시 처리
         if previousFocusCheckEnabled && !settings.focusCheckEnabled {
             notificationService.cancelFocusChecks()
-        } else if !previousFocusCheckEnabled && settings.focusCheckEnabled && timerState == .running {
-            scheduleFocusChecksIfNeeded()
+        } else if settings.focusCheckEnabled && timerState == .running {
+            if !previousFocusCheckEnabled || previousInterval != settings.focusCheckIntervalMinutes {
+                notificationService.cancelFocusChecks()
+                scheduleFocusChecksIfNeeded()
+            }
+        }
+    }
+
+    private func cleanupStaleNotifications() {
+        if !cachedSettings.focusCheckEnabled {
+            notificationService.cancelFocusChecks()
         }
     }
 
