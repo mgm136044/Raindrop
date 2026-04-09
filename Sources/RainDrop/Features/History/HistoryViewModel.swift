@@ -5,6 +5,7 @@ import Foundation
 final class HistoryViewModel: ObservableObject {
     @Published private(set) var summaries: [DailyFocusSummary] = []
     @Published private(set) var latestError: String?
+    @Published private(set) var dailyBucketCounts: [String: Int] = [:]
 
     private let repository: FocusSessionRepositoryProtocol
     let dateService: DateService
@@ -31,23 +32,6 @@ final class HistoryViewModel: ObservableObject {
         Dictionary(uniqueKeysWithValues: summaries.map { ($0.dateKey, $0.totalSeconds) })
     }
 
-    /// 세션별 goalSeconds 기준으로 일별 양동이 수 계산
-    /// goalSeconds가 nil인 세션(무한 모드)은 양동이 카운트에서 제외
-    var dailyBucketCounts: [String: Int] {
-        var counts: [String: Int] = [:]
-        for summary in summaries {
-            var dayBuckets = 0
-            for session in summary.sessions {
-                guard let goal = session.goalSeconds else { continue }
-                if goal > 0 && session.durationSeconds >= goal {
-                    dayBuckets += 1
-                }
-            }
-            counts[summary.dateKey] = dayBuckets
-        }
-        return counts
-    }
-
     func load() {
         do {
             let sessions = try repository.fetchAll()
@@ -63,10 +47,29 @@ final class HistoryViewModel: ObservableObject {
                 )
             }
             latestError = nil
+            dailyBucketCounts = computeBucketCounts()
         } catch {
             summaries = []
+            dailyBucketCounts = [:]
             latestError = "기록을 불러오지 못했습니다."
         }
+    }
+
+    /// 세션별 goalSeconds 기준으로 일별 양동이 수 계산
+    /// goalSeconds가 nil인 세션(무한 모드)은 양동이 카운트에서 제외
+    private func computeBucketCounts() -> [String: Int] {
+        var counts: [String: Int] = [:]
+        for summary in summaries {
+            var dayBuckets = 0
+            for session in summary.sessions {
+                guard let goal = session.goalSeconds else { continue }
+                if goal > 0 && session.durationSeconds >= goal {
+                    dayBuckets += 1
+                }
+            }
+            counts[summary.dateKey] = dayBuckets
+        }
+        return counts
     }
 
     func timeRangeText(for session: FocusSession) -> String {

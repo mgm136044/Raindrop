@@ -7,6 +7,9 @@ struct SkyBackgroundView: View {
     let isOverflowing: Bool
     var backgroundTheme: BackgroundTheme = .defaultTheme
 
+    @State private var currentTop: Color = AppColors.background
+    @State private var currentBottom: Color = AppColors.background
+
     private var skyTop: Color {
         if isOverflowing {
             return AppColors.skyClearingTop
@@ -50,7 +53,7 @@ struct SkyBackgroundView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [effectiveTop, effectiveBottom],
+                colors: [currentTop, currentBottom],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -62,10 +65,31 @@ struct SkyBackgroundView: View {
                     .allowsHitTesting(false)
             }
         }
-        .animation(.easeInOut(duration: 2.0), value: progress)
+        .animation(.easeInOut(duration: 2.0), value: currentTop)
+        .animation(.easeInOut(duration: 2.0), value: currentBottom)
         .animation(.easeInOut(duration: 1.5), value: isOverflowing)
         .animation(.easeInOut(duration: 1.0), value: isRunning)
         .animation(.easeInOut(duration: 1.5), value: backgroundTheme)
+        .onAppear {
+            currentTop = effectiveTop
+            currentBottom = effectiveBottom
+        }
+        .onChange(of: progress) { _ in
+            currentTop = effectiveTop
+            currentBottom = effectiveBottom
+        }
+        .onChange(of: isRunning) { _ in
+            currentTop = effectiveTop
+            currentBottom = effectiveBottom
+        }
+        .onChange(of: isOverflowing) { _ in
+            currentTop = effectiveTop
+            currentBottom = effectiveBottom
+        }
+        .onChange(of: backgroundTheme) { _ in
+            currentTop = effectiveTop
+            currentBottom = effectiveBottom
+        }
     }
 
     private func blend(_ a: Color, _ b: Color, t: Double) -> Color {
