@@ -41,6 +41,11 @@ struct RainParticleView: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
             Canvas { context, size in
+                let sharedGradient = Gradient(colors: [
+                    dropGradientTop,
+                    dropGradientBottom.opacity(0.8)
+                ])
+
                 for particle in particles {
                     let x = particle.x * size.width
                     let y = particle.y * size.height
@@ -53,15 +58,12 @@ struct RainParticleView: View {
                         height: dropSize * 3
                     )
 
-                    let gradient = Gradient(colors: [
-                        dropGradientTop.opacity(particle.opacity),
-                        dropGradientBottom.opacity(particle.opacity * 0.8)
-                    ])
-
-                    context.fill(
+                    var particleContext = context
+                    particleContext.opacity = particle.opacity
+                    particleContext.fill(
                         Capsule().path(in: rect),
                         with: .linearGradient(
-                            gradient,
+                            sharedGradient,
                             startPoint: CGPoint(x: rect.midX, y: rect.minY),
                             endPoint: CGPoint(x: rect.midX, y: rect.maxY)
                         )

@@ -76,6 +76,7 @@ struct TimerScreen: View {
                     .transition(.opacity)
                     .animation(.easeInOut(duration: 0.4), value: motivationIndex)
                     .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
+                        guard viewModel.isRunning else { return }
                         pickRandomMessage()
                     }
                     .onChange(of: viewModel.isRunning) { _,_ in

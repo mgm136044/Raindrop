@@ -25,6 +25,7 @@ final class TimerViewModel: ObservableObject {
     private let shopViewModel: ShopViewModel
     private let syncService: FirebaseSyncService?
     private let whiteNoiseService: WhiteNoiseService?
+    private var cachedSettings: AppSettings = AppSettings()
     private var sessionStartTime: Date?
     private var activeGoalSeconds: Int = 0
     private var activeInfinityMode: Bool = false
@@ -122,9 +123,9 @@ final class TimerViewModel: ObservableObject {
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
         Task { await syncService?.setFocusing(true, startTime: now) }
-        if settingsRepository.load().whiteNoiseEnabled {
+        if cachedSettings.whiteNoiseEnabled {
             whiteNoiseService?.setup()
-            whiteNoiseService?.setVolume(settingsRepository.load().whiteNoiseVolume)
+            whiteNoiseService?.setVolume(cachedSettings.whiteNoiseVolume)
             whiteNoiseService?.resumeAudio()
         }
     }
@@ -142,7 +143,7 @@ final class TimerViewModel: ObservableObject {
         timerState = .running
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
-        if settingsRepository.load().whiteNoiseEnabled {
+        if cachedSettings.whiteNoiseEnabled {
             whiteNoiseService?.resumeAudio()
         }
     }
@@ -261,7 +262,7 @@ final class TimerViewModel: ObservableObject {
     }
 
     private func scheduleFocusChecksIfNeeded() {
-        let settings = settingsRepository.load()
+        let settings = cachedSettings
         guard settings.focusCheckEnabled else { return }
 
         Task {
@@ -276,6 +277,7 @@ final class TimerViewModel: ObservableObject {
 
     private func loadSettings() {
         let settings = settingsRepository.load()
+        cachedSettings = settings
         sessionGoalSeconds = settings.sessionGoalSeconds
         isInfinityMode = settings.infinityModeEnabled
     }
