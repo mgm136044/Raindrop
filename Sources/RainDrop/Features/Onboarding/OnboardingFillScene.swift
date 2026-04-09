@@ -8,6 +8,7 @@ struct OnboardingFillScene: View {
     @State private var showCoin = false
     @State private var showText = false
     @State private var wobbleAngle: Double = 0
+    @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -87,6 +88,7 @@ struct OnboardingFillScene: View {
             Spacer()
                 .frame(height: 24)
         }
+        .onDisappear { animationTask?.cancel() }
     }
 
     private func startFilling() {
@@ -96,8 +98,9 @@ struct OnboardingFillScene: View {
             progress = 1.0
         }
 
-        Task {
+        animationTask = Task {
             try? await Task.sleep(for: .seconds(3.2))
+            guard !Task.isCancelled else { return }
             isRunning = false
 
             withAnimation(.spring(response: 0.5)) {
@@ -105,6 +108,7 @@ struct OnboardingFillScene: View {
             }
 
             try? await Task.sleep(for: .seconds(1.0))
+            guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.5)) {
                 showText = true
             }

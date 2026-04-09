@@ -5,6 +5,7 @@ struct OnboardingGrowthScene: View {
 
     @State private var currentStage: EnvironmentStage = .barren
     @State private var showText = false
+    @State private var animationTask: Task<Void, Never>?
     private let stages: [EnvironmentStage] = [.barren, .grass, .flowers, .trees, .forest, .lake]
 
     var body: some View {
@@ -48,21 +49,22 @@ struct OnboardingGrowthScene: View {
             Spacer()
                 .frame(height: 24)
         }
-        .onAppear {
-            animateStages()
-        }
+        .onAppear { animateStages() }
+        .onDisappear { animationTask?.cancel() }
     }
 
     private func animateStages() {
-        Task {
+        animationTask = Task {
             for (i, stage) in stages.enumerated() {
                 try? await Task.sleep(for: .seconds(i == 0 ? 0.5 : 0.8))
+                guard !Task.isCancelled else { return }
                 withAnimation(.easeInOut(duration: 0.5)) {
                     currentStage = stage
                 }
             }
 
             try? await Task.sleep(for: .seconds(1.0))
+            guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.5)) {
                 showText = true
             }

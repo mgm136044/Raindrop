@@ -8,6 +8,7 @@ struct OnboardingBucketScene: View {
     @State private var dropY: Double = -0.3
     @State private var showText = false
     @State private var wobbleAngle: Double = 0
+    @State private var animationTask: Task<Void, Never>?
 
     var body: some View {
         VStack(spacing: 24) {
@@ -71,29 +72,32 @@ struct OnboardingBucketScene: View {
             Spacer()
                 .frame(height: 24)
         }
-        .onAppear {
-            startSequence()
-        }
+        .onAppear { startSequence() }
+        .onDisappear { animationTask?.cancel() }
     }
 
     private func startSequence() {
-        Task {
+        animationTask = Task {
             try? await Task.sleep(for: .seconds(0.3))
+            guard !Task.isCancelled else { return }
             phase = 1
 
             try? await Task.sleep(for: .seconds(0.8))
+            guard !Task.isCancelled else { return }
             phase = 2
             withAnimation(.easeIn(duration: 0.8)) {
                 dropY = 0.3
             }
 
             try? await Task.sleep(for: .seconds(1.0))
+            guard !Task.isCancelled else { return }
             phase = 3
             withAnimation(.easeOut(duration: 1.0)) {
                 bucketProgress = 0.35
             }
 
             try? await Task.sleep(for: .seconds(1.2))
+            guard !Task.isCancelled else { return }
             withAnimation(.easeIn(duration: 0.5)) {
                 showText = true
             }

@@ -60,9 +60,7 @@ struct RainDropApp: App {
                 OnboardingView {
                     container.settingsViewModel.settings.hasSeenOnboarding = true
                     container.settingsViewModel.save()
-                    if container.settingsViewModel.latestError == nil {
-                        showOnboarding = false
-                    }
+                    showOnboarding = false
                 }
             }
             .onAppear {
