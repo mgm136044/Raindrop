@@ -112,6 +112,12 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         focusCheckTimeoutWork = nil
     }
 
+    /// pending 알림만 제거, 이미 표시된 알림의 타임아웃은 보존
+    func cancelPendingFocusChecks() {
+        let ids = (1...20).map { "focusCheck-\($0)" }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+    }
+
     /// 배너 알림이 가능한 상태인지 확인
     func checkBannerEnabled() async -> Bool {
         let settings = await UNUserNotificationCenter.current().notificationSettings()

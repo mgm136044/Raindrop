@@ -288,16 +288,16 @@ final class TimerViewModel: ObservableObject {
             notificationService.cancelFocusChecks()
         } else if settings.focusCheckEnabled && timerState == .running {
             if !previousFocusCheckEnabled || previousInterval != settings.focusCheckIntervalMinutes {
-                notificationService.cancelFocusChecks()
+                // pending 알림만 교체, 이미 표시된 알림의 타임아웃은 보존
+                notificationService.cancelPendingFocusChecks()
                 scheduleFocusChecksIfNeeded()
             }
         }
     }
 
     private func cleanupStaleNotifications() {
-        if !cachedSettings.focusCheckEnabled {
-            notificationService.cancelFocusChecks()
-        }
+        // 앱 시작 시 항상 이전 세션의 잔여 알림 제거 (크래시/강제종료 대비)
+        notificationService.cancelFocusChecks()
     }
 
     private func loadTodayTotal() {
