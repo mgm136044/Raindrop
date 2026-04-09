@@ -54,6 +54,7 @@ struct OnboardingGrowthScene: View {
     }
 
     private func animateStages() {
+        animationTask?.cancel()
         animationTask = Task {
             for (i, stage) in stages.enumerated() {
                 try? await Task.sleep(for: .seconds(i == 0 ? 0.5 : 0.8))

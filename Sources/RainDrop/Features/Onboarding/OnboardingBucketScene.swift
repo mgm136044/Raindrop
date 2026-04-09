@@ -77,6 +77,7 @@ struct OnboardingBucketScene: View {
     }
 
     private func startSequence() {
+        animationTask?.cancel()
         animationTask = Task {
             try? await Task.sleep(for: .seconds(0.3))
             guard !Task.isCancelled else { return }
