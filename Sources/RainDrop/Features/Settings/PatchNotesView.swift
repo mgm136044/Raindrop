@@ -6,10 +6,14 @@ private struct PatchNote {
     let changes: [String]
 }
 
-struct PatchNotesView: View {
-    @Environment(\.dismiss) private var dismiss
+// MARK: - Patch notes data (shared)
 
-    private let notes: [PatchNote] = [
+private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.5.0", date: "2026.04.09", changes: [
+            "설정 화면 탭 분할 — 집중/환경/성장/기타 4개 탭으로 스크롤 제거",
+            "온보딩 다시보기 수정 (중첩 시트 문제 해결)",
+            "패치노트 오버레이 표시 방식 개선",
+        ]),
         PatchNote(version: "2.4.1", date: "2026.04.09", changes: [
             "0초 세션 drain 애니메이션 버그 수정",
             "집중 시간 기록 정밀도 개선 (반올림 적용)",
@@ -125,55 +129,15 @@ struct PatchNotesView: View {
             "스티커 꾸미기 상점",
             "Homebrew 배포 지원",
         ]),
-    ]
+]
+
+struct PatchNotesView: View {
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 0) {
             header
-
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    ForEach(notes, id: \.version) { note in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack(alignment: .firstTextBaseline) {
-                                Text("v\(note.version)")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundStyle(AppColors.primaryText)
-
-                                Text(note.date)
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(.secondary)
-
-                                if note.version == AppConstants.appVersion {
-                                    Text("현재 버전")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 2)
-                                        .background(AppColors.accentBlue)
-                                        .clipShape(Capsule())
-                                }
-                            }
-
-                            ForEach(note.changes, id: \.self) { change in
-                                HStack(alignment: .top, spacing: 8) {
-                                    Text("·")
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundStyle(AppColors.accentBlue)
-                                    Text(change)
-                                        .font(.system(size: 13))
-                                        .foregroundStyle(AppColors.subtitleText)
-                                }
-                            }
-                        }
-                        .padding(16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(AppColors.panelBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                }
-                .padding(20)
-            }
+            PatchNotesContentView()
         }
         .frame(minWidth: 480, minHeight: 500)
     }
@@ -193,5 +157,61 @@ struct PatchNotesView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .glassEffect(.regular)
+    }
+}
+
+// MARK: - Embeddable content (no @Environment(\.dismiss) — overlay 사용 가능)
+
+struct PatchNotesEmbeddedView: View {
+    var body: some View {
+        PatchNotesContentView()
+    }
+}
+
+private struct PatchNotesContentView: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                ForEach(patchNotes, id: \.version) { note in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text("v\(note.version)")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(AppColors.primaryText)
+
+                            Text(note.date)
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
+
+                            if note.version == AppConstants.appVersion {
+                                Text("현재 버전")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 2)
+                                    .background(AppColors.accentBlue)
+                                    .clipShape(Capsule())
+                            }
+                        }
+
+                        ForEach(note.changes, id: \.self) { change in
+                            HStack(alignment: .top, spacing: 8) {
+                                Text("·")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(AppColors.accentBlue)
+                                Text(change)
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(AppColors.subtitleText)
+                            }
+                        }
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(AppColors.panelBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+            }
+            .padding(20)
+        }
     }
 }
