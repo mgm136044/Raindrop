@@ -19,7 +19,10 @@ final class AppContainer: ObservableObject {
     )
 
     // Shared view models
-    lazy var shopViewModel: ShopViewModel = ShopViewModel(repository: shopRepository)
+    lazy var shopViewModel: ShopViewModel = ShopViewModel(
+        repository: shopRepository,
+        isDeveloperMode: settingsRepository.load().developerMode
+    )
 
     lazy var timerViewModel: TimerViewModel = TimerViewModel(
         timerService: TimerService(),

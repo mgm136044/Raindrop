@@ -43,7 +43,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         if notification.request.identifier.hasPrefix("focusCheck-") {
             Task { @MainActor in
                 self.focusCheckTimeoutWork?.cancel()
-                let work = DispatchWorkItem {
+                let work = DispatchWorkItem { [weak self] in
+                    guard self?.focusCheckTimeoutWork != nil else { return }  // already cancelled
                     NotificationCenter.default.post(name: .focusCheckTimedOut, object: nil)
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: work)

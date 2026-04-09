@@ -174,8 +174,8 @@ private struct DeepOceanParticleView: View {
                     x: Double.random(in: 0.05...0.95),
                     y: 1.05,
                     speed: Double.random(in: 0.001...0.004),
-                    radius: Double.random(in: 2.0...5.0),
-                    opacity: Double.random(in: 0.06...0.18),
+                    radius: Double.random(in: 3.0...8.0),
+                    opacity: Double.random(in: 0.15...0.35),
                     drift: Double.random(in: -0.0004...0.0004)
                 )
             }

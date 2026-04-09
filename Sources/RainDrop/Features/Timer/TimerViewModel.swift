@@ -116,6 +116,7 @@ final class TimerViewModel: ObservableObject {
         currentProgress = 0
         cycleCount = 0
         isCycleDraining = false
+        lastCycleCount = 0
         activeGoalSeconds = sessionGoalSeconds
         activeInfinityMode = isInfinityMode
         let now = Date()
@@ -166,8 +167,6 @@ final class TimerViewModel: ObservableObject {
             elapsedSeconds = 0
             cycleCount = 0
             isCycleDraining = false
-            isDraining = true
-            triggerOverflow()
         }
 
         guard let startTime = sessionStartTime, elapsed > 0 else { return }
@@ -188,7 +187,7 @@ final class TimerViewModel: ObservableObject {
                 shopViewModel.earnBucket()
             }
 
-            shopViewModel.recordFocusMinutes(elapsed / 60, dateKey: session.dateKey)
+            shopViewModel.recordFocusMinutes((elapsed + 30) / 60, dateKey: session.dateKey)
             loadTodayTotal()
 
             Task {
@@ -198,6 +197,9 @@ final class TimerViewModel: ObservableObject {
         } catch {
             latestError = "기록 저장에 실패했습니다."
         }
+
+        isDraining = true
+        triggerOverflow()
     }
 
     func finishDraining() {

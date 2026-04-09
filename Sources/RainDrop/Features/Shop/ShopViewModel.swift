@@ -8,9 +8,10 @@ final class ShopViewModel: ObservableObject {
 
     private let repository: ShopRepositoryProtocol
 
-    init(repository: ShopRepositoryProtocol) {
+    init(repository: ShopRepositoryProtocol, isDeveloperMode: Bool = false) {
         self.repository = repository
         self.shopState = repository.load()
+        self.isDeveloperMode = isDeveloperMode
     }
 
     var balance: Int { shopState.balance }

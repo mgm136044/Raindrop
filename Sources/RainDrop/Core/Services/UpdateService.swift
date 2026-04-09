@@ -13,8 +13,8 @@ final class UpdateService: ObservableObject {
 
     private var hasChecked = false
 
-    func checkForUpdate() async {
-        guard !hasChecked else { return }
+    func checkForUpdate(force: Bool = false) async {
+        guard force || !hasChecked else { return }
         hasChecked = true
 
         guard let url = URL(string: AppConstants.githubReleasesAPI) else { return }
