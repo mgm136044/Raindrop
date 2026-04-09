@@ -7,8 +7,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         false
     }
 
+    var onTerminate: (() -> Void)?
+
     func applicationWillTerminate(_ notification: Notification) {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        onTerminate?()
     }
 }
 
@@ -36,7 +39,7 @@ struct RainDropApp: App {
                 authViewModel: container.authViewModel,
                 socialViewModel: container.socialViewModel,
                 friendsViewModel: container.friendsViewModel,
-                whiteNoiseService: container.whiteNoiseService
+                backgroundSoundService: container.backgroundSoundService
             )
             .frame(width: 1040, height: 700)
             .overlay {
@@ -68,6 +71,10 @@ struct RainDropApp: App {
                     showOnboarding = true
                 }
                 container.shopViewModel.isDeveloperMode = container.settingsViewModel.settings.developerMode
+                let soundService = container.backgroundSoundService
+                appDelegate.onTerminate = {
+                    soundService.teardown()
+                }
             }
             .task {
                 await container.updateService.checkForUpdate()

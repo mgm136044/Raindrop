@@ -9,6 +9,11 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.6.0", date: "2026.04.10", changes: [
+            "배경 사운드 기능 전면 개편 — 10종 사운드 앱 내 재생 (빗소리, 바다, 시냇물, 모닥불 등)",
+            "WKWebView 제거 — 인터넷 없이 사운드 재생 가능",
+            "무한 모드 양동이 코인이 히스토리에 반영되지 않는 버그 수정",
+        ]),
         PatchNote(version: "2.5.3", date: "2026.04.09", changes: [
             "온보딩 다시 보기 동작하지 않는 버그 수정",
         ]),

@@ -55,16 +55,20 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    /// 세션별 goalSeconds 기준으로 일별 양동이 수 계산
-    /// goalSeconds가 nil인 세션(무한 모드)은 양동이 카운트에서 제외
+    /// 세션별 양동이 수 계산 (일반 모드: goal 달성 여부, 무한 모드: bucketsEarned)
     private func computeBucketCounts() -> [String: Int] {
         var counts: [String: Int] = [:]
         for summary in summaries {
             var dayBuckets = 0
             for session in summary.sessions {
-                guard let goal = session.goalSeconds else { continue }
-                if goal > 0 && session.durationSeconds >= goal {
-                    dayBuckets += 1
+                if let goal = session.goalSeconds {
+                    // 일반 모드: 목표 달성 시 1개
+                    if goal > 0 && session.durationSeconds >= goal {
+                        dayBuckets += 1
+                    }
+                } else {
+                    // 무한 모드: 순환 횟수만큼
+                    dayBuckets += session.bucketsEarned
                 }
             }
             counts[summary.dateKey] = dayBuckets

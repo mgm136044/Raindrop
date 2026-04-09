@@ -8,19 +8,19 @@ struct TimerScreen: View {
     var authViewModel: AuthViewModel?
     var socialViewModel: SocialViewModel?
     var friendsViewModel: FriendsViewModel?
-    var whiteNoiseService: WhiteNoiseService?
+    var backgroundSoundService: BackgroundSoundService?
     @State private var isShowingHistory = false
     @State private var isShowingSettings = false
     @State private var isShowingShop = false
     @State private var isShowingSocial = false
-    @State private var isShowingWhiteNoise = false
+    @State private var isShowingBackgroundSound = false
     @State private var isShowingStickerEditor = false
     @State private var isShowingOnboardingReplay = false
     @State private var motivationIndex = 0
 
     private var isAnySheetPresented: Bool {
         isShowingHistory || isShowingSettings || isShowingShop ||
-        isShowingSocial || isShowingWhiteNoise || isShowingStickerEditor
+        isShowingSocial || isShowingBackgroundSound || isShowingStickerEditor
     }
 
     private static let runningMessages = [
@@ -189,11 +189,11 @@ struct TimerScreen: View {
                 useCustomWaterColor: settingsViewModel.settings.useCustomWaterColor
             )
         }
-        .sheet(isPresented: $isShowingWhiteNoise) {
-            if let service = whiteNoiseService {
-                WhiteNoiseScreen(
+        .sheet(isPresented: $isShowingBackgroundSound) {
+            if let service = backgroundSoundService {
+                BackgroundSoundScreen(
                     viewModel: settingsViewModel,
-                    whiteNoiseService: service
+                    backgroundSoundService: service
                 )
             }
         }
@@ -236,8 +236,8 @@ struct TimerScreen: View {
                 headerButton(icon: "bag") { isShowingShop = true }
                 headerButton(icon: "gearshape") { isShowingSettings = true }
 
-                if whiteNoiseService != nil {
-                    headerButton(icon: "cloud.rain") { isShowingWhiteNoise = true }
+                if backgroundSoundService != nil {
+                    headerButton(icon: "cloud.rain") { isShowingBackgroundSound = true }
                 }
 
                 if !shopViewModel.purchasedStickerIDs.isEmpty {

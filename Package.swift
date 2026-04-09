@@ -20,7 +20,10 @@ let package = Package(
                 .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ],
-            path: "Sources/RainDrop"
+            path: "Sources/RainDrop",
+            resources: [
+                .copy("Resources/BackgroundSounds"),
+            ]
         ),
     ]
 )

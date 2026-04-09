@@ -93,6 +93,15 @@ echo "[3/5] 바이너리 배치 중..."
 pkill -x RainDrop 2>/dev/null || true
 sleep 1
 cp "$SCRIPT_DIR/.build/release/RainDrop" "$APP_PATH/Contents/MacOS/RainDrop"
+
+# SPM 리소스 번들 복사
+BUNDLE_SRC="$SCRIPT_DIR/.build/arm64-apple-macosx/release/RainDrop_RainDrop.bundle"
+BUNDLE_DST="$APP_PATH/Contents/Resources/RainDrop_RainDrop.bundle"
+if [ -d "$BUNDLE_SRC" ]; then
+    rm -rf "$BUNDLE_DST"
+    cp -R "$BUNDLE_SRC" "$BUNDLE_DST"
+    echo "  ✓ 리소스 번들 복사 완료"
+fi
 echo "  ✓ 바이너리 복사 완료"
 
 # Step 4: 코드 서명

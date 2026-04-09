@@ -1,9 +1,12 @@
 import SwiftUI
 
-struct WhiteNoiseScreen: View {
+struct BackgroundSoundScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
-    @ObservedObject var whiteNoiseService: WhiteNoiseService
+    @ObservedObject var backgroundSoundService: BackgroundSoundService
     @Environment(\.dismiss) private var dismiss
+
+    /// 시트에서 미리듣기로 재생 시작했는지 추적 (시트 닫힐 때 정지용)
+    @State private var startedPreview = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -11,62 +14,76 @@ struct WhiteNoiseScreen: View {
 
             Form {
                 Section {
-                    Toggle("빗소리 백색소음", isOn: $viewModel.settings.whiteNoiseEnabled)
-                        .onChange(of: viewModel.settings.whiteNoiseEnabled) { _,enabled in
+                    Toggle("배경 사운드", isOn: $viewModel.settings.whiteNoiseEnabled)
+                        .onChange(of: viewModel.settings.whiteNoiseEnabled) { _, enabled in
                             viewModel.save()
-                            if !enabled {
-                                whiteNoiseService.teardown()
+                            if enabled {
+                                backgroundSoundService.play(
+                                    sound: viewModel.settings.backgroundSound,
+                                    volume: viewModel.settings.whiteNoiseVolume
+                                )
+                                startedPreview = true
                             } else {
-                                whiteNoiseService.setup()
+                                backgroundSoundService.teardown()
+                                startedPreview = false
                             }
                         }
+                }
 
-                    if viewModel.settings.whiteNoiseEnabled {
-                        HStack {
-                            Text("볼륨")
-                            Slider(value: $viewModel.settings.whiteNoiseVolume, in: 0...1, step: 0.1)
-                                .onChange(of: viewModel.settings.whiteNoiseVolume) { _,_ in
-                                    viewModel.save()
-                                    whiteNoiseService.setVolume(viewModel.settings.whiteNoiseVolume)
+                if viewModel.settings.whiteNoiseEnabled {
+                    Section("소리 선택") {
+                        ForEach(BackgroundSound.allCases, id: \.self) { sound in
+                            Button {
+                                viewModel.settings.backgroundSound = sound
+                                viewModel.save()
+                                backgroundSoundService.play(
+                                    sound: sound,
+                                    volume: viewModel.settings.whiteNoiseVolume
+                                )
+                                startedPreview = true
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Text(sound.emoji)
+                                        .font(.system(size: 16))
+                                    Text(sound.displayName)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(AppColors.primaryText)
+                                    Spacer()
+                                    if viewModel.settings.backgroundSound == sound {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(AppColors.accent)
+                                            .font(.system(size: 13, weight: .semibold))
+                                    }
                                 }
+                            }
+                            .buttonStyle(.plain)
                         }
+                    }
 
-                        if whiteNoiseService.webView != nil {
-                            RainySoundWebView(
-                                whiteNoiseService: whiteNoiseService,
-                                webViewID: whiteNoiseService.webViewID
-                            )
-                            .frame(height: 120)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
-                            )
-                            .id(whiteNoiseService.webViewID)
-                        } else {
-                            ProgressView("로딩 중...")
-                                .frame(height: 120)
-                        }
-
-                        Text("위 플레이어에서 재생 버튼을 눌러주세요. 인터넷 연결이 필요합니다.\n플레이어가 보이지 않으면 우클릭 후 '페이지 다시 로드'를 선택하세요.")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
+                    Section("볼륨") {
+                        Slider(value: $viewModel.settings.whiteNoiseVolume, in: 0...1, step: 0.1)
+                            .onChange(of: viewModel.settings.whiteNoiseVolume) { _, _ in
+                                viewModel.save()
+                                backgroundSoundService.setVolume(viewModel.settings.whiteNoiseVolume)
+                            }
                     }
                 }
             }
             .formStyle(.grouped)
         }
-        .frame(minWidth: 420, minHeight: 350)
-        .onAppear {
-            if viewModel.settings.whiteNoiseEnabled && whiteNoiseService.webView == nil {
-                whiteNoiseService.setup()
+        .frame(minWidth: 420, minHeight: 400)
+        .onDisappear {
+            // 타이머 미실행 상태에서 미리듣기로 재생했으면 시트 닫힐 때 정지
+            if startedPreview && !backgroundSoundService.isPlaying { return }
+            if startedPreview {
+                backgroundSoundService.teardown()
             }
         }
     }
 
     private var header: some View {
         ZStack {
-            Text("백색소음")
+            Text("배경 사운드")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(AppColors.primaryText)
 

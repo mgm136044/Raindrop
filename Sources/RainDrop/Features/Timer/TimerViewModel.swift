@@ -24,7 +24,7 @@ final class TimerViewModel: ObservableObject {
     private let notificationService: NotificationService
     private let shopViewModel: ShopViewModel
     private let syncService: FirebaseSyncService?
-    private let whiteNoiseService: WhiteNoiseService?
+    private let backgroundSoundService: BackgroundSoundService?
     private var cachedSettings: AppSettings = AppSettings()
     private var sessionStartTime: Date?
     private var activeGoalSeconds: Int = 0
@@ -39,7 +39,7 @@ final class TimerViewModel: ObservableObject {
         notificationService: NotificationService,
         shopViewModel: ShopViewModel,
         syncService: FirebaseSyncService? = nil,
-        whiteNoiseService: WhiteNoiseService? = nil
+        backgroundSoundService: BackgroundSoundService? = nil
     ) {
         self.timerService = timerService
         self.repository = repository
@@ -48,7 +48,7 @@ final class TimerViewModel: ObservableObject {
         self.notificationService = notificationService
         self.shopViewModel = shopViewModel
         self.syncService = syncService
-        self.whiteNoiseService = whiteNoiseService
+        self.backgroundSoundService = backgroundSoundService
         loadSettings()
         loadTodayTotal()
         cleanupStaleNotifications()
@@ -126,9 +126,10 @@ final class TimerViewModel: ObservableObject {
         scheduleFocusChecksIfNeeded()
         Task { await syncService?.setFocusing(true, startTime: now) }
         if cachedSettings.whiteNoiseEnabled {
-            whiteNoiseService?.setup()
-            whiteNoiseService?.setVolume(cachedSettings.whiteNoiseVolume)
-            whiteNoiseService?.resumeAudio()
+            backgroundSoundService?.play(
+                sound: cachedSettings.backgroundSound,
+                volume: cachedSettings.whiteNoiseVolume
+            )
         }
     }
 
@@ -137,7 +138,7 @@ final class TimerViewModel: ObservableObject {
         timerService.stop()
         timerState = .paused
         notificationService.cancelFocusChecks()
-        whiteNoiseService?.pauseAudio()
+        backgroundSoundService?.pauseAudio()
     }
 
     func resume() {
@@ -146,7 +147,7 @@ final class TimerViewModel: ObservableObject {
         startTimerTicks()
         scheduleFocusChecksIfNeeded()
         if cachedSettings.whiteNoiseEnabled {
-            whiteNoiseService?.resumeAudio()
+            backgroundSoundService?.resumeAudio()
         }
     }
 
@@ -154,7 +155,7 @@ final class TimerViewModel: ObservableObject {
         guard canStop else { return }
         timerService.stop()
         notificationService.cancelFocusChecks()
-        whiteNoiseService?.pauseAudio()
+        backgroundSoundService?.teardown()
 
         let endTime = Date()
         let elapsed = elapsedSeconds
@@ -171,12 +172,20 @@ final class TimerViewModel: ObservableObject {
 
         guard let startTime = sessionStartTime, elapsed > 0 else { return }
 
+        let earned: Int
+        if activeInfinityMode {
+            earned = cycleCount
+        } else {
+            earned = elapsed >= goalSeconds ? 1 : 0
+        }
+
         let session = FocusSession(
             startTime: startTime,
             endTime: endTime,
             durationSeconds: elapsed,
             dateKey: dateService.dateKey(for: startTime),
-            goalSeconds: activeInfinityMode ? nil : goalSeconds
+            goalSeconds: activeInfinityMode ? nil : goalSeconds,
+            bucketsEarned: earned
         )
 
         do {
