@@ -4,7 +4,7 @@ struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
     var shopViewModel: ShopViewModel?
-    @Environment(\.overlayDismiss) private var overlayDismiss
+    @Environment(\.dismiss) private var dismiss
     @State private var showOnboarding = false
     @State private var showPatchNotes = false
     @State private var devCode = ""
@@ -219,7 +219,7 @@ struct SettingsScreen: View {
 
             HStack {
                 Spacer()
-                Button("완료") { overlayDismiss?() }
+                Button("완료") { dismiss() }
                     .buttonStyle(.glass)
             }
         }

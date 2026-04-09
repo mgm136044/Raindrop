@@ -4,7 +4,7 @@ struct FriendSearchScreen: View {
     @ObservedObject var viewModel: FriendsViewModel
     @State private var searchText = ""
     @State private var searchMode: SearchMode = .nickname
-    @Environment(\.overlayDismiss) private var overlayDismiss
+    @Environment(\.dismiss) private var dismiss
 
     enum SearchMode: String, CaseIterable {
         case nickname = "닉네임"
@@ -17,7 +17,7 @@ struct FriendSearchScreen: View {
                 Text("친구 찾기")
                     .font(.system(size: 20, weight: .bold))
                 Spacer()
-                Button("닫기") { overlayDismiss?() }
+                Button("닫기") { dismiss() }
                     .buttonStyle(.glass)
             }
 

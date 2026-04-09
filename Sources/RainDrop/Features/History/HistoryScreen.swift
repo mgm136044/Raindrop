@@ -3,7 +3,7 @@ import SwiftUI
 struct HistoryScreen: View {
     @ObservedObject var viewModel: HistoryViewModel
     var skin: BucketSkin = .wood
-    @Environment(\.overlayDismiss) private var overlayDismiss
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: HistoryTab = .monthly
 
     var body: some View {
@@ -33,7 +33,7 @@ struct HistoryScreen: View {
 
                 HStack {
                     Spacer()
-                    Button("완료") { overlayDismiss?() }
+                    Button("완료") { dismiss() }
                         .buttonStyle(.glass)
                 }
             }
