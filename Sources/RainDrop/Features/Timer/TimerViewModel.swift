@@ -276,10 +276,18 @@ final class TimerViewModel: ObservableObject {
     }
 
     private func loadSettings() {
+        let previousFocusCheckEnabled = cachedSettings.focusCheckEnabled
         let settings = settingsRepository.load()
         cachedSettings = settings
         sessionGoalSeconds = settings.sessionGoalSeconds
         isInfinityMode = settings.infinityModeEnabled
+
+        // 알림 토글 변경 시 처리
+        if previousFocusCheckEnabled && !settings.focusCheckEnabled {
+            notificationService.cancelFocusChecks()
+        } else if !previousFocusCheckEnabled && settings.focusCheckEnabled && timerState == .running {
+            scheduleFocusChecksIfNeeded()
+        }
     }
 
     private func loadTodayTotal() {
