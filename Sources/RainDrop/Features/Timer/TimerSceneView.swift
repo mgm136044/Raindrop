@@ -10,11 +10,16 @@ struct TimerSceneView: View {
     var environmentStage: EnvironmentStage = .barren
     var weatherCondition: WeatherCondition = .cloudy
     var waterColorOverride: (top: Color, bottom: Color)?
+    var reduceAnimations: Bool = false
 
     @State private var displayProgress: Double = 0
 
     private var intensity: Double {
         viewModel.isRunning ? viewModel.currentProgress : 0
+    }
+
+    private var particlesActive: Bool {
+        viewModel.isRunning && !reduceAnimations
     }
 
     var body: some View {
@@ -31,12 +36,12 @@ struct TimerSceneView: View {
 
             // Cloud + Rain layer
             ZStack(alignment: .top) {
-                CloudView(isVisible: viewModel.isRunning, intensity: intensity)
+                CloudView(isVisible: particlesActive, intensity: intensity)
                     .frame(width: 260, height: 70)
                     .offset(y: -50)
 
                 RainParticleView(
-                    isAnimating: viewModel.isRunning,
+                    isAnimating: particlesActive,
                     dropGradientTop: dropGradientTop,
                     dropGradientBottom: dropGradientBottom,
                     intensity: max(intensity, 0.15)
@@ -59,7 +64,7 @@ struct TimerSceneView: View {
             .padding(.top, 56)
 
             // Overflow celebration
-            OverflowAnimationView(isActive: viewModel.isOverflowing)
+            OverflowAnimationView(isActive: viewModel.isOverflowing && !reduceAnimations)
                 .frame(width: 340, height: 320)
                 .padding(.top, 56)
                 .allowsHitTesting(false)
@@ -68,7 +73,7 @@ struct TimerSceneView: View {
             WaterSplashView(
                 waterLevel: displayProgress,
                 intensity: intensity,
-                isActive: viewModel.isRunning && displayProgress > 0.05,
+                isActive: particlesActive && displayProgress > 0.05,
                 splashColor: dropGradientTop
             )
             .frame(width: 340, height: 320)

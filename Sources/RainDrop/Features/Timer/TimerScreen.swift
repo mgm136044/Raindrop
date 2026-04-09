@@ -17,6 +17,11 @@ struct TimerScreen: View {
     @State private var isShowingStickerEditor = false
     @State private var motivationIndex = 0
 
+    private var isAnySheetPresented: Bool {
+        isShowingHistory || isShowingSettings || isShowingShop ||
+        isShowingSocial || isShowingWhiteNoise || isShowingStickerEditor
+    }
+
     private static let runningMessages = [
         "물방울이 떨어지는 중",
         "좋아요, 집중하고 있어요!",
@@ -55,7 +60,8 @@ struct TimerScreen: View {
                 placements: shopViewModel.shopState.placements,
                 environmentStage: shopViewModel.currentEnvironmentStage,
                 weatherCondition: shopViewModel.currentWeather,
-                waterColorOverride: effectiveWaterColorOverride
+                waterColorOverride: effectiveWaterColorOverride,
+                reduceAnimations: isAnySheetPresented
             )
 
             // Layer 2: Header overlay — 상단
