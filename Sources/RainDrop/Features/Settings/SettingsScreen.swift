@@ -198,7 +198,7 @@ struct SettingsScreen: View {
                     }
                 }
             }
-            .formStyle(.grouped)
+            .formStyle(.automatic)
             .sheet(isPresented: $showOnboarding) {
                 OnboardingView {
                     showOnboarding = false

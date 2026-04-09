@@ -112,7 +112,7 @@ struct SkyBackgroundView: View {
 
 private struct DeepOceanParticleView: View {
     @State private var particles: [OceanBubble] = []
-    @State private var tick: Int = 0
+    @State private var bubbleTimer: Timer?
 
     private let bubbleCount = 15
 
@@ -140,6 +140,10 @@ private struct DeepOceanParticleView: View {
             initBubbles()
             startTimer()
         }
+        .onDisappear {
+            bubbleTimer?.invalidate()
+            bubbleTimer = nil
+        }
     }
 
     private func initBubbles() {
@@ -156,14 +160,18 @@ private struct DeepOceanParticleView: View {
     }
 
     private func startTimer() {
-        Timer.scheduledTimer(withTimeInterval: 1.0 / 15.0, repeats: true) { _ in
+        bubbleTimer?.invalidate()
+        let timer = Timer(timeInterval: 1.0 / 15.0, repeats: true) { _ in
             Task { @MainActor in
                 updateBubbles()
             }
         }
+        RunLoop.main.add(timer, forMode: .common)
+        bubbleTimer = timer
     }
 
     private func updateBubbles() {
+        guard bubbleTimer != nil else { return }
         var updated = particles
         for i in updated.indices {
             updated[i].y -= updated[i].speed
