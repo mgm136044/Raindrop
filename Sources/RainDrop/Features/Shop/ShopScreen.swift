@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ShopScreen: View {
     @ObservedObject var viewModel: ShopViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
     @State private var selectedCategory: String
 
     init(viewModel: ShopViewModel) {
@@ -27,7 +27,7 @@ struct ShopScreen: View {
 
             HStack {
                 Spacer()
-                Button("완료") { dismiss() }
+                Button("완료") { overlayDismiss?() }
                     .buttonStyle(.glass)
             }
         }

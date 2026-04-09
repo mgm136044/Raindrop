@@ -1,5 +1,20 @@
 import SwiftUI
 
+// MARK: - Overlay Dismiss Environment
+
+private struct OverlayDismissKey: EnvironmentKey {
+    nonisolated(unsafe) static let defaultValue: (@Sendable () -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var overlayDismiss: (@Sendable () -> Void)? {
+        get { self[OverlayDismissKey.self] }
+        set { self[OverlayDismissKey.self] = newValue }
+    }
+}
+
+// MARK: - Overlay Modal Modifier
+
 extension View {
     func overlayModal<Content: View>(
         isPresented: Binding<Bool>,
@@ -15,12 +30,16 @@ extension View {
                         }
 
                     content()
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .environment(\.overlayDismiss, { isPresented.wrappedValue = false })
                         .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
                 }
-                .transition(.opacity)
+                .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                .onKeyPress(.escape) {
+                    isPresented.wrappedValue = false
+                    return .handled
+                }
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isPresented.wrappedValue)
+        .animation(.spring(duration: 0.25, bounce: 0.1), value: isPresented.wrappedValue)
     }
 }

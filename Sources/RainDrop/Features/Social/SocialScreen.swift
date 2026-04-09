@@ -7,7 +7,7 @@ struct SocialScreen: View {
     @State private var isShowingFriendSearch = false
     @State private var isShowingFriendRequests = false
     @State private var rankingTab: RankingTab = .daily
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
 
     enum RankingTab: String, CaseIterable {
         case daily = "오늘"
@@ -101,7 +101,7 @@ struct SocialScreen: View {
                 }
             }
 
-            Button("닫기") { dismiss() }
+            Button("닫기") { overlayDismiss?() }
                 .buttonStyle(.glass)
         }
         .padding(16)

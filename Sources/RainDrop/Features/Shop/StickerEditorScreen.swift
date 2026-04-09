@@ -4,7 +4,7 @@ struct StickerEditorScreen: View {
     @ObservedObject var shopViewModel: ShopViewModel
     let skin: BucketSkin
     let useCustomWaterColor: Bool
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,7 +39,7 @@ struct StickerEditorScreen: View {
 
             HStack {
                 Spacer()
-                Button("완료") { dismiss() }
+                Button("완료") { overlayDismiss?() }
                     .buttonStyle(.glass)
             }
         }

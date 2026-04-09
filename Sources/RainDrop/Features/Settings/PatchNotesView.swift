@@ -7,7 +7,7 @@ private struct PatchNote {
 }
 
 struct PatchNotesView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
 
     private let notes: [PatchNote] = [
         PatchNote(version: "2.4.1", date: "2026.04.09", changes: [
@@ -186,7 +186,7 @@ struct PatchNotesView: View {
 
             HStack {
                 Spacer()
-                Button("닫기") { dismiss() }
+                Button("닫기") { overlayDismiss?() }
                     .buttonStyle(.glass)
             }
         }

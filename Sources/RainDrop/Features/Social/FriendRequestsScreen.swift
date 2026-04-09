@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FriendRequestsScreen: View {
     @ObservedObject var viewModel: FriendsViewModel
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
 
     var body: some View {
         VStack(spacing: 16) {
@@ -10,7 +10,7 @@ struct FriendRequestsScreen: View {
                 Text("친구 요청")
                     .font(.system(size: 20, weight: .bold))
                 Spacer()
-                Button("닫기") { dismiss() }
+                Button("닫기") { overlayDismiss?() }
                     .buttonStyle(.glass)
             }
 

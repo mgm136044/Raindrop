@@ -3,7 +3,7 @@ import SwiftUI
 struct WhiteNoiseScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var whiteNoiseService: WhiteNoiseService
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.overlayDismiss) private var overlayDismiss
 
     var body: some View {
         VStack(spacing: 0) {
@@ -72,7 +72,7 @@ struct WhiteNoiseScreen: View {
 
             HStack {
                 Spacer()
-                Button("완료") { dismiss() }
+                Button("완료") { overlayDismiss?() }
                     .buttonStyle(.glass)
             }
         }
