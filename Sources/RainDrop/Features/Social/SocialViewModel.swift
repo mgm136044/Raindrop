@@ -16,10 +16,6 @@ final class SocialViewModel: ObservableObject {
         self.authViewModel = authViewModel
     }
 
-    deinit {
-        listeners.forEach { $0.remove() }
-    }
-
     var myUID: String? { authViewModel.currentUser?.id }
 
     var focusingFriends: [UserProfile] {

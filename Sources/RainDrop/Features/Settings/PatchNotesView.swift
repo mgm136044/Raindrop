@@ -10,6 +10,14 @@ struct PatchNotesView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let notes: [PatchNote] = [
+        PatchNote(version: "2.4.1", date: "2026.04.09", changes: [
+            "0초 세션 drain 애니메이션 버그 수정",
+            "집중 시간 기록 정밀도 개선 (반올림 적용)",
+            "개발자 모드 앱 시작 시 즉시 동기화",
+            "집중 확인 알림 타이밍 안정성 향상",
+            "업데이트 수동 재확인 지원",
+            "거품 파티클 일관성 수정",
+        ]),
         PatchNote(version: "2.4.0", date: "2026.04.09", changes: [
             "성능 최적화 — 파도 렌더링 80% 가속 (sin 룩업 테이블)",
             "설정 디스크 읽기 캐싱 (세션당 5~7회 → 0회)",

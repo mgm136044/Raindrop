@@ -18,9 +18,6 @@ final class FriendsViewModel: ObservableObject {
         self.authViewModel = authViewModel
     }
 
-    deinit {
-        requestListener?.remove()
-    }
 
     var myUID: String? { authViewModel.currentUser?.id }
 
