@@ -44,7 +44,7 @@ struct OnboardingBucketScene: View {
             .frame(height: 200)
             .contentShape(Rectangle())
             .onTapGesture {
-                wobbleAngle = 6
+                wobbleAngle = wobbleAngle <= 0 ? 6 : -6
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     wobbleAngle = 0
                 }

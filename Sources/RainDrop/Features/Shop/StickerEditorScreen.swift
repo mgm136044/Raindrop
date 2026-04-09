@@ -90,7 +90,7 @@ struct StickerEditorScreen: View {
                 .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 .onTapGesture {
-                    wobbleAngle = 6
+                    wobbleAngle = wobbleAngle <= 0 ? 6 : -6
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         wobbleAngle = 0
                     }

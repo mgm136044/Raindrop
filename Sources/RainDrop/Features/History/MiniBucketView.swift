@@ -48,7 +48,7 @@ struct MiniBucketView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             guard tappable else { return }
-            wobbleAngle = 6
+            wobbleAngle = wobbleAngle <= 0 ? 6 : -6
             waterTilt = 6
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 wobbleAngle = 0
