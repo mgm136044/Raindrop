@@ -4,9 +4,9 @@ struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
     var shopViewModel: ShopViewModel?
+    var onShowOnboarding: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: SettingsTab = .focus
-    @State private var showOnboarding = false
     @State private var showPatchNotes = false
     @State private var devCode = ""
 
@@ -15,10 +15,6 @@ struct SettingsScreen: View {
         case skin = "환경"
         case growth = "성장"
         case misc = "기타"
-    }
-
-    private var isOverlayActive: Bool {
-        showOnboarding || showPatchNotes
     }
 
     var body: some View {
@@ -49,25 +45,13 @@ struct SettingsScreen: View {
                         .padding(.bottom, 8)
                 }
             }
-            .disabled(isOverlayActive)
-
-            // Overlay presentations — .sheet 중첩 문제 우회
-            if showOnboarding {
-                Color.black.opacity(0.3)
-                    .ignoresSafeArea()
-
-                OnboardingView {
-                    showOnboarding = false
-                }
-                .transition(.opacity)
-            }
+            .disabled(showPatchNotes)
 
             if showPatchNotes {
                 overlayPatchNotes
                     .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: showOnboarding)
         .animation(.easeInOut(duration: 0.2), value: showPatchNotes)
         .frame(minWidth: 420, minHeight: 320)
     }
@@ -274,12 +258,10 @@ struct SettingsScreen: View {
         Form {
             Section("정보") {
                 Button("패치노트") {
-                    showOnboarding = false
                     showPatchNotes = true
                 }
                 Button("온보딩 다시 보기") {
-                    showPatchNotes = false
-                    showOnboarding = true
+                    onShowOnboarding?()
                 }
             }
 

@@ -9,6 +9,9 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.5.3", date: "2026.04.09", changes: [
+            "온보딩 다시 보기 동작하지 않는 버그 수정",
+        ]),
         PatchNote(version: "2.5.2", date: "2026.04.09", changes: [
             "백색소음 화면 플레이어 리로드 안내 문구 복원",
         ]),

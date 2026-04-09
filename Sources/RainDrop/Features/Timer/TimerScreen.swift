@@ -15,6 +15,7 @@ struct TimerScreen: View {
     @State private var isShowingSocial = false
     @State private var isShowingWhiteNoise = false
     @State private var isShowingStickerEditor = false
+    @State private var isShowingOnboardingReplay = false
     @State private var motivationIndex = 0
 
     private var isAnySheetPresented: Bool {
@@ -153,8 +154,19 @@ struct TimerScreen: View {
             SettingsScreen(
                 viewModel: settingsViewModel,
                 totalBuckets: shopViewModel.shopState.totalBucketsEarned,
-                shopViewModel: shopViewModel
+                shopViewModel: shopViewModel,
+                onShowOnboarding: {
+                    isShowingSettings = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        isShowingOnboardingReplay = true
+                    }
+                }
             )
+        }
+        .sheet(isPresented: $isShowingOnboardingReplay) {
+            OnboardingView {
+                isShowingOnboardingReplay = false
+            }
         }
         .sheet(isPresented: $isShowingShop) {
             ShopScreen(viewModel: shopViewModel)
