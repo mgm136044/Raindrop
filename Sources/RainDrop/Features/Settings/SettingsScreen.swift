@@ -199,12 +199,12 @@ struct SettingsScreen: View {
                 }
             }
             .formStyle(.grouped)
-            .overlayModal(isPresented: $showOnboarding) {
+            .sheet(isPresented: $showOnboarding) {
                 OnboardingView {
                     showOnboarding = false
                 }
             }
-            .overlayModal(isPresented: $showPatchNotes) {
+            .sheet(isPresented: $showPatchNotes) {
                 PatchNotesView()
             }
         }
