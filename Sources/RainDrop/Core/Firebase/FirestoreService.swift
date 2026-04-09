@@ -255,9 +255,7 @@ private extension FirestoreService {
         if let number = value as? NSNumber {
             return number.intValue
         }
-        if let string = value as? String {
-            return Int(string)
-        }
+        // String→Int 변환 제거 (CWE-502: 타입 강제 변환으로 인한 예기치 못한 동작 방지)
         return nil
     }
 

@@ -9,6 +9,11 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.5.1", date: "2026.04.09", changes: [
+            "보안 강화 — 업데이트 스크립트 경로 예측 방지 (mktemp)",
+            "보안 강화 — 초대코드 암호학적 난수 적용",
+            "온보딩 애니메이션 안정성 향상 (Task 취소 지원)",
+        ]),
         PatchNote(version: "2.5.0", date: "2026.04.09", changes: [
             "설정 화면 탭 분할 — 집중/환경/성장/기타 4개 탭으로 스크롤 제거",
             "온보딩 다시보기 수정 (중첩 시트 문제 해결)",

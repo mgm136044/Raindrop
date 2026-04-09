@@ -165,9 +165,12 @@ final class AuthViewModel: ObservableObject {
     }
 
     private func generateUniqueInviteCode() async throws -> String {
-        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let chars = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
         for _ in 0..<10 {
-            let code = String((0..<6).map { _ in chars.randomElement()! })
+            // CWE-330: 암호학적 보안 난수 사용 (SecRandomCopyBytes)
+            var randomBytes = [UInt8](repeating: 0, count: 6)
+            _ = SecRandomCopyBytes(kSecRandomDefault, 6, &randomBytes)
+            let code = String(randomBytes.map { chars[Int($0) % chars.count] })
             let existing = try await firestoreService.queryUserByInviteCode(code)
             if existing == nil { return code }
         }

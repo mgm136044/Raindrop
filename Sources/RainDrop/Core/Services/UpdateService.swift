@@ -66,32 +66,52 @@ final class UpdateService: ObservableObject {
 
         isUpdating = true
 
+        // mktemp으로 예측 불가능한 스크립트 경로 생성 (symlink 공격 방지)
+        let mktemp = Process()
+        mktemp.executableURL = URL(fileURLWithPath: "/usr/bin/mktemp")
+        mktemp.arguments = ["/tmp/raindrop_update.XXXXXXXX"]
+        let pipe = Pipe()
+        mktemp.standardOutput = pipe
+        do { try mktemp.run() } catch {
+            logger.error("mktemp 실패: \(error.localizedDescription, privacy: .public)")
+            isUpdating = false
+            updateResult = "업데이트 준비 실패"
+            return
+        }
+        mktemp.waitUntilExit()
+        let scriptPath = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !scriptPath.isEmpty else {
+            isUpdating = false
+            updateResult = "업데이트 준비 실패"
+            return
+        }
+
+        let logPath = scriptPath + ".log"
         let scriptContent = """
         #!/bin/zsh
         sleep 2
         \(brewPath) update 2>/dev/null
         # upgrade 시도, 실패하면 reinstall 시도
-        if \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+        if \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>\(logPath); then
             sleep 1
             open /Applications/RainDrop.app
-        elif \(brewPath) reinstall --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+        elif \(brewPath) reinstall --cask mgm136044/tap/raindrop 2>\(logPath); then
             sleep 1
             open /Applications/RainDrop.app
-        elif \(brewPath) install --cask mgm136044/tap/raindrop 2>/tmp/raindrop_update.log; then
+        elif \(brewPath) install --cask mgm136044/tap/raindrop 2>\(logPath); then
             sleep 1
             open /Applications/RainDrop.app
         else
             osascript -e 'display notification "업데이트에 실패했습니다. 터미널에서 수동으로 진행해주세요." with title "RainDrop"'
         fi
-        rm -f /tmp/raindrop_update.sh
+        rm -f \(scriptPath) \(logPath)
         """
-
-        let scriptPath = "/tmp/raindrop_update.sh"
 
         do {
             try scriptContent.write(toFile: scriptPath, atomically: true, encoding: .utf8)
             try FileManager.default.setAttributes(
-                [.posixPermissions: 0o755],
+                [.posixPermissions: 0o700],
                 ofItemAtPath: scriptPath
             )
         } catch {

@@ -283,6 +283,7 @@ struct SettingsScreen: View {
                 }
             }
 
+            #if DEBUG
             Section("개발자") {
                 if viewModel.settings.developerMode {
                     HStack {
@@ -311,6 +312,7 @@ struct SettingsScreen: View {
                     }
                 }
             }
+            #endif
         }
         .formStyle(.grouped)
     }
