@@ -193,7 +193,8 @@ struct TimerScreen: View {
             if let service = backgroundSoundService {
                 BackgroundSoundScreen(
                     viewModel: settingsViewModel,
-                    backgroundSoundService: service
+                    backgroundSoundService: service,
+                    isTimerRunning: viewModel.isSessionActive
                 )
             }
         }

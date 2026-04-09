@@ -9,6 +9,10 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.6.1", date: "2026.04.10", changes: [
+            "타이머 실행 중 배경 사운드 활성화 시 정상 동작하도록 수정",
+            "일시정지 상태에서 배경 사운드 설정 변경 지원",
+        ]),
         PatchNote(version: "2.6.0", date: "2026.04.10", changes: [
             "배경 사운드 기능 전면 개편 — 10종 사운드 앱 내 재생 (빗소리, 바다, 시냇물, 모닥불 등)",
             "WKWebView 제거 — 인터넷 없이 사운드 재생 가능",

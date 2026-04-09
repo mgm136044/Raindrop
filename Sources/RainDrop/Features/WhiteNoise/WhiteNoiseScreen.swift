@@ -3,6 +3,7 @@ import SwiftUI
 struct BackgroundSoundScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var backgroundSoundService: BackgroundSoundService
+    var isTimerRunning: Bool
     @Environment(\.dismiss) private var dismiss
 
     /// 시트에서 미리듣기로 재생 시작했는지 추적 (시트 닫힐 때 정지용)
@@ -73,9 +74,10 @@ struct BackgroundSoundScreen: View {
         }
         .frame(minWidth: 420, minHeight: 400)
         .onDisappear {
+            // 타이머 실행 중이면 TimerViewModel이 사운드 관리 → 건드리지 않음
+            guard !isTimerRunning else { return }
             // 타이머 미실행 상태에서 미리듣기로 재생했으면 시트 닫힐 때 정지
-            if startedPreview && !backgroundSoundService.isPlaying { return }
-            if startedPreview {
+            if startedPreview && backgroundSoundService.isPlaying {
                 backgroundSoundService.teardown()
             }
         }

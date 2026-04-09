@@ -81,6 +81,10 @@ final class TimerViewModel: ObservableObject {
         timerState == .running
     }
 
+    var isSessionActive: Bool {
+        timerState == .running || timerState == .paused
+    }
+
     var waterLevelDescription: String {
         switch currentProgress {
         case 0..<0.05: return "바닥"
@@ -289,6 +293,9 @@ final class TimerViewModel: ObservableObject {
     private func loadSettings() {
         let previousFocusCheckEnabled = cachedSettings.focusCheckEnabled
         let previousInterval = cachedSettings.focusCheckIntervalMinutes
+        let previousWhiteNoise = cachedSettings.whiteNoiseEnabled
+        let previousSound = cachedSettings.backgroundSound
+        let previousVolume = cachedSettings.whiteNoiseVolume
         let settings = settingsRepository.load()
         cachedSettings = settings
         sessionGoalSeconds = settings.sessionGoalSeconds
@@ -299,9 +306,19 @@ final class TimerViewModel: ObservableObject {
             notificationService.cancelFocusChecks()
         } else if settings.focusCheckEnabled && timerState == .running {
             if !previousFocusCheckEnabled || previousInterval != settings.focusCheckIntervalMinutes {
-                // pending 알림만 교체, 이미 표시된 알림의 타임아웃은 보존
                 notificationService.cancelPendingFocusChecks()
                 scheduleFocusChecksIfNeeded()
+            }
+        }
+
+        // 배경 사운드 변경 시 처리 (세션 활성 중)
+        if isSessionActive {
+            if settings.whiteNoiseEnabled && (!previousWhiteNoise || previousSound != settings.backgroundSound) {
+                backgroundSoundService?.play(sound: settings.backgroundSound, volume: settings.whiteNoiseVolume)
+            } else if !settings.whiteNoiseEnabled && previousWhiteNoise {
+                backgroundSoundService?.teardown()
+            } else if settings.whiteNoiseEnabled && previousVolume != settings.whiteNoiseVolume {
+                backgroundSoundService?.setVolume(settings.whiteNoiseVolume)
             }
         }
     }
