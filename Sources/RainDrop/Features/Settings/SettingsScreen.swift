@@ -86,46 +86,9 @@ struct SettingsScreen: View {
                     }
                 }
 
-                // 성장 현황
+                // 성장 현황 (별도 뷰로 격리 — settings 변경 시 재렌더링 방지)
                 if let shop = shopViewModel {
-                    Section("성장 현황") {
-                        HStack {
-                            Text("환경")
-                            Spacer()
-                            Text("\(shop.currentEnvironmentStage.emoji) \(shop.currentEnvironmentStage.displayName)")
-                                .foregroundStyle(AppColors.accentBlue)
-                        }
-
-                        if let minutesLeft = shop.minutesToNextStage {
-                            HStack {
-                                Text("다음 단계까지")
-                                Spacer()
-                                Text("\(minutesLeft)분")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-
-                        HStack {
-                            Text("날씨")
-                            Spacer()
-                            Text("\(shop.currentWeather.emoji) \(shop.currentWeather.displayName)")
-                                .foregroundStyle(.secondary)
-                        }
-
-                        HStack {
-                            Text("연속 집중일수")
-                            Spacer()
-                            Text("\(shop.shopState.consecutiveFocusDays)일")
-                                .foregroundStyle(AppColors.accentBlue)
-                        }
-
-                        HStack {
-                            Text("총 집중 시간")
-                            Spacer()
-                            Text(TimeFormatter.compactDuration(from: shop.shopState.totalFocusMinutes * 60))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                    GrowthStatusSection(shopViewModel: shop)
                 }
 
                 Section("환경 선택") {
@@ -263,5 +226,52 @@ struct SettingsScreen: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .glassEffect(.regular)
+    }
+}
+
+// MARK: - 성장 현황 (격리된 뷰 — settings 변경에 영향 없음)
+
+private struct GrowthStatusSection: View {
+    @ObservedObject var shopViewModel: ShopViewModel
+
+    var body: some View {
+        Section("성장 현황") {
+            HStack {
+                Text("환경")
+                Spacer()
+                Text("\(shopViewModel.currentEnvironmentStage.emoji) \(shopViewModel.currentEnvironmentStage.displayName)")
+                    .foregroundStyle(AppColors.accent)
+            }
+
+            if let minutesLeft = shopViewModel.minutesToNextStage {
+                HStack {
+                    Text("다음 단계까지")
+                    Spacer()
+                    Text("\(minutesLeft)분")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            HStack {
+                Text("날씨")
+                Spacer()
+                Text("\(shopViewModel.currentWeather.emoji) \(shopViewModel.currentWeather.displayName)")
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack {
+                Text("연속 집중일수")
+                Spacer()
+                Text("\(shopViewModel.shopState.consecutiveFocusDays)일")
+                    .foregroundStyle(AppColors.accent)
+            }
+
+            HStack {
+                Text("총 집중 시간")
+                Spacer()
+                Text(TimeFormatter.compactDuration(from: shopViewModel.shopState.totalFocusMinutes * 60))
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 }

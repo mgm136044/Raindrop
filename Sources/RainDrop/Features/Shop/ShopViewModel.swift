@@ -12,6 +12,7 @@ final class ShopViewModel: ObservableObject {
         self.repository = repository
         self.shopState = repository.load()
         self.isDeveloperMode = isDeveloperMode
+        updateGrowthState()
     }
 
     var balance: Int { shopState.balance }
@@ -89,19 +90,20 @@ final class ShopViewModel: ObservableObject {
         saveState()
     }
 
-    // MARK: - Environment & Weather
+    // MARK: - Environment & Weather (캐시됨 — recordFocusMinutes에서만 갱신)
 
-    var currentEnvironmentStage: EnvironmentStage {
-        EnvironmentStage.stage(for: shopState.totalFocusMinutes)
-    }
+    @Published private(set) var currentEnvironmentStage: EnvironmentStage = .barren
+    @Published private(set) var currentWeather: WeatherCondition = .cloudy
+    @Published private(set) var minutesToNextStage: Int?
 
-    var currentWeather: WeatherCondition {
-        WeatherCondition.condition(for: shopState.consecutiveFocusDays)
-    }
-
-    var minutesToNextStage: Int? {
-        guard let next = currentEnvironmentStage.nextStage else { return nil }
-        return next.requiredTotalMinutes - shopState.totalFocusMinutes
+    private func updateGrowthState() {
+        currentEnvironmentStage = EnvironmentStage.stage(for: shopState.totalFocusMinutes)
+        currentWeather = WeatherCondition.condition(for: shopState.consecutiveFocusDays)
+        if let next = currentEnvironmentStage.nextStage {
+            minutesToNextStage = next.requiredTotalMinutes - shopState.totalFocusMinutes
+        } else {
+            minutesToNextStage = nil
+        }
     }
 
     func recordFocusMinutes(_ minutes: Int, dateKey: String) {
@@ -121,6 +123,7 @@ final class ShopViewModel: ObservableObject {
         shopState.lastFocusDateKey = dateKey
 
         saveState()
+        updateGrowthState()
     }
 
     private static let dateKeyFormatter: DateFormatter = {
@@ -139,6 +142,7 @@ final class ShopViewModel: ObservableObject {
 
     func reload() {
         shopState = repository.load()
+        updateGrowthState()
     }
 
     private func saveState() {
