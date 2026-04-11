@@ -169,7 +169,7 @@ struct SettingsScreen: View {
         Form {
             Section("환경 선택") {
                 ForEach(BucketSkin.allCases, id: \.self) { skin in
-                    let unlocked = skin.isUnlocked(totalBuckets: totalBuckets)
+                    let unlocked = viewModel.settings.developerMode || skin.isUnlocked(totalBuckets: totalBuckets)
                     let palette = skin.shapeProvider.colorPalette
                     Button {
                         if unlocked {
@@ -268,30 +268,19 @@ struct SettingsScreen: View {
 
             #if DEBUG
             Section("개발자") {
-                if viewModel.settings.developerMode {
+                Toggle(isOn: Binding(
+                    get: { viewModel.settings.developerMode },
+                    set: { newValue in
+                        viewModel.settings.developerMode = newValue
+                        shopViewModel?.isDeveloperMode = newValue
+                        viewModel.save()
+                    }
+                )) {
                     HStack {
                         Image(systemName: "hammer.fill")
-                            .foregroundStyle(AppColors.accent)
-                        Text("개발자 모드 활성화됨")
+                            .foregroundStyle(viewModel.settings.developerMode ? AppColors.accent : .secondary)
+                        Text("개발자 모드")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AppColors.accent)
-                    }
-                } else {
-                    HStack {
-                        Text("개발자 코드")
-                            .font(.system(size: 13))
-                        Spacer()
-                        SecureField("코드 입력", text: $devCode)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 100)
-                            .onSubmit {
-                                if devCode == "0530" {
-                                    viewModel.settings.developerMode = true
-                                    shopViewModel?.isDeveloperMode = true
-                                    viewModel.save()
-                                }
-                                devCode = ""
-                            }
                     }
                 }
             }
