@@ -24,6 +24,16 @@ struct TimerSceneView: View {
 
     var body: some View {
         ZStack {
+            let provider = skin.shapeProvider
+            let topFraction = provider.topOpeningFraction
+            let bottomFraction = provider.bottomWidthFraction
+            let floorFraction = provider.bottomInsetFraction
+
+            let bucketW: CGFloat = 340
+            let bucketH: CGFloat = 320
+            let cloudW = bucketW * topFraction
+            let rainW = bucketW * max(topFraction, bottomFraction) * 0.85
+
             // Environment layer (behind everything)
             EnvironmentView(stage: environmentStage)
                 .frame(width: 400, height: 400)
@@ -37,7 +47,7 @@ struct TimerSceneView: View {
             // Cloud + Rain layer
             ZStack(alignment: .top) {
                 CloudView(isVisible: particlesActive, intensity: intensity)
-                    .frame(width: 260, height: 70)
+                    .frame(width: cloudW, height: 70)
                     .offset(y: -50)
 
                 RainParticleView(
@@ -46,9 +56,9 @@ struct TimerSceneView: View {
                     dropGradientBottom: dropGradientBottom,
                     intensity: max(intensity, 0.15)
                 )
-                .frame(width: 260, height: 360)
+                .frame(width: rainW, height: bucketH * floorFraction)
             }
-            .frame(width: 340, height: 360)
+            .frame(width: bucketW, height: 360)
             .allowsHitTesting(false)
 
             // Bucket + Stickers
@@ -60,12 +70,12 @@ struct TimerSceneView: View {
                 waterColorOverride: waterColorOverride,
                 placements: placements
             )
-            .frame(width: 340, height: 320)
+            .frame(width: bucketW, height: bucketH)
             .padding(.top, 56)
 
             // Overflow celebration
             OverflowAnimationView(isActive: viewModel.isOverflowing && !reduceAnimations)
-                .frame(width: 340, height: 320)
+                .frame(width: bucketW, height: bucketH)
                 .padding(.top, 56)
                 .allowsHitTesting(false)
 
@@ -76,7 +86,7 @@ struct TimerSceneView: View {
                 isActive: particlesActive && displayProgress > 0.05,
                 splashColor: dropGradientTop
             )
-            .frame(width: 340, height: 320)
+            .frame(width: bucketW, height: bucketH)
             .padding(.top, 56)
             .allowsHitTesting(false)
         }

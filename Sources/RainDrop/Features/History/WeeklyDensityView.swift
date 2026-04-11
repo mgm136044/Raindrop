@@ -71,10 +71,9 @@ struct WeeklyDensityView: View {
             HStack(spacing: 10) {
                 ForEach(Array(weekDays.enumerated()), id: \.element.id) { index, day in
                     VStack(spacing: 6) {
-                        MiniBucketView(
+                        TappableMiniBucket(
                             fillRatio: animatedFill ? day.fillRatio : 0,
-                            skin: skin,
-                            tappable: true
+                            skin: skin
                         )
                         .frame(width: 52, height: 52)
 
@@ -128,5 +127,34 @@ struct WeeklyDensityView: View {
         guard let first = weekDays.first, let last = weekDays.last else { return "" }
         let f = Self.weekRangeFormatter
         return "\(f.string(from: first.date)) ~ \(f.string(from: last.date))"
+    }
+}
+
+// MARK: - Tappable Mini Bucket (wobble on tap)
+
+private struct TappableMiniBucket: View {
+    let fillRatio: Double
+    let skin: BucketSkin
+
+    @State private var wobbleAngle: Double = 0
+
+    var body: some View {
+        BucketView(
+            progress: fillRatio,
+            skin: skin,
+            useCustomWaterColor: false,
+            intensity: 0,
+            tiltAngle: wobbleAngle,
+            mode: .mini
+        )
+        .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
+        .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            wobbleAngle = wobbleAngle <= 0 ? 6 : -6
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                wobbleAngle = 0
+            }
+        }
     }
 }

@@ -201,8 +201,8 @@ struct SettingsScreen: View {
                             Spacer()
 
                             Circle()
-                                .fill(skin.bucketFill)
-                                .overlay(Circle().stroke(skin.bucketStroke, lineWidth: 2))
+                                .fill(skin.shapeProvider.colorPalette.fill)
+                                .overlay(Circle().stroke(skin.shapeProvider.colorPalette.stroke, lineWidth: 2))
                                 .frame(width: 24, height: 24)
                                 .opacity(unlocked ? 1.0 : 0.4)
                         }
