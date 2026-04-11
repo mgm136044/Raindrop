@@ -10,7 +10,6 @@ struct AppSettings: Codable, Equatable, Sendable {
     var whiteNoiseEnabled: Bool = false
     var whiteNoiseVolume: Double = 0.5
     var backgroundSound: BackgroundSound = .rain
-    var waterColorEvolution: Bool = false
     var developerMode: Bool = false
 
     var sessionGoalSeconds: Int { sessionGoalMinutes * 60 }
@@ -29,7 +28,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         whiteNoiseEnabled = try container.decodeIfPresent(Bool.self, forKey: .whiteNoiseEnabled) ?? false
         whiteNoiseVolume = try container.decodeIfPresent(Double.self, forKey: .whiteNoiseVolume) ?? 0.5
         backgroundSound = try container.decodeIfPresent(BackgroundSound.self, forKey: .backgroundSound) ?? .rain
-        waterColorEvolution = try container.decodeIfPresent(Bool.self, forKey: .waterColorEvolution) ?? false
         developerMode = try container.decodeIfPresent(Bool.self, forKey: .developerMode) ?? false
     }
 
@@ -43,7 +41,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         whiteNoiseEnabled: Bool = false,
         whiteNoiseVolume: Double = 0.5,
         backgroundSound: BackgroundSound = .rain,
-        waterColorEvolution: Bool = false,
         developerMode: Bool = false
     ) {
         self.sessionGoalMinutes = sessionGoalMinutes
@@ -55,7 +52,6 @@ struct AppSettings: Codable, Equatable, Sendable {
         self.whiteNoiseEnabled = whiteNoiseEnabled
         self.whiteNoiseVolume = whiteNoiseVolume
         self.backgroundSound = backgroundSound
-        self.waterColorEvolution = waterColorEvolution
         self.developerMode = developerMode
     }
 }

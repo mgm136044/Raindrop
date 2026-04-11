@@ -12,7 +12,6 @@ struct SettingsScreen: View {
     enum SettingsTab: String, CaseIterable {
         case focus = "집중"
         case skin = "환경"
-        case growth = "성장"
         case misc = "기타"
     }
 
@@ -28,8 +27,6 @@ struct SettingsScreen: View {
                         focusTab
                     case .skin:
                         skinTab
-                    case .growth:
-                        growthTab
                     case .misc:
                         miscTab
                     }
@@ -214,15 +211,7 @@ struct SettingsScreen: View {
             }
 
             Section("물 색상") {
-                Toggle("물 색상 자연 진화", isOn: $viewModel.settings.waterColorEvolution)
-                    .onChange(of: viewModel.settings.waterColorEvolution) { _,_ in
-                        viewModel.save()
-                    }
-                Text("집중 시간이 쌓일수록 물의 색이 깊어집니다.")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-
-                if !viewModel.settings.waterColorEvolution && viewModel.settings.selectedSkin.hasCustomWaterColor {
+                if viewModel.settings.selectedSkin.hasCustomWaterColor {
                     Toggle("스킨 색 물 사용", isOn: $viewModel.settings.useCustomWaterColor)
                         .onChange(of: viewModel.settings.useCustomWaterColor) { _,_ in
                             viewModel.save()
@@ -236,23 +225,7 @@ struct SettingsScreen: View {
         .formStyle(.grouped)
     }
 
-    // MARK: - Tab 3: 성장
-
-    private var growthTab: some View {
-        Form {
-            if let shop = shopViewModel {
-                GrowthStatusSection(shopViewModel: shop)
-            } else {
-                Section("성장 현황") {
-                    Text("상점 데이터를 불러올 수 없습니다")
-                        .foregroundStyle(.tertiary)
-                }
-            }
-        }
-        .formStyle(.grouped)
-    }
-
-    // MARK: - Tab 4: 기타
+    // MARK: - Tab 3: 기타
 
     private var miscTab: some View {
         Form {
@@ -323,49 +296,3 @@ struct SettingsScreen: View {
     }
 }
 
-// MARK: - 성장 현황 (격리된 뷰 — settings 변경에 영향 없음)
-
-private struct GrowthStatusSection: View {
-    @ObservedObject var shopViewModel: ShopViewModel
-
-    var body: some View {
-        Section("성장 현황") {
-            HStack {
-                Text("환경")
-                Spacer()
-                Text("\(shopViewModel.currentEnvironmentStage.emoji) \(shopViewModel.currentEnvironmentStage.displayName)")
-                    .foregroundStyle(AppColors.accent)
-            }
-
-            if let minutesLeft = shopViewModel.minutesToNextStage {
-                HStack {
-                    Text("다음 단계까지")
-                    Spacer()
-                    Text("\(minutesLeft)분")
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            HStack {
-                Text("날씨")
-                Spacer()
-                Text("\(shopViewModel.currentWeather.emoji) \(shopViewModel.currentWeather.displayName)")
-                    .foregroundStyle(.secondary)
-            }
-
-            HStack {
-                Text("연속 집중일수")
-                Spacer()
-                Text("\(shopViewModel.shopState.consecutiveFocusDays)일")
-                    .foregroundStyle(AppColors.accent)
-            }
-
-            HStack {
-                Text("총 집중 시간")
-                Spacer()
-                Text(TimeFormatter.compactDuration(from: shopViewModel.shopState.totalFocusMinutes * 60))
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-}

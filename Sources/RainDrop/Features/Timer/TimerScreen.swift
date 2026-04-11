@@ -16,6 +16,7 @@ struct TimerScreen: View {
     @State private var isShowingBackgroundSound = false
     @State private var isShowingStickerEditor = false
     @State private var motivationIndex = 0
+    @State private var growthSeed: UInt64 = 0
 
     private var isAnySheetPresented: Bool {
         isShowingHistory || isShowingSettings || isShowingShop ||
@@ -50,7 +51,7 @@ struct TimerScreen: View {
                 backgroundTheme: shopViewModel.selectedBackground
             )
 
-            // Layer 1: Scene (cloud + rain + bucket) — 화면 중앙, 주인공
+            // Layer 1: Scene (cloud + rain + bucket + terrarium) — 화면 중앙, 주인공
             TimerSceneView(
                 viewModel: viewModel,
                 skin: settingsViewModel.settings.selectedSkin,
@@ -58,10 +59,10 @@ struct TimerScreen: View {
                 dropGradientTop: effectiveDropGradientTop,
                 dropGradientBottom: effectiveDropGradientBottom,
                 placements: shopViewModel.shopState.placements,
-                environmentStage: shopViewModel.currentEnvironmentStage,
-                weatherCondition: shopViewModel.currentWeather,
                 waterColorOverride: effectiveWaterColorOverride,
-                reduceAnimations: isAnySheetPresented
+                reduceAnimations: isAnySheetPresented,
+                totalFocusMinutes: shopViewModel.shopState.totalFocusMinutes,
+                growthSeed: growthSeed
             )
 
             // Layer 2: Header overlay — 상단
@@ -185,6 +186,10 @@ struct TimerScreen: View {
                     isTimerRunning: viewModel.isSessionActive
                 )
             }
+        }
+        .onAppear {
+            let repo = GrowthRepository()
+            growthSeed = repo.load().seed
         }
     }
 
@@ -364,9 +369,7 @@ struct TimerScreen: View {
     }
 
     private var effectiveWaterColorOverride: (top: Color, bottom: Color)? {
-        guard settingsViewModel.settings.waterColorEvolution else { return nil }
-        let colors = WaterColorProgression.colors(for: shopViewModel.shopState.totalFocusMinutes)
-        return (colors.top, colors.bottom)
+        return nil
     }
 
     private var effectiveDropGradientTop: Color {

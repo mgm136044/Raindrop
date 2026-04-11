@@ -7,10 +7,10 @@ struct TimerSceneView: View {
     let dropGradientTop: Color
     let dropGradientBottom: Color
     let placements: [StickerPlacement]
-    var environmentStage: EnvironmentStage = .barren
-    var weatherCondition: WeatherCondition = .cloudy
     var waterColorOverride: (top: Color, bottom: Color)?
     var reduceAnimations: Bool = false
+    var totalFocusMinutes: Int = 0
+    var growthSeed: UInt64 = 0
 
     @State private var displayProgress: Double = 0
 
@@ -34,16 +34,6 @@ struct TimerSceneView: View {
             let cloudW = bucketW * topFraction
             let rainW = bucketW * max(topFraction, bottomFraction) * 0.85
 
-            // Environment layer (behind everything)
-            EnvironmentView(stage: environmentStage)
-                .frame(width: 400, height: 400)
-                .allowsHitTesting(false)
-
-            // Weather overlay (ambient, always visible)
-            WeatherOverlayView(condition: weatherCondition)
-                .frame(width: 400, height: 400)
-                .allowsHitTesting(false)
-
             // Cloud + Rain layer
             ZStack(alignment: .top) {
                 CloudView(isVisible: particlesActive, intensity: intensity)
@@ -61,14 +51,24 @@ struct TimerSceneView: View {
             .frame(width: bucketW, height: 360)
             .allowsHitTesting(false)
 
-            // Bucket + Stickers
-            BucketWithStickersView(
-                progress: displayProgress,
-                skin: skin,
-                useCustomWaterColor: useCustomWaterColor,
-                intensity: intensity,
-                waterColorOverride: waterColorOverride,
-                placements: placements
+            // Bucket + Stickers + Terrarium
+            TerrariumView(
+                snapshot: GrowthEngine.snapshot(totalMinutes: totalFocusMinutes, skin: skin),
+                placements: PlantLayoutEngine.placements(
+                    biome: skin.biome,
+                    level: GrowthEngine.snapshot(totalMinutes: totalFocusMinutes, skin: skin).level,
+                    seed: growthSeed
+                ),
+                bucketContent: AnyView(
+                    BucketWithStickersView(
+                        progress: displayProgress,
+                        skin: skin,
+                        useCustomWaterColor: useCustomWaterColor,
+                        intensity: intensity,
+                        waterColorOverride: waterColorOverride,
+                        placements: placements
+                    )
+                )
             )
             .frame(width: bucketW, height: bucketH)
             .padding(.top, 56)
