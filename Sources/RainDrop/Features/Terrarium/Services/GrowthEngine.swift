@@ -1,6 +1,5 @@
 import Foundation
 
-@MainActor
 final class GrowthEngine {
     static func snapshot(totalMinutes: Int, skin: BucketSkin) -> GrowthSnapshot {
         let level = GrowthCurve.level(for: totalMinutes)

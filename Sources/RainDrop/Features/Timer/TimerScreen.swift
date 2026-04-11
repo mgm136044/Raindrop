@@ -9,6 +9,7 @@ struct TimerScreen: View {
     var socialViewModel: SocialViewModel?
     var friendsViewModel: FriendsViewModel?
     var backgroundSoundService: BackgroundSoundService?
+    var growthRepository: GrowthRepository?
     @State private var isShowingHistory = false
     @State private var isShowingSettings = false
     @State private var isShowingShop = false
@@ -188,7 +189,7 @@ struct TimerScreen: View {
             }
         }
         .onAppear {
-            let repo = GrowthRepository()
+            let repo = growthRepository ?? GrowthRepository()
             growthSeed = repo.load().seed
         }
     }

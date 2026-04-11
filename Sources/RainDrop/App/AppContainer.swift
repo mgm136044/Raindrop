@@ -10,6 +10,7 @@ final class AppContainer: ObservableObject {
     private let notificationService: NotificationService
     let backgroundSoundService = BackgroundSoundService()
     let updateService = UpdateService()
+    lazy var growthRepository = GrowthRepository()
 
     // Firebase services (소셜 기능 활성화 시에만 사용)
     private lazy var firestoreService: FirestoreService = FirestoreService()

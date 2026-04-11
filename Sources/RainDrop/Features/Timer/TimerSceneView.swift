@@ -52,24 +52,25 @@ struct TimerSceneView: View {
             .allowsHitTesting(false)
 
             // Bucket + Stickers + Terrarium
-            TerrariumView(
-                snapshot: GrowthEngine.snapshot(totalMinutes: totalFocusMinutes, skin: skin),
-                placements: PlantLayoutEngine.placements(
-                    biome: skin.biome,
-                    level: GrowthEngine.snapshot(totalMinutes: totalFocusMinutes, skin: skin).level,
-                    seed: growthSeed
-                ),
-                bucketContent: AnyView(
-                    BucketWithStickersView(
-                        progress: displayProgress,
-                        skin: skin,
-                        useCustomWaterColor: useCustomWaterColor,
-                        intensity: intensity,
-                        waterColorOverride: waterColorOverride,
-                        placements: placements
-                    )
-                )
+            let growthSnapshot = GrowthEngine.snapshot(totalMinutes: totalFocusMinutes, skin: skin)
+            let plantPlacements = PlantLayoutEngine.placements(
+                biome: skin.biome,
+                level: growthSnapshot.level,
+                seed: growthSeed
             )
+            TerrariumView(
+                snapshot: growthSnapshot,
+                placements: plantPlacements
+            ) {
+                BucketWithStickersView(
+                    progress: displayProgress,
+                    skin: skin,
+                    useCustomWaterColor: useCustomWaterColor,
+                    intensity: intensity,
+                    waterColorOverride: waterColorOverride,
+                    placements: placements
+                )
+            }
             .frame(width: bucketW, height: bucketH)
             .padding(.top, 56)
 

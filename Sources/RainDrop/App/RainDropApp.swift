@@ -38,7 +38,8 @@ struct RainDropApp: App {
                 authViewModel: container.authViewModel,
                 socialViewModel: container.socialViewModel,
                 friendsViewModel: container.friendsViewModel,
-                backgroundSoundService: container.backgroundSoundService
+                backgroundSoundService: container.backgroundSoundService,
+                growthRepository: container.growthRepository
             )
             .frame(width: 1040, height: 700)
             .overlay {

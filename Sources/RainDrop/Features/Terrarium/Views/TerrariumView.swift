@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct TerrariumView: View {
+struct TerrariumView<Content: View>: View {
     let snapshot: GrowthSnapshot
     let placements: [PlantPlacement]
-    let bucketContent: AnyView // The existing BucketView
+    @ViewBuilder let bucketContent: () -> Content
 
     var body: some View {
         ZStack {
@@ -13,10 +13,10 @@ struct TerrariumView: View {
                 phase: snapshot.phase,
                 biomeTheme: snapshot.biome.theme
             )
+            .drawingGroup()  // Only flatten canvas layer
 
             // Foreground: the bucket itself
-            bucketContent
+            bucketContent()  // BucketView keeps its own rendering
         }
-        .drawingGroup()
     }
 }
