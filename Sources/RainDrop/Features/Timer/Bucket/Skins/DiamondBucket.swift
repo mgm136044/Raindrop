@@ -64,23 +64,6 @@ struct DiamondBucket: BucketShapeProvider {
         return path
     }
 
-    // MARK: - Handle Path (Arc handle)
-
-    func handlePath(in rect: CGRect) -> Path {
-        let centerX = rect.midX
-        let topY = rect.height * 0.08
-        let handleWidth = rect.width * 0.48
-        let handleHeight: CGFloat = 18
-
-        var path = Path()
-        path.move(to: CGPoint(x: centerX - handleWidth / 2, y: topY))
-        path.addQuadCurve(
-            to: CGPoint(x: centerX + handleWidth / 2, y: topY),
-            control: CGPoint(x: centerX, y: topY - handleHeight)
-        )
-        return path
-    }
-
     // MARK: - Band Paths (None — pure crystal geometry)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -140,7 +123,6 @@ struct DiamondBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.85, green: 0.92, blue: 1.0, opacity: 0.45),
             stroke: Color(red: 0.70, green: 0.82, blue: 0.95),
-            handle: Color(red: 0.65, green: 0.78, blue: 0.90),
             band: .clear,
             accent: Color(red: 0.80, green: 0.92, blue: 1.0)
         )

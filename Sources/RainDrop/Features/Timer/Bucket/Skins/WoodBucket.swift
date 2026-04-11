@@ -63,26 +63,6 @@ struct WoodBucket: BucketShapeProvider {
         return path
     }
 
-    // MARK: - Handle Path
-
-    func handlePath(in rect: CGRect) -> Path {
-        var path = Path()
-        let handleWidth = rect.width * 0.52
-        let handleHeight = rect.height * 0.32
-        let handleX = rect.midX - handleWidth / 2
-        let handleY = rect.minY + rect.height * 0.16 - handleHeight
-
-        let handleRect = CGRect(x: handleX, y: handleY, width: handleWidth, height: handleHeight)
-        path.addArc(
-            center: CGPoint(x: handleRect.midX, y: handleRect.maxY),
-            radius: handleRect.width / 2,
-            startAngle: .degrees(195),
-            endAngle: .degrees(-15),
-            clockwise: false
-        )
-        return path
-    }
-
     // MARK: - Band Paths (at 30% and 70%, subtle thin lines)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -139,7 +119,6 @@ struct WoodBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.24, green: 0.17, blue: 0.10, opacity: 0.85),
             stroke: Color(red: 0.36, green: 0.25, blue: 0.15),
-            handle: Color(red: 0.36, green: 0.25, blue: 0.15),
             band: Color(red: 0.30, green: 0.20, blue: 0.10).opacity(0.3),
             accent: Color(red: 0.55, green: 0.40, blue: 0.25)
         )

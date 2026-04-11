@@ -12,7 +12,6 @@ enum BucketRenderMode: Sendable {
 struct BucketColorPalette: Sendable {
     let fill: Color
     let stroke: Color
-    let handle: Color
     let band: Color
     let accent: Color
 }
@@ -59,7 +58,6 @@ protocol BucketShapeProvider {
 
     func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path
     func rimPath(in rect: CGRect) -> Path
-    func handlePath(in rect: CGRect) -> Path
     func bandPaths(in rect: CGRect) -> [Path]
 
     @ViewBuilder func overlay(in rect: CGRect, mode: BucketRenderMode) -> OverlayContent
@@ -89,7 +87,6 @@ protocol BucketShapeProvider {
 struct AnyBucketSkin: BucketShapeProvider {
     private let _bodyPath: @MainActor (CGRect, BucketRenderMode) -> Path
     private let _rimPath: @MainActor (CGRect) -> Path
-    private let _handlePath: @MainActor (CGRect) -> Path
     private let _bandPaths: @MainActor (CGRect) -> [Path]
     private let _overlay: @MainActor (CGRect, BucketRenderMode) -> AnyView
     private let _colorPalette: BucketColorPalette
@@ -104,7 +101,6 @@ struct AnyBucketSkin: BucketShapeProvider {
     init<S: BucketShapeProvider>(_ skin: S) {
         _bodyPath = { skin.bodyPath(in: $0, mode: $1) }
         _rimPath = { skin.rimPath(in: $0) }
-        _handlePath = { skin.handlePath(in: $0) }
         _bandPaths = { skin.bandPaths(in: $0) }
         _overlay = { AnyView(skin.overlay(in: $0, mode: $1)) }
         _colorPalette = skin.colorPalette
@@ -119,7 +115,6 @@ struct AnyBucketSkin: BucketShapeProvider {
 
     func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path { _bodyPath(rect, mode) }
     func rimPath(in rect: CGRect) -> Path { _rimPath(rect) }
-    func handlePath(in rect: CGRect) -> Path { _handlePath(rect) }
     func bandPaths(in rect: CGRect) -> [Path] { _bandPaths(rect) }
     func overlay(in rect: CGRect, mode: BucketRenderMode) -> AnyView { _overlay(rect, mode) }
 

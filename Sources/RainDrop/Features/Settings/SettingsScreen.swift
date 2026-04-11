@@ -170,6 +170,7 @@ struct SettingsScreen: View {
             Section("환경 선택") {
                 ForEach(BucketSkin.allCases, id: \.self) { skin in
                     let unlocked = skin.isUnlocked(totalBuckets: totalBuckets)
+                    let palette = skin.shapeProvider.colorPalette
                     Button {
                         if unlocked {
                             viewModel.settings.selectedSkin = skin
@@ -201,8 +202,8 @@ struct SettingsScreen: View {
                             Spacer()
 
                             Circle()
-                                .fill(skin.shapeProvider.colorPalette.fill)
-                                .overlay(Circle().stroke(skin.shapeProvider.colorPalette.stroke, lineWidth: 2))
+                                .fill(palette.fill)
+                                .overlay(Circle().stroke(palette.stroke, lineWidth: 2))
                                 .frame(width: 24, height: 24)
                                 .opacity(unlocked ? 1.0 : 0.4)
                         }

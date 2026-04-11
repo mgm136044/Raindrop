@@ -88,22 +88,6 @@ struct RainbowBucket: BucketShapeProvider {
         Path()
     }
 
-    // MARK: - Handle Path (Arc handle)
-
-    func handlePath(in rect: CGRect) -> Path {
-        let centerX = rect.midX
-        let topY = rect.height * 0.08
-        let radius = rect.width * 0.26
-
-        var path = Path()
-        path.move(to: CGPoint(x: centerX - radius, y: topY))
-        path.addQuadCurve(
-            to: CGPoint(x: centerX + radius, y: topY),
-            control: CGPoint(x: centerX, y: topY - radius)
-        )
-        return path
-    }
-
     // MARK: - Band Paths (None)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -138,7 +122,6 @@ struct RainbowBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.58, green: 0.58, blue: 0.60, opacity: 0.75),
             stroke: Color(red: 0.72, green: 0.72, blue: 0.76),
-            handle: Color(red: 0.65, green: 0.65, blue: 0.70),
             band: .clear,
             accent: Color(red: 0.85, green: 0.80, blue: 0.95)
         )

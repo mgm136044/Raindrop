@@ -86,22 +86,6 @@ struct GoldBucket: BucketShapeProvider {
         return path
     }
 
-    // MARK: - Handle Path (Arc handle at center)
-
-    func handlePath(in rect: CGRect) -> Path {
-        let centerX = rect.midX
-        let topY = rect.height * 0.08
-        let radius = rect.width * 0.26
-
-        var path = Path()
-        path.move(to: CGPoint(x: centerX - radius, y: topY))
-        path.addQuadCurve(
-            to: CGPoint(x: centerX + radius, y: topY),
-            control: CGPoint(x: centerX, y: topY - radius)
-        )
-        return path
-    }
-
     // MARK: - Band Paths (Single thin band at 0.25 — subtle, chalice waist)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -150,7 +134,6 @@ struct GoldBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.65, green: 0.49, blue: 0.13, opacity: 0.85),
             stroke: Color(red: 0.75, green: 0.58, blue: 0.15),
-            handle: Color(red: 0.70, green: 0.53, blue: 0.12),
             band: Color(red: 0.80, green: 0.65, blue: 0.25).opacity(0.2),
             accent: Color(red: 1.0, green: 0.84, blue: 0.40)
         )

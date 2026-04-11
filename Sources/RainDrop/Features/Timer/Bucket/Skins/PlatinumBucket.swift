@@ -64,23 +64,6 @@ struct PlatinumBucket: BucketShapeProvider {
         return path
     }
 
-    // MARK: - Handle Path (slender arc above the rim)
-
-    func handlePath(in rect: CGRect) -> Path {
-        let centerX = rect.midX
-        let topY = rect.minY
-        let handleWidth = rect.width * 0.38
-        let handleHeight: CGFloat = 18
-
-        var path = Path()
-        path.move(to: CGPoint(x: centerX - handleWidth / 2, y: topY))
-        path.addQuadCurve(
-            to: CGPoint(x: centerX + handleWidth / 2, y: topY),
-            control: CGPoint(x: centerX, y: topY - handleHeight)
-        )
-        return path
-    }
-
     // MARK: - Band Paths (empty — clean mirror surface)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -118,7 +101,6 @@ struct PlatinumBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.55, green: 0.56, blue: 0.58, opacity: 0.80),
             stroke: Color(red: 0.75, green: 0.76, blue: 0.78),
-            handle: Color(red: 0.65, green: 0.66, blue: 0.68),
             band: .clear,
             accent: Color(red: 0.95, green: 0.95, blue: 0.96)
         )

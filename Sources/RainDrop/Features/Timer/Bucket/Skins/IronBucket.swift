@@ -53,27 +53,6 @@ struct IronBucket: BucketShapeProvider {
         return path
     }
 
-    // MARK: - Handle Path
-
-    func handlePath(in rect: CGRect) -> Path {
-        var path = Path()
-        let topY = rect.minY + rect.height * 0.06
-        let handleWidth = rect.width * 0.48
-        let handleHeight = rect.height * 0.28
-        let handleX = rect.midX - handleWidth / 2
-        let handleY = topY - handleHeight
-
-        let handleRect = CGRect(x: handleX, y: handleY, width: handleWidth, height: handleHeight)
-        path.addArc(
-            center: CGPoint(x: handleRect.midX, y: handleRect.maxY),
-            radius: handleRect.width / 2,
-            startAngle: .degrees(195),
-            endAngle: .degrees(-15),
-            clockwise: false
-        )
-        return path
-    }
-
     // MARK: - Band Paths (two straight lines at 30% and 70%)
 
     func bandPaths(in rect: CGRect) -> [Path] {
@@ -125,7 +104,6 @@ struct IronBucket: BucketShapeProvider {
         BucketColorPalette(
             fill: Color(red: 0.18, green: 0.20, blue: 0.22, opacity: 0.88),
             stroke: Color(red: 0.30, green: 0.33, blue: 0.36),
-            handle: Color(red: 0.35, green: 0.38, blue: 0.40),
             band: Color(red: 0.40, green: 0.43, blue: 0.46).opacity(0.25),
             accent: Color(red: 0.29, green: 0.33, blue: 0.37)
         )
