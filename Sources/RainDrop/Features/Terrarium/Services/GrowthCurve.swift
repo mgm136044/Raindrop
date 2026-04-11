@@ -17,7 +17,7 @@ struct GrowthCurve: Sendable {
     static func level(for totalMinutes: Int) -> Int {
         guard totalMinutes > 0 else { return 0 }
         let k = Double(totalMinutesToMax) / Double(maxLevel * maxLevel)
-        let level = Int(sqrt(Double(totalMinutes) / k))
+        let level = Int(sqrt(Double(totalMinutes) / k) + 1e-9)
         return min(level, maxLevel)
     }
 
