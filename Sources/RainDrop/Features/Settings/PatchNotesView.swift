@@ -9,6 +9,9 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.8.1", date: "2026.04.12", changes: [
+            "물 색상 선택 안내 문구 추가 (금 양동이부터 활성화)",
+        ]),
         PatchNote(version: "2.8.0", date: "2026.04.12", changes: [
             "테라리움 성장 시스템 도입 — 집중할수록 양동이 주변에 식물이 자라남",
             "50 바이탈리티 레벨 (4단계: 발아 → 개화 → 성장 → 초월)",
