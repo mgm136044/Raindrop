@@ -9,6 +9,13 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.8.0", date: "2026.04.12", changes: [
+            "테라리움 성장 시스템 도입 — 집중할수록 양동이 주변에 식물이 자라남",
+            "50 바이탈리티 레벨 (4단계: 발아 → 개화 → 성장 → 초월)",
+            "6개 바이옴 — 스킨별 고유 식물 생태계 (숲/산업/크리스털/왕실/얼음/마법)",
+            "온보딩 화면 제거",
+            "구 환경/날씨 시스템 제거 → 테라리움으로 대체",
+        ]),
         PatchNote(version: "2.7.0", date: "2026.04.11", changes: [
             "양동이 스킨 전면 리디자인 — Apple 디자인 철학 기반 6종 고유 형태/재질",
             "물 애니메이션 안정성 대폭 개선 — TimelineView 기반 (프리즈 버그 수정)",
