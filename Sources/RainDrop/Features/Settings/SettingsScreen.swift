@@ -219,6 +219,10 @@ struct SettingsScreen: View {
                     Text("물과 물방울의 색을 스킨 색상에 맞춥니다.")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
+                } else {
+                    Text("🪣 금 양동이부터 물 색상을 선택할 수 있습니다.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
