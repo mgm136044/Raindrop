@@ -4,7 +4,6 @@ struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
     var totalBuckets: Int = 0
     var shopViewModel: ShopViewModel?
-    var onShowOnboarding: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: SettingsTab = .focus
     @State private var showPatchNotes = false
@@ -260,9 +259,6 @@ struct SettingsScreen: View {
             Section("정보") {
                 Button("패치노트") {
                     showPatchNotes = true
-                }
-                Button("온보딩 다시 보기") {
-                    onShowOnboarding?()
                 }
             }
 

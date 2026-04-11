@@ -19,7 +19,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 struct RainDropApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var container = AppContainer()
-    @State private var showOnboarding = false
     @State private var showUpdateAlert = false
     @State private var showUpdateResult = false
 
@@ -59,17 +58,7 @@ struct RainDropApp: App {
                     .ignoresSafeArea()
                 }
             }
-            .sheet(isPresented: $showOnboarding) {
-                OnboardingView {
-                    container.settingsViewModel.settings.hasSeenOnboarding = true
-                    container.settingsViewModel.save()
-                    showOnboarding = false
-                }
-            }
             .onAppear {
-                if !container.settingsViewModel.settings.hasSeenOnboarding && !showOnboarding {
-                    showOnboarding = true
-                }
                 container.shopViewModel.isDeveloperMode = container.settingsViewModel.settings.developerMode
                 let soundService = container.backgroundSoundService
                 appDelegate.onTerminate = {
