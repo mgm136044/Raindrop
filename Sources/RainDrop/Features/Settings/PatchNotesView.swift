@@ -9,6 +9,15 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.7.0", date: "2026.04.11", changes: [
+            "양동이 스킨 전면 리디자인 — Apple 디자인 철학 기반 6종 고유 형태/재질",
+            "물 애니메이션 안정성 대폭 개선 — TimelineView 기반 (프리즈 버그 수정)",
+            "스킨별 동적 비/물 영역 — 입구, 바닥, 채움 높이 자동 적응",
+            "배경 사운드 품질 업그레이드 — Apple ComfortSounds 고품질 오디오 적용",
+            "노이즈 3종 제거 → 비행기 앰비언스 추가 (총 8종)",
+            "배경 사운드 선택 UX 개선 — 블럭 전체 클릭 가능",
+            "개발자 모드 코드 토글 방식으로 변경",
+        ]),
         PatchNote(version: "2.6.1", date: "2026.04.10", changes: [
             "타이머 실행 중 배경 사운드 활성화 시 정상 동작하도록 수정",
             "일시정지 상태에서 배경 사운드 설정 변경 지원",

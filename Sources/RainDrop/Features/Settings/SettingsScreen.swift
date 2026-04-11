@@ -266,25 +266,33 @@ struct SettingsScreen: View {
                 }
             }
 
-            #if DEBUG
             Section("개발자") {
-                Toggle(isOn: Binding(
-                    get: { viewModel.settings.developerMode },
-                    set: { newValue in
-                        viewModel.settings.developerMode = newValue
-                        shopViewModel?.isDeveloperMode = newValue
-                        viewModel.save()
-                    }
-                )) {
+                if viewModel.settings.developerMode {
                     HStack {
                         Image(systemName: "hammer.fill")
-                            .foregroundStyle(viewModel.settings.developerMode ? AppColors.accent : .secondary)
-                        Text("개발자 모드")
+                            .foregroundStyle(AppColors.accent)
+                        Text("개발자 모드 활성화됨")
                             .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AppColors.accent)
                     }
                 }
+                HStack {
+                    Text("개발자 코드")
+                        .font(.system(size: 13))
+                    Spacer()
+                    SecureField("코드 입력", text: $devCode)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 100)
+                        .onSubmit {
+                            if devCode == "0530" {
+                                viewModel.settings.developerMode.toggle()
+                                shopViewModel?.isDeveloperMode = viewModel.settings.developerMode
+                                viewModel.save()
+                            }
+                            devCode = ""
+                        }
+                }
             }
-            #endif
         }
         .formStyle(.grouped)
     }

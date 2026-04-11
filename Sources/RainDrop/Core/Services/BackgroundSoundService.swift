@@ -104,9 +104,7 @@ enum BackgroundSound: String, CaseIterable, Codable {
     case fire = "Fire"
     case night = "Night"
     case quietNight = "QuietNight"
-    case whiteNoise = "WhiteNoise"
-    case pinkNoise = "PinkNoise"
-    case brownNoise = "BrownNoise"
+    case airplane = "Airplane"
 
     var filename: String { rawValue + ".m4a" }
 
@@ -119,9 +117,7 @@ enum BackgroundSound: String, CaseIterable, Codable {
         case .fire: return "모닥불"
         case .night: return "밤"
         case .quietNight: return "고요한 밤"
-        case .whiteNoise: return "화이트 노이즈"
-        case .pinkNoise: return "핑크 노이즈"
-        case .brownNoise: return "브라운 노이즈"
+        case .airplane: return "비행기"
         }
     }
 
@@ -132,7 +128,19 @@ enum BackgroundSound: String, CaseIterable, Codable {
         case .stream: return "🏞️"
         case .fire: return "🔥"
         case .night, .quietNight: return "🌙"
-        case .whiteNoise, .pinkNoise, .brownNoise: return "🔊"
+        case .airplane: return "✈️"
+        }
+    }
+
+    // Backward compatibility: old saved values map to default
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        switch rawValue {
+        case "WhiteNoise", "PinkNoise", "BrownNoise":
+            self = .rain  // Fall back to rain for removed sounds
+        default:
+            self = BackgroundSound(rawValue: rawValue) ?? .rain
         }
     }
 }

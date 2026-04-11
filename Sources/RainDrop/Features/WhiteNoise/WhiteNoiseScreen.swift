@@ -56,6 +56,7 @@ struct BackgroundSoundScreen: View {
                                             .font(.system(size: 13, weight: .semibold))
                                     }
                                 }
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                         }
