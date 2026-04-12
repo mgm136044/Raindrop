@@ -130,13 +130,11 @@ struct WeeklyDensityView: View {
     }
 }
 
-// MARK: - Tappable Mini Bucket (wobble on tap)
+// MARK: - Mini Bucket
 
 private struct TappableMiniBucket: View {
     let fillRatio: Double
     let skin: BucketSkin
-
-    @State private var wobbleAngle: Double = 0
 
     var body: some View {
         BucketView(
@@ -144,17 +142,7 @@ private struct TappableMiniBucket: View {
             skin: skin,
             useCustomWaterColor: false,
             intensity: 0,
-            tiltAngle: wobbleAngle,
             mode: .mini
         )
-        .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
-        .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            wobbleAngle = wobbleAngle <= 0 ? 6 : -6
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                wobbleAngle = 0
-            }
-        }
     }
 }

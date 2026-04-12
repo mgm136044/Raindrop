@@ -8,7 +8,6 @@ struct BucketView: View {
     let useCustomWaterColor: Bool
     var intensity: Double = 0.5
     var waterColorOverride: (top: Color, bottom: Color)?
-    var tiltAngle: Double = 0
     var mode: BucketRenderMode = .full
 
     @State private var idlePhase: Double = 0
@@ -20,7 +19,6 @@ struct BucketView: View {
         useCustomWaterColor: Bool,
         intensity: Double = 0.5,
         waterColorOverride: (top: Color, bottom: Color)? = nil,
-        tiltAngle: Double = 0,
         mode: BucketRenderMode = .full
     ) {
         self.progress = progress
@@ -28,7 +26,6 @@ struct BucketView: View {
         self.useCustomWaterColor = useCustomWaterColor
         self.intensity = intensity
         self.waterColorOverride = waterColorOverride
-        self.tiltAngle = tiltAngle
         self.mode = mode
         self._provider = State(initialValue: skin.shapeProvider)
     }
@@ -101,7 +98,6 @@ struct BucketView: View {
                     waveOffset: waveOffset + 0.3,
                     intensity: effectiveIntensity,
                     layer: .back,
-                    tiltAngle: tiltAngle,
                     maxFillHeight: provider.maxFillHeight
                 )
                 .fill(
@@ -123,7 +119,6 @@ struct BucketView: View {
                 waveOffset: waveOffset,
                 intensity: mode == .mini ? 0 : effectiveIntensity,
                 layer: .front,
-                tiltAngle: tiltAngle,
                 maxFillHeight: provider.maxFillHeight
             )
             .fill(
@@ -144,7 +139,6 @@ struct BucketView: View {
                     progress: progress,
                     waveOffset: waveOffset,
                     intensity: effectiveIntensity,
-                    tiltAngle: tiltAngle,
                     maxFillHeight: provider.maxFillHeight
                 )
                 .stroke(Color.white.opacity(surfaceReflectionOpacity), lineWidth: 1.5)
@@ -237,7 +231,7 @@ struct BucketView: View {
                 idlePhase = 1.0
             }
         case .facetShimmer:
-            break // Driven by tiltAngle from parent
+            break
         }
     }
 }

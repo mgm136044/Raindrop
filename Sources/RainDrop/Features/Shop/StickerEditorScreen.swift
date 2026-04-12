@@ -52,7 +52,6 @@ struct StickerEditorScreen: View {
 
     private let bucketPreviewWidth: CGFloat = 220
     private let bucketPreviewHeight: CGFloat = 200
-    @State private var wobbleAngle: Double = 0
 
     private var bucketPreview: some View {
         ZStack {
@@ -64,7 +63,7 @@ struct StickerEditorScreen: View {
 
             GeometryReader { geometry in
                 ZStack {
-                    BucketView(progress: 0.5, skin: skin, useCustomWaterColor: useCustomWaterColor, tiltAngle: wobbleAngle)
+                    BucketView(progress: 0.5, skin: skin, useCustomWaterColor: useCustomWaterColor)
                         .frame(width: bucketPreviewWidth, height: bucketPreviewHeight)
 
                     ForEach(shopViewModel.shopState.placements) { placement in
@@ -86,15 +85,7 @@ struct StickerEditorScreen: View {
                     }
                 }
                 .frame(width: bucketPreviewWidth, height: bucketPreviewHeight)
-                .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
-                .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                .onTapGesture {
-                    wobbleAngle = wobbleAngle <= 0 ? 6 : -6
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        wobbleAngle = 0
-                    }
-                }
             }
 
             // Hint

@@ -24,11 +24,10 @@ struct WaterSurfaceShape: Shape {
     var waveOffset: Double
     var intensity: Double
     var layer: WaterLayer
-    var tiltAngle: Double = 0
     var maxFillHeight: Double = 0.80
 
     // animatableData에는 waveOffset만 — repeat-forever 애니메이션의 유일한 소유자
-    // progress와 tiltAngle은 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
+    // progress는 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
     var animatableData: Double {
         get { waveOffset }
         set { waveOffset = newValue }
@@ -56,21 +55,12 @@ struct WaterSurfaceShape: Shape {
 
         let phaseShift: Double = layer == .back ? 0.3 : 0
 
-        // Tilt: water sloshes opposite to bucket tilt (inertia)
-        // tiltAngle in degrees → convert to slope across bucket width
-        let slopeFactor = max(-1, min(1, -tiltAngle / 8.0))  // clamp: 8° tilt = full slope
-        let maxSlosh = rect.height * 0.06 * min(clampedProgress + 0.2, 1.0)
-
         for x in stride(from: 0, through: rect.width, by: 3) {
             let primary = WaveMath.fastSin(((x / primaryWL) + waveOffset + phaseShift) * 2 * .pi) * primaryAmp
             let secondary = WaveMath.fastSin(((x / secondaryWL) + waveOffset * 1.3 + phaseShift) * 2 * .pi) * secondaryAmp
             let tertiary = WaveMath.fastSin(((x / tertiaryWL) + waveOffset * 2.1) * 2 * .pi) * tertiaryAmp
 
-            // Linear slope: left side goes up when tilting right (positive angle)
-            let normalizedX = (x / rect.width) - 0.5  // -0.5 to +0.5
-            let slosh = normalizedX * slopeFactor * maxSlosh * 2
-
-            let y = waterTop + primary + secondary + tertiary + slosh
+            let y = waterTop + primary + secondary + tertiary
             path.addLine(to: CGPoint(x: x, y: y))
         }
 
@@ -87,7 +77,6 @@ struct WaterSurfaceHighlight: Shape {
     var progress: Double
     var waveOffset: Double
     var intensity: Double
-    var tiltAngle: Double = 0
     var maxFillHeight: Double = 0.80
 
     var animatableData: Double {
@@ -105,18 +94,13 @@ struct WaterSurfaceHighlight: Shape {
         let secondaryAmp = (1.5 + intensityClamped * 2.0)
         let secondaryWL = rect.width / 3.0
 
-        let slopeFactor = max(-1, min(1, -tiltAngle / 8.0))
-        let maxSlosh = rect.height * 0.06 * min(clampedProgress + 0.2, 1.0)
-
         var path = Path()
         var started = false
 
         for x in stride(from: 0, through: rect.width, by: 3) {
             let primary = WaveMath.fastSin(((x / primaryWL) + waveOffset) * 2 * .pi) * primaryAmp
             let secondary = WaveMath.fastSin(((x / secondaryWL) + waveOffset * 1.3) * 2 * .pi) * secondaryAmp
-            let normalizedX = (x / rect.width) - 0.5
-            let slosh = normalizedX * slopeFactor * maxSlosh * 2
-            let y = waterTop + primary + secondary + slosh - 1
+            let y = waterTop + primary + secondary - 1
 
             if !started {
                 path.move(to: CGPoint(x: x, y: y))
