@@ -27,11 +27,12 @@ struct WaterSurfaceShape: Shape {
     var maxFillHeight: Double = 0.80
     var bottomInsetFraction: Double = 1.0
 
-    // animatableData에는 waveOffset만 — repeat-forever 애니메이션의 유일한 소유자
-    // progress는 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
-    var animatableData: Double {
-        get { waveOffset }
-        set { waveOffset = newValue }
+    var animatableData: AnimatablePair<Double, Double> {
+        get { .init(progress, waveOffset) }
+        set {
+            progress = newValue.first
+            waveOffset = newValue.second
+        }
     }
 
     func path(in rect: CGRect) -> Path {
@@ -87,9 +88,12 @@ struct WaterSurfaceHighlight: Shape {
     var maxFillHeight: Double = 0.80
     var bottomInsetFraction: Double = 1.0
 
-    var animatableData: Double {
-        get { waveOffset }
-        set { waveOffset = newValue }
+    var animatableData: AnimatablePair<Double, Double> {
+        get { .init(progress, waveOffset) }
+        set {
+            progress = newValue.first
+            waveOffset = newValue.second
+        }
     }
 
     func path(in rect: CGRect) -> Path {
