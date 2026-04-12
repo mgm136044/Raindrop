@@ -27,12 +27,10 @@ struct WaterSurfaceShape: Shape {
     var maxFillHeight: Double = 0.80
     var bottomInsetFraction: Double = 1.0
 
-    var animatableData: AnimatablePair<Double, Double> {
-        get { .init(progress, waveOffset) }
-        set {
-            progress = newValue.first
-            waveOffset = newValue.second
-        }
+    // progress only — waveOffset is driven directly by TimelineView each frame
+    var animatableData: Double {
+        get { progress }
+        set { progress = newValue }
     }
 
     func path(in rect: CGRect) -> Path {
@@ -88,12 +86,10 @@ struct WaterSurfaceHighlight: Shape {
     var maxFillHeight: Double = 0.80
     var bottomInsetFraction: Double = 1.0
 
-    var animatableData: AnimatablePair<Double, Double> {
-        get { .init(progress, waveOffset) }
-        set {
-            progress = newValue.first
-            waveOffset = newValue.second
-        }
+    // progress only — waveOffset is driven directly by TimelineView each frame
+    var animatableData: Double {
+        get { progress }
+        set { progress = newValue }
     }
 
     func path(in rect: CGRect) -> Path {
