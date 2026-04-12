@@ -93,13 +93,7 @@ struct TimerSceneView: View {
         }
         .onChange(of: viewModel.currentProgress) { _,newValue in
             if !viewModel.isDraining && !viewModel.isCycleDraining {
-                // Use nil-animation transaction to prevent inheriting any
-                // active drain animation context, which would reset progress to 0.
-                var t = Transaction()
-                t.animation = nil
-                withTransaction(t) {
-                    displayProgress = newValue
-                }
+                displayProgress = newValue
             }
         }
         .onChange(of: viewModel.isDraining) { _,draining in
