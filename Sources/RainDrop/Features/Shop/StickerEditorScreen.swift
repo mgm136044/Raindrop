@@ -143,6 +143,7 @@ struct StickerEditorScreen: View {
                             Text(item.emoji)
                                 .font(.system(size: 24))
                                 .frame(width: 40, height: 40)
+                                .contentShape(Rectangle())
                                 .background(AppColors.panelBackground)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
@@ -171,6 +172,9 @@ struct StickerEditorScreen: View {
                         Text("전체 삭제")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(AppColors.danger)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }

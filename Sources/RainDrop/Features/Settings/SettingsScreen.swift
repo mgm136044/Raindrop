@@ -207,6 +207,7 @@ struct SettingsScreen: View {
                                 .opacity(unlocked ? 1.0 : 0.4)
                         }
                         .padding(.vertical, 4)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .disabled(!unlocked)

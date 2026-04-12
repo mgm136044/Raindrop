@@ -46,6 +46,8 @@ struct CalendarHeatmapView: View {
             Button { previousMonth() } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 14, weight: .semibold))
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
@@ -77,6 +79,8 @@ struct CalendarHeatmapView: View {
             Button { nextMonth() } label: {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(isCurrentMonth)
@@ -145,6 +149,7 @@ struct CalendarHeatmapView: View {
                     lineWidth: isSelected || isToday ? 2 : 1
                 )
         )
+        .contentShape(Rectangle())
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.2)) {
                 selectedDay = selectedDay?.dateKey == day.dateKey ? nil : day

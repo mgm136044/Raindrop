@@ -59,6 +59,7 @@ struct TimerControlsView: View {
                 .font(.system(size: 22, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
+                .contentShape(Circle())
                 .glassEffect(Glass.regular.tint(color), in: Circle())
         }
         .buttonStyle(.plain)
