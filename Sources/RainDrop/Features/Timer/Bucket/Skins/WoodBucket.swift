@@ -145,5 +145,5 @@ struct WoodBucket: BucketShapeProvider {
     var bottomWidthFraction: Double { 0.88 }
     var waterMaskScale: Double { 0.84 }
     var maxFillHeight: Double { 0.82 }
-    var bottomInsetFraction: Double { 0.94 }
+    var bottomInsetFraction: Double { 1.0 }
 }

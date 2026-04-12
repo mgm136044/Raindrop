@@ -25,6 +25,7 @@ struct WaterSurfaceShape: Shape {
     var intensity: Double
     var layer: WaterLayer
     var maxFillHeight: Double = 0.80
+    var bottomInsetFraction: Double = 1.0
 
     // animatableData에는 waveOffset만 — repeat-forever 애니메이션의 유일한 소유자
     // progress는 부모 뷰가 보간하여 전달 (withAnimation/animation modifier)
@@ -35,7 +36,13 @@ struct WaterSurfaceShape: Shape {
 
     func path(in rect: CGRect) -> Path {
         let clampedProgress = min(max(progress, 0), 1.0)
-        let waterTop = rect.maxY - (rect.height * maxFillHeight * clampedProgress)
+        let clampedBottom = min(max(bottomInsetFraction, 0), 1.0)
+
+        let waterBottom = rect.minY + (rect.height * clampedBottom)
+        let maxFillSpan = rect.height * maxFillHeight
+        let floorInset = rect.maxY - waterBottom
+        let effectiveFillSpan = max(CGFloat(0), maxFillSpan - floorInset)
+        let waterTop = waterBottom - (effectiveFillSpan * clampedProgress)
         let hasWave = clampedProgress >= 0.05
 
         var path = Path()
@@ -64,8 +71,8 @@ struct WaterSurfaceShape: Shape {
             path.addLine(to: CGPoint(x: x, y: y))
         }
 
-        path.addLine(to: CGPoint(x: rect.width, y: rect.maxY))
-        path.addLine(to: CGPoint(x: 0, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.width, y: waterBottom))
+        path.addLine(to: CGPoint(x: 0, y: waterBottom))
         path.closeSubpath()
         return path
     }
@@ -78,6 +85,7 @@ struct WaterSurfaceHighlight: Shape {
     var waveOffset: Double
     var intensity: Double
     var maxFillHeight: Double = 0.80
+    var bottomInsetFraction: Double = 1.0
 
     var animatableData: Double {
         get { waveOffset }
@@ -86,7 +94,13 @@ struct WaterSurfaceHighlight: Shape {
 
     func path(in rect: CGRect) -> Path {
         let clampedProgress = min(max(progress, 0), 1.0)
-        let waterTop = rect.maxY - (rect.height * maxFillHeight * clampedProgress)
+        let clampedBottom = min(max(bottomInsetFraction, 0), 1.0)
+
+        let waterBottom = rect.minY + (rect.height * clampedBottom)
+        let maxFillSpan = rect.height * maxFillHeight
+        let floorInset = rect.maxY - waterBottom
+        let effectiveFillSpan = max(CGFloat(0), maxFillSpan - floorInset)
+        let waterTop = waterBottom - (effectiveFillSpan * clampedProgress)
         let intensityClamped = min(max(intensity, 0), 1)
 
         let primaryAmp = (4.0 + intensityClamped * 4.0)

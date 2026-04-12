@@ -163,5 +163,5 @@ struct GoldBucket: BucketShapeProvider {
     var bottomWidthFraction: Double { 0.68 }
     var waterMaskScale: Double { 0.86 }
     var maxFillHeight: Double { 0.85 }
-    var bottomInsetFraction: Double { 0.94 }
+    var bottomInsetFraction: Double { 0.92 }
 }

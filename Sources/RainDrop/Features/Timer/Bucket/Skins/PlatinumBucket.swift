@@ -133,5 +133,5 @@ struct PlatinumBucket: BucketShapeProvider {
     var bottomWidthFraction: Double { 0.76 }
     var waterMaskScale: Double { 0.86 }
     var maxFillHeight: Double { 0.75 }
-    var bottomInsetFraction: Double { 0.90 }
+    var bottomInsetFraction: Double { 1.0 }
 }

@@ -98,7 +98,8 @@ struct BucketView: View {
                     waveOffset: waveOffset + 0.3,
                     intensity: effectiveIntensity,
                     layer: .back,
-                    maxFillHeight: provider.maxFillHeight
+                    maxFillHeight: provider.maxFillHeight,
+                    bottomInsetFraction: provider.bottomInsetFraction
                 )
                 .fill(
                     LinearGradient(
@@ -119,7 +120,8 @@ struct BucketView: View {
                 waveOffset: waveOffset,
                 intensity: mode == .mini ? 0 : effectiveIntensity,
                 layer: .front,
-                maxFillHeight: provider.maxFillHeight
+                maxFillHeight: provider.maxFillHeight,
+                bottomInsetFraction: provider.bottomInsetFraction
             )
             .fill(
                 LinearGradient(
@@ -139,7 +141,8 @@ struct BucketView: View {
                     progress: progress,
                     waveOffset: waveOffset,
                     intensity: effectiveIntensity,
-                    maxFillHeight: provider.maxFillHeight
+                    maxFillHeight: provider.maxFillHeight,
+                    bottomInsetFraction: provider.bottomInsetFraction
                 )
                 .stroke(Color.white.opacity(surfaceReflectionOpacity), lineWidth: 1.5)
                 .mask(BucketBodyShape(provider: provider, mode: mode).scale(provider.waterMaskScale))

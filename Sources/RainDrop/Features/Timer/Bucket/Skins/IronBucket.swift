@@ -133,5 +133,5 @@ struct IronBucket: BucketShapeProvider {
     var bottomWidthFraction: Double { 0.84 }
     var waterMaskScale: Double { 0.88 }
     var maxFillHeight: Double { 0.78 }
-    var bottomInsetFraction: Double { 0.92 }
+    var bottomInsetFraction: Double { 1.0 }
 }
