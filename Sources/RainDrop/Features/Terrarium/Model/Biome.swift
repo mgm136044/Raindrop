@@ -26,6 +26,28 @@ struct BiomeTheme: Sendable {
 }
 
 extension Biome {
+    var emoji: String {
+        switch self {
+        case .forest: return "🌿"
+        case .industrial: return "⚙️"
+        case .crystal: return "💎"
+        case .royal: return "👑"
+        case .ice: return "❄️"
+        case .enchanted: return "✨"
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .forest: return "숲"
+        case .industrial: return "산업 정원"
+        case .crystal: return "크리스털 정원"
+        case .royal: return "왕실 정원"
+        case .ice: return "얼음 정원"
+        case .enchanted: return "마법 정원"
+        }
+    }
+
     var theme: BiomeTheme {
         switch self {
         case .forest:

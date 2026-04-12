@@ -7,7 +7,7 @@ struct GrowthSnapshot: Sendable {
     let totalMinutes: Int
     let biome: Biome
 
-    enum GrowthPhase: Int, Sendable {
+    enum GrowthPhase: Int, Sendable, CaseIterable {
         case germination = 1    // Lv 1-10
         case bloom = 2          // Lv 11-25
         case flourish = 3       // Lv 26-40
@@ -19,6 +19,15 @@ struct GrowthSnapshot: Sendable {
             case 11...25: return .bloom
             case 26...40: return .flourish
             default: return .transcendence
+            }
+        }
+
+        var displayName: String {
+            switch self {
+            case .germination: return "발아"
+            case .bloom: return "개화"
+            case .flourish: return "만개"
+            case .transcendence: return "초월"
             }
         }
     }

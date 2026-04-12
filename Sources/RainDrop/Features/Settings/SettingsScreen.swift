@@ -12,6 +12,7 @@ struct SettingsScreen: View {
     enum SettingsTab: String, CaseIterable {
         case focus = "집중"
         case skin = "스킨"
+        case garden = "가든"
         case misc = "기타"
     }
 
@@ -27,6 +28,8 @@ struct SettingsScreen: View {
                         focusTab
                     case .skin:
                         skinTab
+                    case .garden:
+                        gardenTab
                     case .misc:
                         miscTab
                     }
@@ -229,7 +232,7 @@ struct SettingsScreen: View {
         .formStyle(.grouped)
     }
 
-    // MARK: - Tab 3: 기타
+    // MARK: - Tab 4: 기타
 
     private var miscTab: some View {
         Form {
@@ -269,6 +272,128 @@ struct SettingsScreen: View {
         }
         .formStyle(.grouped)
     }
+
+    // MARK: - Tab 3: 가든
+
+    private var gardenTab: some View {
+        let snapshot = GrowthEngine.snapshot(
+            totalMinutes: shopViewModel?.shopState.totalFocusMinutes ?? 0,
+            skin: viewModel.settings.selectedSkin
+        )
+        let minutesToNext = GrowthCurve.cumulativeMinutes(for: snapshot.level + 1) - snapshot.totalMinutes
+        let sessionsToNext = max(1, Int(ceil(Double(minutesToNext) / 25.0)))
+
+        return Form {
+            Section("현재 상태") {
+                HStack(spacing: 16) {
+                    // Progress ring
+                    ZStack {
+                        Circle()
+                            .stroke(Color.gray.opacity(0.15), lineWidth: 8)
+                        Circle()
+                            .trim(from: 0, to: snapshot.progressToNext)
+                            .stroke(
+                                AngularGradient(
+                                    colors: [AppColors.accent, AppColors.accent.opacity(0.6)],
+                                    center: .center
+                                ),
+                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                        VStack(spacing: 1) {
+                            Text("\(snapshot.level)")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(.primary)
+                            Text("LEVEL")
+                                .font(.system(size: 8, weight: .heavy))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(width: 70, height: 70)
+
+                    // Info text
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(snapshot.phase.displayName)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        if snapshot.level < GrowthCurve.maxLevel {
+                            Text("다음 레벨까지 \(minutesToNext)분")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Text("약 \(sessionsToNext)회 세션")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        } else {
+                            Text("최고 레벨 달성!")
+                                .font(.subheadline)
+                                .foregroundStyle(AppColors.accent)
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
+            Section("성장 여정") {
+                let currentPhaseRaw = snapshot.phase.rawValue
+                let allPhases = GrowthSnapshot.GrowthPhase.allCases
+                VStack(spacing: 12) {
+                    HStack(spacing: 6) {
+                        ForEach(Array(allPhases.enumerated()), id: \.offset) { index, phase in
+                            let phaseRaw = phase.rawValue
+                            VStack(spacing: 4) {
+                                Capsule()
+                                    .fill(
+                                        phaseRaw < currentPhaseRaw
+                                            ? AnyShapeStyle(AppColors.accent)
+                                            : phaseRaw == currentPhaseRaw
+                                                ? AnyShapeStyle(AppColors.accent.opacity(0.6))
+                                                : AnyShapeStyle(Color.gray.opacity(0.15))
+                                    )
+                                    .frame(height: 6)
+                                Text(phase.displayName)
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(phaseRaw <= currentPhaseRaw ? .primary : .tertiary)
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
+            Section("통계") {
+                LabeledContent("총 집중 시간") {
+                    Text(formatDuration(snapshot.totalMinutes))
+                        .foregroundStyle(.secondary)
+                }
+                LabeledContent("바이옴") {
+                    Text("\(snapshot.biome.emoji) \(snapshot.biome.displayName)")
+                        .foregroundStyle(.secondary)
+                }
+                LabeledContent("최고 레벨까지") {
+                    if snapshot.level < GrowthCurve.maxLevel {
+                        let remaining = GrowthCurve.totalMinutesToMax - snapshot.totalMinutes
+                        Text("\(formatDuration(remaining)) 남음")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("달성 완료")
+                            .foregroundStyle(AppColors.accent)
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func formatDuration(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let mins = minutes % 60
+        if hours > 0 {
+            return "\(hours)시간 \(mins)분"
+        }
+        return "\(mins)분"
+    }
+
+    // MARK: - Tab 4: 기타
 
     // MARK: - Overlay Patch Notes
 
