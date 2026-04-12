@@ -151,7 +151,7 @@ private struct TappableMiniBucket: View {
         .contentShape(Rectangle())
         .onTapGesture {
             wobbleAngle = wobbleAngle <= 0 ? 6 : -6
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                 wobbleAngle = 0
             }
         }
