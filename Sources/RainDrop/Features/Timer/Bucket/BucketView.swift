@@ -111,7 +111,7 @@ struct BucketView: View {
                         endPoint: .bottom
                     )
                 )
-                .mask(BucketBodyShape(provider: provider, mode: mode).scale(provider.waterMaskScale))
+                .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
             }
 
             // 2b. Water layer (front, primary)
@@ -133,7 +133,7 @@ struct BucketView: View {
                     endPoint: .bottom
                 )
             )
-            .mask(BucketBodyShape(provider: provider, mode: mode).scale(provider.waterMaskScale))
+            .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
 
             // 3. Surface highlight
             if progress > 0.05 && mode == .full {
@@ -145,7 +145,7 @@ struct BucketView: View {
                     bottomInsetFraction: provider.bottomInsetFraction
                 )
                 .stroke(Color.white.opacity(surfaceReflectionOpacity), lineWidth: 1.5)
-                .mask(BucketBodyShape(provider: provider, mode: mode).scale(provider.waterMaskScale))
+                .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
             }
 
             // 4. Overlay (skin-specific decorations) — full mode only
