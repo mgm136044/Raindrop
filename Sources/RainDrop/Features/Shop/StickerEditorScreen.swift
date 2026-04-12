@@ -5,6 +5,7 @@ struct StickerEditorScreen: View {
     let skin: BucketSkin
     let useCustomWaterColor: Bool
     @Environment(\.dismiss) private var dismiss
+    @State private var wobbleAngle: Double = 0
 
     var body: some View {
         VStack(spacing: 0) {
@@ -65,6 +66,14 @@ struct StickerEditorScreen: View {
                 ZStack {
                     BucketView(progress: 0.5, skin: skin, useCustomWaterColor: useCustomWaterColor)
                         .frame(width: bucketPreviewWidth, height: bucketPreviewHeight)
+                        .rotationEffect(.degrees(wobbleAngle), anchor: .bottom)
+                        .animation(.interpolatingSpring(stiffness: 300, damping: 8), value: wobbleAngle)
+                        .onTapGesture {
+                            wobbleAngle = wobbleAngle <= 0 ? 6 : -6
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                wobbleAngle = 0
+                            }
+                        }
 
                     ForEach(shopViewModel.shopState.placements) { placement in
                         if let item = ShopCatalog.item(for: placement.itemID) {
