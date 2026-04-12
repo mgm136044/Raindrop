@@ -93,7 +93,13 @@ struct TimerSceneView: View {
         }
         .onChange(of: viewModel.currentProgress) { _,newValue in
             if !viewModel.isDraining && !viewModel.isCycleDraining {
-                displayProgress = newValue
+                // Use nil-animation transaction to prevent inheriting any
+                // active drain animation context, which would reset progress to 0.
+                var t = Transaction()
+                t.animation = nil
+                withTransaction(t) {
+                    displayProgress = newValue
+                }
             }
         }
         .onChange(of: viewModel.isDraining) { _,draining in
@@ -113,9 +119,16 @@ struct TimerSceneView: View {
                 withAnimation(.easeIn(duration: 1.2)) {
                     displayProgress = 0
                 }
-                Task {
+                Task { @MainActor in
                     try? await Task.sleep(for: .seconds(1.3))
                     viewModel.finishCycleDraining()
+                    // Force-reset displayProgress after drain animation completes,
+                    // overriding any residual animation state from the easeIn.
+                    var t = Transaction()
+                    t.animation = nil
+                    withTransaction(t) {
+                        displayProgress = viewModel.currentProgress
+                    }
                 }
             }
         }
