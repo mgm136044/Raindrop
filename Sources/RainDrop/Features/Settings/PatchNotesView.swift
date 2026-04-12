@@ -12,6 +12,7 @@ private let patchNotes: [PatchNote] = [
         PatchNote(version: "2.8.3", date: "2026.04.12", changes: [
             "클릭 영역 대폭 개선 — 모든 버튼/셀에서 행 전체 클릭 가능",
             "집중 시작/정지 등 주요 버튼 탭 영역 확장",
+            "물 빠짐 애니메이션 복원 — 집중 종료 시 물이 천천히 내려감",
         ]),
         PatchNote(version: "2.8.2", date: "2026.04.12", changes: [
             "가든 탭 추가 — 바이탈리티 레벨, 성장 진행률, 통계 확인",
