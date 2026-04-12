@@ -11,7 +11,7 @@ struct SettingsScreen: View {
 
     enum SettingsTab: String, CaseIterable {
         case focus = "집중"
-        case skin = "환경"
+        case skin = "스킨"
         case misc = "기타"
     }
 

@@ -7,8 +7,14 @@ final class GrowthRepository: Sendable {
         store = JSONFileStore()
     }
 
-    func load() -> GrowthState {
-        (try? store.load(GrowthState.self, filename: GrowthState.storageFilename)) ?? GrowthState()
+    /// Load existing state, or create + save new one if first launch
+    func loadOrCreate() -> GrowthState {
+        if let existing = try? store.load(GrowthState.self, filename: GrowthState.storageFilename) {
+            return existing
+        }
+        let newState = GrowthState()
+        save(newState)
+        return newState
     }
 
     func save(_ state: GrowthState) {

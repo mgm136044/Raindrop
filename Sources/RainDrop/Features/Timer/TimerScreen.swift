@@ -190,7 +190,7 @@ struct TimerScreen: View {
         }
         .onAppear {
             let repo = growthRepository ?? GrowthRepository()
-            growthSeed = repo.load().seed
+            growthSeed = repo.loadOrCreate().seed
         }
     }
 
