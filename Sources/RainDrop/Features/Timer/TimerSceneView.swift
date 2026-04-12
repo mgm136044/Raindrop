@@ -107,9 +107,14 @@ struct TimerSceneView: View {
                 withAnimation(.easeIn(duration: 1.2)) {
                     displayProgress = 0
                 }
-                Task {
+                Task { @MainActor in
                     try? await Task.sleep(for: .seconds(1.3))
                     viewModel.finishDraining()
+                    var t = Transaction()
+                    t.animation = nil
+                    withTransaction(t) {
+                        displayProgress = 0
+                    }
                 }
             }
         }
