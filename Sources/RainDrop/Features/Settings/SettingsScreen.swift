@@ -162,7 +162,7 @@ struct SettingsScreen: View {
         .formStyle(.grouped)
     }
 
-    // MARK: - Tab 2: 환경
+    // MARK: - Tab 2: 스킨
 
     private var skinTab: some View {
         Form {
@@ -392,8 +392,6 @@ struct SettingsScreen: View {
         }
         return "\(mins)분"
     }
-
-    // MARK: - Tab 4: 기타
 
     // MARK: - Overlay Patch Notes
 
