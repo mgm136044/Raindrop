@@ -9,6 +9,11 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.8.2", date: "2026.04.12", changes: [
+            "가든 탭 추가 — 바이탈리티 레벨, 성장 진행률, 통계 확인",
+            "Activity Ring 스타일 레벨 프로그레스 링",
+            "4단계 성장 여정 캡슐 바 (발아/개화/만개/초월)",
+        ]),
         PatchNote(version: "2.8.1", date: "2026.04.12", changes: [
             "물 색상 선택 안내 문구 추가 (금 양동이부터 활성화)",
             "물 슬로싱 제거 — 파도 애니메이션 끊김 해소",
