@@ -74,8 +74,11 @@ struct SkyBackgroundView: View {
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: progress) { _, newVal in
-            guard newVal < 0.5 || isOverflowing else { return }
+        .onChange(of: progress) { oldVal, newVal in
+            // Skip redundant updates when sky is fixed at storm (progress >= 0.5)
+            // But always update when crossing the 0.5 threshold or overflowing
+            let crossedThreshold = (oldVal < 0.5 && newVal >= 0.5) || (oldVal >= 0.5 && newVal < 0.5)
+            guard newVal < 0.5 || isOverflowing || crossedThreshold else { return }
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
