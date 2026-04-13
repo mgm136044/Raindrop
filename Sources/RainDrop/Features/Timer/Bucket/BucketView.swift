@@ -62,7 +62,7 @@ struct BucketView: View {
             let palette = provider.colorPalette
 
             if mode == .full {
-                TimelineView(.animation) { context in
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { context in
                     let waveOffset = (context.date.timeIntervalSinceReferenceDate / Self.waveCycleDuration)
                         .truncatingRemainder(dividingBy: 1.0)
 
