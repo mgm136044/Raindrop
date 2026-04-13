@@ -9,6 +9,13 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.9.0", date: "2026.04.14", changes: [
+            "성능 최적화 — 전체 CPU 35-65% 감소",
+            "비활성 애니메이션 자동 중단 (테라리움, 오버플로우, 스플래시)",
+            "BucketView 30fps 캡 적용 (120Hz 디스플레이 과다 렌더 방지)",
+            "bodyPath 중복 계산 제거 (프레임당 6회→1회)",
+            "무한 모드 물 채움 고착 버그 수정",
+        ]),
         PatchNote(version: "2.8.3", date: "2026.04.12", changes: [
             "클릭 영역 대폭 개선 — 모든 버튼/셀에서 행 전체 클릭 가능",
             "집중 시작/정지 등 주요 버튼 탭 영역 확장",
