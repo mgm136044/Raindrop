@@ -46,21 +46,21 @@ struct WaterSplashView: View {
                     )
                 }
             }
-            .onChange(of: timeline.date) { _,_ in
-                updateSplashes()
+            .onChange(of: timeline.date) { _,newDate in
+                updateSplashes(currentDate: newDate)
             }
         }
     }
 
-    private func updateSplashes() {
+    private func updateSplashes(currentDate: Date) {
         guard isActive, waterLevel > 0.05 else {
             splashes.removeAll()
+            startDate = currentDate
             return
         }
 
-        // Derive frameCount from elapsed time to avoid @State double-invalidation
-        let elapsed = Date.now.timeIntervalSince(startDate)
-        let frameCount = Int(elapsed * 30) // 30fps equivalent
+        let elapsed = currentDate.timeIntervalSince(startDate)
+        let frameCount = Int(elapsed * 30)
         var updated = splashes
 
         // Spawn new splashes

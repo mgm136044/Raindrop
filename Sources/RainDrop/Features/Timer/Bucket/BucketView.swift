@@ -72,7 +72,6 @@ struct BucketView: View {
                 bucketContent(rect: rect, palette: palette, waveOffset: 0)
             }
         }
-        .compositingGroup()
         .onAppear {
             restartIdleAnimation()
         }

@@ -60,8 +60,11 @@ struct OverflowAnimationView: View {
         .onChange(of: isActive) { _,active in
             if active {
                 spawnBurst()
-                withAnimation(.easeIn(duration: 0.3)) {
-                    opacity = 1.0
+                // Delay fade-in by one cycle to let TimelineView insert first
+                DispatchQueue.main.async {
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        opacity = 1.0
+                    }
                 }
                 Task {
                     try? await Task.sleep(for: .seconds(2.5))

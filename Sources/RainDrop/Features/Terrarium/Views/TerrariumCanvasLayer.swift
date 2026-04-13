@@ -14,6 +14,9 @@ struct TerrariumCanvasLayer: View {
                 for placement in placements {
                     drawPlant(ctx: ctx, size: size, placement: placement, time: 0)
                 }
+                if phase.rawValue >= 3 {
+                    drawAmbientParticles(ctx: ctx, size: size, time: 0)
+                }
             }
             .allowsHitTesting(false)
         } else {
