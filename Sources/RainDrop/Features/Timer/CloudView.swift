@@ -4,15 +4,17 @@ struct CloudView: View {
     let isVisible: Bool
     var intensity: Double = 0.5
 
-    @State private var cloudOffset: Double = 0
     @State private var cloudOpacity: Double = 0
-    @State private var isAnimatingDrift = false
 
     private var baseOpacity: Double {
         0.3 + min(max(intensity, 0), 1) * 0.5
     }
 
     var body: some View {
+        TimelineView(isVisible ? .animation(minimumInterval: 1.0 / 15.0) : .animation(paused: true)) { timeline in
+            let time = isVisible ? timeline.date.timeIntervalSinceReferenceDate : 0
+            let cloudOffset = sin(time / 8.0 * .pi * 2) * 10  // 8s cycle, ±10pt
+
         ZStack {
             // Main cloud
             Ellipse()
@@ -103,25 +105,13 @@ struct CloudView: View {
             }
         }
         .opacity(cloudOpacity * baseOpacity)
+        } // TimelineView
         .onChange(of: isVisible) { _,visible in
             if visible {
                 withAnimation(.easeIn(duration: 1.5)) {
                     cloudOpacity = 1.0
                 }
-                if !isAnimatingDrift {
-                    isAnimatingDrift = true
-                    withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
-                        cloudOffset = 10
-                    }
-                }
             } else {
-                isAnimatingDrift = false
-                // Use explicit transaction to break the repeatForever cycle
-                var transaction = Transaction()
-                transaction.disablesAnimations = true
-                withTransaction(transaction) {
-                    cloudOffset = 0
-                }
                 withAnimation(.easeOut(duration: 1.0)) {
                     cloudOpacity = 0
                 }
@@ -130,12 +120,6 @@ struct CloudView: View {
         .onAppear {
             if isVisible {
                 cloudOpacity = 1.0
-                if !isAnimatingDrift {
-                    isAnimatingDrift = true
-                    withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
-                        cloudOffset = 10
-                    }
-                }
             }
         }
     }
