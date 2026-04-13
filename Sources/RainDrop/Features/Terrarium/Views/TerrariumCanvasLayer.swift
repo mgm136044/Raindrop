@@ -4,27 +4,39 @@ struct TerrariumCanvasLayer: View {
     let placements: [PlantPlacement]
     let phase: GrowthSnapshot.GrowthPhase
     let biomeTheme: BiomeTheme
+    var reduceAnimations: Bool = false
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
-            let time = timeline.date.timeIntervalSinceReferenceDate
-
+        if reduceAnimations {
+            // Static render — no TimelineView, zero CPU when idle
             Canvas { ctx, size in
-                // Ground layer
-                drawGround(ctx: ctx, size: size, time: time)
-
-                // Plants (sorted by zIndex — back to front)
+                drawGround(ctx: ctx, size: size, time: 0)
                 for placement in placements {
-                    drawPlant(ctx: ctx, size: size, placement: placement, time: time)
-                }
-
-                // Ambient particles (phase 3+)
-                if phase.rawValue >= 3 {
-                    drawAmbientParticles(ctx: ctx, size: size, time: time)
+                    drawPlant(ctx: ctx, size: size, placement: placement, time: 0)
                 }
             }
+            .allowsHitTesting(false)
+        } else {
+            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
+                let time = timeline.date.timeIntervalSinceReferenceDate
+
+                Canvas { ctx, size in
+                    // Ground layer
+                    drawGround(ctx: ctx, size: size, time: time)
+
+                    // Plants (sorted by zIndex — back to front)
+                    for placement in placements {
+                        drawPlant(ctx: ctx, size: size, placement: placement, time: time)
+                    }
+
+                    // Ambient particles (phase 3+)
+                    if phase.rawValue >= 3 {
+                        drawAmbientParticles(ctx: ctx, size: size, time: time)
+                    }
+                }
+            }
+            .allowsHitTesting(false)
         }
-        .allowsHitTesting(false)
     }
 
     private func drawGround(ctx: GraphicsContext, size: CGSize, time: TimeInterval) {

@@ -72,7 +72,7 @@ struct BucketView: View {
                 bucketContent(rect: rect, palette: palette, waveOffset: 0)
             }
         }
-        .drawingGroup()
+        .compositingGroup()
         .onAppear {
             restartIdleAnimation()
         }
@@ -86,9 +86,11 @@ struct BucketView: View {
 
     @ViewBuilder
     private func bucketContent(rect: CGRect, palette: BucketColorPalette, waveOffset: Double) -> some View {
+        let bodyShape = BucketBodyShape(provider: provider, mode: mode)
+
         ZStack(alignment: .bottom) {
             // 1. Body fill
-            BucketBodyShape(provider: provider, mode: mode)
+            bodyShape
                 .fill(palette.fill)
 
             // 2a. Water layer (back, softer) — full mode only
@@ -111,7 +113,7 @@ struct BucketView: View {
                         endPoint: .bottom
                     )
                 )
-                .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
+                .mask(bodyShape.scaleEffect(provider.waterMaskScale, anchor: .bottom))
             }
 
             // 2b. Water layer (front, primary)
@@ -133,7 +135,7 @@ struct BucketView: View {
                     endPoint: .bottom
                 )
             )
-            .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
+            .mask(bodyShape.scaleEffect(provider.waterMaskScale, anchor: .bottom))
 
             // 3. Surface highlight
             if progress > 0.05 && mode == .full {
@@ -145,13 +147,13 @@ struct BucketView: View {
                     bottomInsetFraction: provider.bottomInsetFraction
                 )
                 .stroke(Color.white.opacity(surfaceReflectionOpacity), lineWidth: 1.5)
-                .mask(BucketBodyShape(provider: provider, mode: mode).scaleEffect(provider.waterMaskScale, anchor: .bottom))
+                .mask(bodyShape.scaleEffect(provider.waterMaskScale, anchor: .bottom))
             }
 
             // 4. Overlay (skin-specific decorations) — full mode only
             if mode == .full {
                 provider.overlay(in: rect, mode: mode)
-                    .mask(BucketBodyShape(provider: provider, mode: mode))
+                    .mask(bodyShape)
             }
 
             // 5. Bands (subtle, thin)
@@ -162,7 +164,7 @@ struct BucketView: View {
             }
 
             // 6. Edge rim light (1pt white->transparent instead of thick outline)
-            BucketBodyShape(provider: provider, mode: mode)
+            bodyShape
                 .stroke(
                     LinearGradient(
                         colors: [
@@ -177,7 +179,7 @@ struct BucketView: View {
 
             // 7. Specular highlight layer (.screen blend)
             if mode == .full {
-                BucketBodyShape(provider: provider, mode: mode)
+                bodyShape
                     .fill(
                         LinearGradient(
                             colors: [

@@ -17,7 +17,7 @@ struct WaterSplashView: View {
     let splashColor: Color
 
     @State private var splashes: [SplashParticle] = []
-    @State private var frameCount: Int = 0
+    @State private var startDate: Date = .now
 
     private var spawnRate: Int {
         Int(2 + min(max(intensity, 0), 1) * 8)
@@ -58,7 +58,9 @@ struct WaterSplashView: View {
             return
         }
 
-        frameCount += 1
+        // Derive frameCount from elapsed time to avoid @State double-invalidation
+        let elapsed = Date.now.timeIntervalSince(startDate)
+        let frameCount = Int(elapsed * 30) // 30fps equivalent
         var updated = splashes
 
         // Spawn new splashes

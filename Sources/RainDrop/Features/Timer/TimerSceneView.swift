@@ -60,7 +60,8 @@ struct TimerSceneView: View {
             )
             TerrariumView(
                 snapshot: growthSnapshot,
-                placements: plantPlacements
+                placements: plantPlacements,
+                reduceAnimations: reduceAnimations
             ) {
                 BucketWithStickersView(
                     progress: displayProgress,

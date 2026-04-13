@@ -18,40 +18,44 @@ struct OverflowAnimationView: View {
 
     var body: some View {
         ZStack {
-            // Golden sparkle burst
-            TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-                Canvas { context, size in
-                    for sparkle in sparkles {
-                        let alpha = max(1.0 - sparkle.life / sparkle.maxLife, 0)
-                        let x = sparkle.x * size.width
-                        let y = sparkle.y * size.height
+            if sparkles.isEmpty {
+                Color.clear
+            } else {
+                // Golden sparkle burst
+                TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+                    Canvas { context, size in
+                        for sparkle in sparkles {
+                            let alpha = max(1.0 - sparkle.life / sparkle.maxLife, 0)
+                            let x = sparkle.x * size.width
+                            let y = sparkle.y * size.height
 
-                        let rect = CGRect(
-                            x: x - sparkle.size / 2,
-                            y: y - sparkle.size / 2,
-                            width: sparkle.size,
-                            height: sparkle.size
-                        )
+                            let rect = CGRect(
+                                x: x - sparkle.size / 2,
+                                y: y - sparkle.size / 2,
+                                width: sparkle.size,
+                                height: sparkle.size
+                            )
 
-                        context.fill(
-                            Circle().path(in: rect),
-                            with: .color(Color.yellow.opacity(alpha * 0.8))
-                        )
+                            context.fill(
+                                Circle().path(in: rect),
+                                with: .color(Color.yellow.opacity(alpha * 0.8))
+                            )
 
-                        // Glow
-                        let glowRect = rect.insetBy(dx: -sparkle.size * 0.5, dy: -sparkle.size * 0.5)
-                        context.fill(
-                            Circle().path(in: glowRect),
-                            with: .color(Color.orange.opacity(alpha * 0.2))
-                        )
+                            // Glow
+                            let glowRect = rect.insetBy(dx: -sparkle.size * 0.5, dy: -sparkle.size * 0.5)
+                            context.fill(
+                                Circle().path(in: glowRect),
+                                with: .color(Color.orange.opacity(alpha * 0.2))
+                            )
+                        }
+                    }
+                    .onChange(of: timeline.date) { _,_ in
+                        updateSparkles()
                     }
                 }
-                .onChange(of: timeline.date) { _,_ in
-                    updateSparkles()
-                }
             }
-            .allowsHitTesting(false)
         }
+        .allowsHitTesting(false)
         .opacity(opacity)
         .onChange(of: isActive) { _,active in
             if active {
