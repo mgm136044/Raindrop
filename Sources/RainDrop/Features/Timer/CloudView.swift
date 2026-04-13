@@ -6,6 +6,7 @@ struct CloudView: View {
 
     @State private var cloudOffset: Double = 0
     @State private var cloudOpacity: Double = 0
+    @State private var isAnimatingDrift = false
 
     private var baseOpacity: Double {
         0.3 + min(max(intensity, 0), 1) * 0.5
@@ -107,21 +108,33 @@ struct CloudView: View {
                 withAnimation(.easeIn(duration: 1.5)) {
                     cloudOpacity = 1.0
                 }
-                withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
-                    cloudOffset = 10
+                if !isAnimatingDrift {
+                    isAnimatingDrift = true
+                    withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
+                        cloudOffset = 10
+                    }
                 }
             } else {
+                isAnimatingDrift = false
+                // Use explicit transaction to break the repeatForever cycle
+                var transaction = Transaction()
+                transaction.disablesAnimations = true
+                withTransaction(transaction) {
+                    cloudOffset = 0
+                }
                 withAnimation(.easeOut(duration: 1.0)) {
                     cloudOpacity = 0
-                    cloudOffset = 0
                 }
             }
         }
         .onAppear {
             if isVisible {
                 cloudOpacity = 1.0
-                withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
-                    cloudOffset = 10
+                if !isAnimatingDrift {
+                    isAnimatingDrift = true
+                    withAnimation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true)) {
+                        cloudOffset = 10
+                    }
                 }
             }
         }

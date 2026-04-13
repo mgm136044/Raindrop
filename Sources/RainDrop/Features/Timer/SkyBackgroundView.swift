@@ -74,7 +74,8 @@ struct SkyBackgroundView: View {
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
-        .onChange(of: progress) { _,_ in
+        .onChange(of: progress) { _, newVal in
+            guard newVal < 0.5 || isOverflowing else { return }
             currentTop = effectiveTop
             currentBottom = effectiveBottom
         }
@@ -112,37 +113,39 @@ struct SkyBackgroundView: View {
 
 private struct DeepOceanParticleView: View {
     @State private var particles: [OceanBubble] = []
-    @State private var bubbleTimer: Timer?
 
     private let bubbleCount = 15
 
     var body: some View {
-        Canvas { context, size in
-            for bubble in particles {
-                let x = bubble.x * size.width
-                let y = bubble.y * size.height
-                let r = bubble.radius
+        TimelineView(.animation(minimumInterval: 1.0 / 15.0)) { timeline in
+            Canvas { context, size in
+                // Use timeline.date to trigger re-evaluation each frame
+                let _ = timeline.date
 
-                let rect = CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)
-                context.fill(
-                    Circle().path(in: rect),
-                    with: .color(.white.opacity(bubble.opacity))
-                )
+                for bubble in particles {
+                    let x = bubble.x * size.width
+                    let y = bubble.y * size.height
+                    let r = bubble.radius
 
-                let hlRect = CGRect(x: x - r * 0.3, y: y - r * 0.3, width: r * 0.6, height: r * 0.6)
-                context.fill(
-                    Circle().path(in: hlRect),
-                    with: .color(.white.opacity(bubble.opacity * 0.5))
-                )
+                    let rect = CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)
+                    context.fill(
+                        Circle().path(in: rect),
+                        with: .color(.white.opacity(bubble.opacity))
+                    )
+
+                    let hlRect = CGRect(x: x - r * 0.3, y: y - r * 0.3, width: r * 0.6, height: r * 0.6)
+                    context.fill(
+                        Circle().path(in: hlRect),
+                        with: .color(.white.opacity(bubble.opacity * 0.5))
+                    )
+                }
+            }
+            .onChange(of: timeline.date) { _, _ in
+                updateBubbles()
             }
         }
         .onAppear {
             initBubbles()
-            startTimer()
-        }
-        .onDisappear {
-            bubbleTimer?.invalidate()
-            bubbleTimer = nil
         }
     }
 
@@ -159,19 +162,7 @@ private struct DeepOceanParticleView: View {
         }
     }
 
-    private func startTimer() {
-        bubbleTimer?.invalidate()
-        let timer = Timer(timeInterval: 1.0 / 15.0, repeats: true) { _ in
-            Task { @MainActor in
-                updateBubbles()
-            }
-        }
-        RunLoop.main.add(timer, forMode: .common)
-        bubbleTimer = timer
-    }
-
     private func updateBubbles() {
-        guard bubbleTimer != nil else { return }
         var updated = particles
         for i in updated.indices {
             updated[i].y -= updated[i].speed
