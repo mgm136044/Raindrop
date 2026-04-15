@@ -196,12 +196,13 @@ final class AuthViewModel: ObservableObject {
         case 17020:
             return "네트워크 연결을 확인해주세요."
         case 17010:
-            return "잘못된 API 키입니다. Firebase 설정을 확인하세요."
+            logger.fault("Firebase API key invalid (17010) during \(context, privacy: .public)")
+            return "\(context)에 실패했습니다. 잠시 후 다시 시도해 주세요."
         case 17995:
             let reason = nsError.userInfo[NSLocalizedFailureReasonErrorKey] as? String
                 ?? error.localizedDescription
             logger.error("Keychain error 17995 during \(context, privacy: .public): \(reason, privacy: .public)")
-            return "\(context) 실패: Keychain 접근 오류 — 앱을 재설치하거나 개발자에게 문의하세요."
+            return "\(context) 실패: 앱을 재설치하거나 개발자에게 문의하세요."
         case 17999:
             // Internal error — log details, show generic message to user
             let underlyingMessage = nsError.userInfo[NSLocalizedDescriptionKey] as? String

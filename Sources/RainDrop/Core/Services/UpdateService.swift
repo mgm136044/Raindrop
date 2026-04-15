@@ -146,7 +146,7 @@ final class UpdateService: ObservableObject {
         } catch {
             logger.error("업데이트 스크립트 실행 실패: \(error.localizedDescription, privacy: .public)")
             isUpdating = false
-            updateResult = "업데이트 실행 실패: \(error.localizedDescription)"
+            updateResult = "업데이트 실행에 실패했습니다."
         }
     }
 
