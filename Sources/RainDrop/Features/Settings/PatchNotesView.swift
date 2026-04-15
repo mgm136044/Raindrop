@@ -9,6 +9,12 @@ private struct PatchNote {
 // MARK: - Patch notes data (shared)
 
 private let patchNotes: [PatchNote] = [
+        PatchNote(version: "2.9.1", date: "2026.04.15", changes: [
+            "보안 강화 — 개발자 코드 SHA256 해시 기반 검증 (바이너리 추출 방지)",
+            "보안 강화 — Firebase 에러 메시지 일반화 (내부 정보 미노출)",
+            "보안 강화 — 셸 스크립트 변수 인용 처리 (인젝션 방지)",
+            "크래시 수정 — AppleSignInCoordinator 강제 언래핑 제거",
+        ]),
         PatchNote(version: "2.9.0", date: "2026.04.14", changes: [
             "성능 최적화 — 전체 CPU 35-65% 감소",
             "비활성 애니메이션 자동 중단 (테라리움, 오버플로우, 스플래시, 구름)",
