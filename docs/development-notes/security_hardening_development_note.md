@@ -29,7 +29,13 @@
 - `Features/Auth/AuthViewModel.swift` (에러 메시지 일반화)
 - `Core/Services/UpdateService.swift` (셸 변수 인용)
 
+## 추가 수정 (Codex 리뷰 후속)
+- UpdateService: `updateResult`에 `error.localizedDescription` 직접 노출 → 일반화 메시지로 교체
+- AuthViewModel 17010: "잘못된 API 키입니다. Firebase 설정을 확인하세요." → logger.fault + 일반 메시지 ("실패했습니다. 잠시 후 다시 시도해 주세요.")
+- AuthViewModel 17995: "Keychain 접근 오류" 기술 용어 제거 → "앱을 재설치하거나 개발자에게 문의하세요."
+
 ## 관련 커밋
 - `a097180` security: fix audit findings (1 high, 3 medium)
 - `c23be59` security: upgrade dev code from XOR to SHA256 hash
 - `3d0382e` feat: v2.9.1 — security hardening
+- `7e48adb` security: generalize remaining error messages (Codex review follow-up)
