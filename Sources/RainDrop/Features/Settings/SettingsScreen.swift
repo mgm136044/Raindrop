@@ -1,4 +1,5 @@
 import SwiftUI
+import CryptoKit
 
 struct SettingsScreen: View {
     @ObservedObject var viewModel: SettingsViewModel
@@ -385,12 +386,11 @@ struct SettingsScreen: View {
         .formStyle(.grouped)
     }
 
-    // Obfuscated dev code check — prevents plaintext extraction via `strings` binary
+    // Hash-based dev code check — no plaintext or reversible encoding in binary
     private static func isValidDevCode(_ code: String) -> Bool {
-        // XOR-masked expected bytes (each ASCII byte XOR 0xAA)
-        let masked: [UInt8] = [0x9A, 0x9F, 0x99, 0x9A]  // "0530" ^ 0xAA
-        let expected = masked.map { $0 ^ 0xAA }
-        return Array(code.utf8) == expected
+        let hash = SHA256.hash(data: Data(code.utf8))
+        let hex = hash.compactMap { String(format: "%02x", $0) }.joined()
+        return hex == "fdd786c4bb54810ca1e7edf1538dec73a46a7682f141a8bc5278b4fb0ec76360"
     }
 
     private func formatDuration(_ minutes: Int) -> String {
