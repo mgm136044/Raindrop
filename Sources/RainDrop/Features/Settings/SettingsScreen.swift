@@ -261,7 +261,7 @@ struct SettingsScreen: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 100)
                         .onSubmit {
-                            if devCode == "0530" {
+                            if Self.isValidDevCode(devCode) {
                                 viewModel.settings.developerMode.toggle()
                                 shopViewModel?.isDeveloperMode = viewModel.settings.developerMode
                                 viewModel.save()
@@ -383,6 +383,14 @@ struct SettingsScreen: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    // Obfuscated dev code check — prevents plaintext extraction via `strings` binary
+    private static func isValidDevCode(_ code: String) -> Bool {
+        // XOR-masked expected bytes (each ASCII byte XOR 0xAA)
+        let masked: [UInt8] = [0x9A, 0x9F, 0x99, 0x9A]  // "0530" ^ 0xAA
+        let expected = masked.map { $0 ^ 0xAA }
+        return Array(code.utf8) == expected
     }
 
     private func formatDuration(_ minutes: Int) -> String {

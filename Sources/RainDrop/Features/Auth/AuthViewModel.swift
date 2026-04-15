@@ -124,7 +124,8 @@ final class AuthViewModel: ObservableObject {
                 authState = .signedIn
                 NotificationCenter.default.post(name: .authStateDidChange, object: nil)
             } catch {
-                errorMessage = "프로필 생성 실패: \(error.localizedDescription)"
+                logger.error("프로필 생성 실패: \(error.localizedDescription, privacy: .public)")
+                errorMessage = "프로필 생성에 실패했습니다. 잠시 후 다시 시도해 주세요."
             }
             isLoading = false
         }
@@ -202,12 +203,14 @@ final class AuthViewModel: ObservableObject {
             logger.error("Keychain error 17995 during \(context, privacy: .public): \(reason, privacy: .public)")
             return "\(context) 실패: Keychain 접근 오류 — 앱을 재설치하거나 개발자에게 문의하세요."
         case 17999:
-            // 내부 에러 — 실제 원인을 보여줌
+            // Internal error — log details, show generic message to user
             let underlyingMessage = nsError.userInfo[NSLocalizedDescriptionKey] as? String
                 ?? error.localizedDescription
-            return "\(context) 내부 오류: \(underlyingMessage)"
+            logger.error("Auth internal error 17999 during \(context, privacy: .public): \(underlyingMessage, privacy: .public)")
+            return "\(context)에 실패했습니다. 잠시 후 다시 시도해 주세요."
         default:
-            return "\(context) 실패 [\(nsError.code)]: \(error.localizedDescription)"
+            logger.error("Auth error \(nsError.code) during \(context, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            return "\(context)에 실패했습니다. 잠시 후 다시 시도해 주세요."
         }
     }
 
@@ -218,17 +221,22 @@ final class AuthViewModel: ObservableObject {
            let code = FirestoreErrorCode.Code(rawValue: nsError.code) {
             switch code {
             case .permissionDenied:
-                return "프로필 확인 실패: Firestore 권한이 없습니다. Rules를 확인하세요."
+                logger.error("Firestore permission denied: \(nsError.localizedDescription, privacy: .public)")
+                return "프로필을 확인할 수 없습니다. 다시 로그인해 주세요."
             case .unauthenticated:
-                return "프로필 확인 실패: 인증 상태가 유효하지 않습니다. 다시 로그인해주세요."
+                logger.error("Firestore unauthenticated: \(nsError.localizedDescription, privacy: .public)")
+                return "인증 상태가 유효하지 않습니다. 다시 로그인해 주세요."
             case .unavailable:
-                return "프로필 확인 실패: 네트워크 연결 또는 Firestore 서비스 상태를 확인해주세요."
+                logger.error("Firestore unavailable: \(nsError.localizedDescription, privacy: .public)")
+                return "네트워크 연결을 확인해 주세요."
             default:
-                return "프로필 확인 실패 [Firestore \(nsError.code)]: \(nsError.localizedDescription)"
+                logger.error("Firestore error \(nsError.code): \(nsError.localizedDescription, privacy: .public)")
+                return "프로필 확인에 실패했습니다. 잠시 후 다시 시도해 주세요."
             }
         }
 
-        return "프로필 확인 실패 [\(nsError.code)]: \(nsError.localizedDescription)"
+        logger.error("Profile error \(nsError.code): \(nsError.localizedDescription, privacy: .public)")
+        return "프로필 확인에 실패했습니다. 잠시 후 다시 시도해 주세요."
     }
 }
 

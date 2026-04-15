@@ -91,21 +91,21 @@ final class UpdateService: ObservableObject {
         let scriptContent = """
         #!/bin/zsh
         sleep 2
-        \(brewPath) update 2>/dev/null
+        "\(brewPath)" update 2>/dev/null
         # upgrade 시도, 실패하면 reinstall 시도
-        if \(brewPath) upgrade --cask mgm136044/tap/raindrop 2>\(logPath); then
+        if "\(brewPath)" upgrade --cask mgm136044/tap/raindrop 2>"\(logPath)"; then
             sleep 1
             open /Applications/RainDrop.app
-        elif \(brewPath) reinstall --cask mgm136044/tap/raindrop 2>\(logPath); then
+        elif "\(brewPath)" reinstall --cask mgm136044/tap/raindrop 2>"\(logPath)"; then
             sleep 1
             open /Applications/RainDrop.app
-        elif \(brewPath) install --cask mgm136044/tap/raindrop 2>\(logPath); then
+        elif "\(brewPath)" install --cask mgm136044/tap/raindrop 2>"\(logPath)"; then
             sleep 1
             open /Applications/RainDrop.app
         else
             osascript -e 'display notification "업데이트에 실패했습니다. 터미널에서 수동으로 진행해주세요." with title "RainDrop"'
         fi
-        rm -f \(scriptPath) \(logPath)
+        rm -f "\(scriptPath)" "\(logPath)"
         """
 
         do {
@@ -123,7 +123,7 @@ final class UpdateService: ObservableObject {
 
         let launcher = Process()
         launcher.executableURL = URL(fileURLWithPath: "/bin/zsh")
-        launcher.arguments = ["-c", "nohup \(scriptPath) > /dev/null 2>&1 &"]
+        launcher.arguments = ["-c", "nohup \"\(scriptPath)\" > /dev/null 2>&1 &"]
         launcher.standardOutput = FileHandle.nullDevice
         launcher.standardError = FileHandle.nullDevice
 

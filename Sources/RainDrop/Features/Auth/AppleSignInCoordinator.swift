@@ -77,7 +77,7 @@ final class AppleSignInCoordinator: NSObject,
 
     nonisolated func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         MainActor.assumeIsolated {
-            NSApp.keyWindow ?? NSApp.windows.first!
+            NSApp.keyWindow ?? NSApp.windows.first ?? NSWindow()
         }
     }
 
