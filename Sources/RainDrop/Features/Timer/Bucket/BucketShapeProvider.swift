@@ -52,13 +52,12 @@ struct BucketAnimationConfig: Sendable {
 
 // MARK: - Provider Protocol
 
-@MainActor
-protocol BucketShapeProvider {
+protocol BucketShapeProvider: Sendable {
     associatedtype OverlayContent: View
 
-    func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path
-    func rimPath(in rect: CGRect) -> Path
-    func bandPaths(in rect: CGRect) -> [Path]
+    nonisolated func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path
+    nonisolated func rimPath(in rect: CGRect) -> Path
+    nonisolated func bandPaths(in rect: CGRect) -> [Path]
 
     @ViewBuilder func overlay(in rect: CGRect, mode: BucketRenderMode) -> OverlayContent
 
@@ -84,11 +83,11 @@ protocol BucketShapeProvider {
 
 // MARK: - Type-Erased Wrapper
 
-struct AnyBucketSkin: BucketShapeProvider {
-    private let _bodyPath: @MainActor (CGRect, BucketRenderMode) -> Path
-    private let _rimPath: @MainActor (CGRect) -> Path
-    private let _bandPaths: @MainActor (CGRect) -> [Path]
-    private let _overlay: @MainActor (CGRect, BucketRenderMode) -> AnyView
+struct AnyBucketSkin: BucketShapeProvider, @unchecked Sendable {
+    private let _bodyPath: @Sendable (CGRect, BucketRenderMode) -> Path
+    private let _rimPath: @Sendable (CGRect) -> Path
+    private let _bandPaths: @Sendable (CGRect) -> [Path]
+    private let _overlay: @Sendable (CGRect, BucketRenderMode) -> AnyView
     private let _colorPalette: BucketColorPalette
     private let _waterStyle: WaterStyle
     private let _animationConfig: BucketAnimationConfig
@@ -113,9 +112,9 @@ struct AnyBucketSkin: BucketShapeProvider {
         _bottomInsetFraction = skin.bottomInsetFraction
     }
 
-    func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path { _bodyPath(rect, mode) }
-    func rimPath(in rect: CGRect) -> Path { _rimPath(rect) }
-    func bandPaths(in rect: CGRect) -> [Path] { _bandPaths(rect) }
+    nonisolated func bodyPath(in rect: CGRect, mode: BucketRenderMode) -> Path { _bodyPath(rect, mode) }
+    nonisolated func rimPath(in rect: CGRect) -> Path { _rimPath(rect) }
+    nonisolated func bandPaths(in rect: CGRect) -> [Path] { _bandPaths(rect) }
     func overlay(in rect: CGRect, mode: BucketRenderMode) -> AnyView { _overlay(rect, mode) }
 
     var colorPalette: BucketColorPalette { _colorPalette }

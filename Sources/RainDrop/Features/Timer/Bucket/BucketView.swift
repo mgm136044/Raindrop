@@ -265,27 +265,21 @@ private extension View {
 
 // MARK: - Shape Wrappers
 
-/// Wraps provider.bodyPath as a SwiftUI Shape for use with .fill/.stroke/.mask/.scale
-@MainActor
+/// Wraps provider.bodyPath — nonisolated, pure geometry (no actor needed)
 private struct BucketBodyShape: Shape {
     let provider: AnyBucketSkin
     let mode: BucketRenderMode
 
-    nonisolated func path(in rect: CGRect) -> Path {
-        MainActor.assumeIsolated {
-            provider.bodyPath(in: rect, mode: mode)
-        }
+    func path(in rect: CGRect) -> Path {
+        provider.bodyPath(in: rect, mode: mode)
     }
 }
 
-/// Wraps provider.rimPath as a SwiftUI Shape
-@MainActor
+/// Wraps provider.rimPath — nonisolated, pure geometry
 private struct BucketRimShape: Shape {
     let provider: AnyBucketSkin
 
-    nonisolated func path(in rect: CGRect) -> Path {
-        MainActor.assumeIsolated {
-            provider.rimPath(in: rect)
-        }
+    func path(in rect: CGRect) -> Path {
+        provider.rimPath(in: rect)
     }
 }

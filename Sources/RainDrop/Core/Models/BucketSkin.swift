@@ -52,7 +52,6 @@ enum BucketSkin: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    @MainActor
     var shapeProvider: AnyBucketSkin {
         switch self {
         case .wood: return AnyBucketSkin(WoodBucket())
@@ -64,11 +63,11 @@ enum BucketSkin: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    @MainActor var customDropGradientTop: Color {
+    var customDropGradientTop: Color {
         shapeProvider.waterStyle.dropGradientTop
     }
 
-    @MainActor var customDropGradientBottom: Color {
+    var customDropGradientBottom: Color {
         shapeProvider.waterStyle.dropGradientBottom
     }
 }
