@@ -17,6 +17,8 @@ final class AuthViewModel: ObservableObject {
     @Published private(set) var currentUser: UserProfile?
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
+    @Published private(set) var loginAttemptsRemaining: Int = 5
+    private var lockoutUntil: Date?
 
     private let firestoreService: FirestoreService
     private let dateService: DateService
@@ -31,15 +33,31 @@ final class AuthViewModel: ObservableObject {
 
     func signInWithEmail(email: String, password: String) {
         guard !isLoading else { return }
+
+        // Rate limiting: check lockout
+        if let lockout = lockoutUntil, Date() < lockout {
+            errorMessage = "로그인 시도가 초과되었습니다. 30초 후 다시 시도해 주세요."
+            return
+        }
+
         isLoading = true
         errorMessage = nil
 
         Task {
             do {
                 let result = try await Auth.auth().signIn(withEmail: email, password: password)
+                loginAttemptsRemaining = 5
+                lockoutUntil = nil
                 await handleAuthResult(uid: result.user.uid)
             } catch {
-                errorMessage = mapAuthError(error, context: "로그인")
+                loginAttemptsRemaining -= 1
+                if loginAttemptsRemaining <= 0 {
+                    lockoutUntil = Date().addingTimeInterval(30)
+                    loginAttemptsRemaining = 5
+                    errorMessage = "로그인 시도가 초과되었습니다. 30초 후 다시 시도해 주세요."
+                } else {
+                    errorMessage = mapAuthError(error, context: "로그인")
+                }
             }
             isLoading = false
         }
@@ -81,6 +99,17 @@ final class AuthViewModel: ObservableObject {
             errorMessage = "닉네임을 입력해주세요."
             return
         }
+
+        // Nickname character whitelist: alphanumeric, Korean, space, underscore, hyphen
+        let allowed = CharacterSet.alphanumerics
+            .union(CharacterSet(charactersIn: "\u{AC00}"..."\u{D7A3}"))  // Korean syllables
+            .union(CharacterSet(charactersIn: " _-"))
+        let isClean = trimmed.unicodeScalars.allSatisfy { allowed.contains($0) }
+        guard isClean else {
+            errorMessage = "닉네임에 사용할 수 없는 문자가 포함되어 있습니다."
+            return
+        }
+
         guard let uid = Auth.auth().currentUser?.uid else { return }
         isLoading = true
         errorMessage = nil
@@ -175,7 +204,7 @@ final class AuthViewModel: ObservableObject {
         case 17007:
             return "이미 등록된 이메일입니다."
         case 17026:
-            return "비밀번호는 6자 이상이어야 합니다."
+            return "비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다."
         case 17020:
             return "네트워크 연결을 확인해주세요."
         case 17010:

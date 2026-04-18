@@ -9,8 +9,14 @@ struct SignInScreen: View {
 
     private enum Field { case email, password }
 
+    private var isPasswordValid: Bool {
+        password.count >= 8
+        && password.rangeOfCharacter(from: .letters) != nil
+        && password.rangeOfCharacter(from: .decimalDigits) != nil
+    }
+
     private var isFormValid: Bool {
-        !email.trimmingCharacters(in: .whitespaces).isEmpty && password.count >= 6
+        !email.trimmingCharacters(in: .whitespaces).isEmpty && isPasswordValid
     }
 
     var body: some View {
@@ -35,10 +41,17 @@ struct SignInScreen: View {
                     .focused($focusedField, equals: .email)
                     .onSubmit { focusedField = .password }
 
-                SecureField("비밀번호 (6자 이상)", text: $password)
+                SecureField("비밀번호 (8자 이상, 영문+숫자)", text: $password)
                     .textFieldStyle(.roundedBorder)
                     .frame(maxWidth: 280)
                     .focused($focusedField, equals: .password)
+
+                if !password.isEmpty && !isPasswordValid {
+                    Text("비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다.")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(AppColors.danger)
+                        .frame(maxWidth: 280, alignment: .leading)
+                }
 
                 Button {
                     if isSignUp {
