@@ -36,10 +36,13 @@ Before deploying:
 1. Update **PatchNotesView** — describe what features are added/changed in this version
 2. Update **AppConstants.appVersion** — sync with patch notes
 3. Ask user for deployment approval
-4. Deploy via `./deploy.sh`
+4. Deploy via **`./deploy.sh`** (프로비저닝 프로파일 없이, 엔타이틀먼트 포함)
+   - **CRITICAL: `--social` 플래그 사용 금지** — 개발 기기에서만 실행 가능하게 됨
+   - 기본 모드에서도 Keychain 엔타이틀먼트가 포함됨 (소셜 기능 정상 동작)
+   - `--social`은 로컬 디버깅 전용
 
 ## Project Context
-- **Current version**: v2.7.0
+- **Current version**: v3.0.0
 - **Build system**: SPM (Package.swift), macOS 26
 - **Deploy**: `./deploy.sh` (release build + sign + copy to /Applications)
 - **GitHub**: https://github.com/mgm136044/Raindrop (public)
