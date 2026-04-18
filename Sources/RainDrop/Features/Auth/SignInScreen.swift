@@ -1,5 +1,4 @@
 import SwiftUI
-import AuthenticationServices
 
 struct SignInScreen: View {
     @ObservedObject var authViewModel: AuthViewModel
@@ -27,36 +26,6 @@ struct SignInScreen: View {
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(.secondary)
             }
-
-            // Apple Sign In
-            Button {
-                authViewModel.signInWithApple()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "apple.logo")
-                        .font(.system(size: 18, weight: .medium))
-                    Text("Apple로 로그인")
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                .frame(maxWidth: 280)
-                .padding(.vertical, 10)
-            }
-            .buttonStyle(.glassProminent)
-            .tint(.black)
-            .disabled(authViewModel.isLoading)
-
-            HStack {
-                Rectangle()
-                    .fill(.secondary.opacity(0.3))
-                    .frame(height: 1)
-                Text("또는")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.secondary)
-                Rectangle()
-                    .fill(.secondary.opacity(0.3))
-                    .frame(height: 1)
-            }
-            .frame(maxWidth: 280)
 
             // Email/Password
             VStack(spacing: 12) {

@@ -20,7 +20,6 @@ final class AuthViewModel: ObservableObject {
 
     private let firestoreService: FirestoreService
     private let dateService: DateService
-    private let appleCoordinator = AppleSignInCoordinator()
 
     var isSignedIn: Bool { authState == .signedIn }
 
@@ -57,22 +56,6 @@ final class AuthViewModel: ObservableObject {
                 await handleAuthResult(uid: result.user.uid)
             } catch {
                 errorMessage = mapAuthError(error, context: "회원가입")
-            }
-            isLoading = false
-        }
-    }
-
-    func signInWithApple() {
-        guard !isLoading else { return }
-        isLoading = true
-        errorMessage = nil
-
-        Task {
-            do {
-                let result = try await appleCoordinator.signIn()
-                await handleAuthResult(uid: result.user.uid)
-            } catch {
-                errorMessage = mapAuthError(error, context: "Apple 로그인")
             }
             isLoading = false
         }
