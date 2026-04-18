@@ -114,10 +114,13 @@ if [ "$SOCIAL_ENABLED" = true ]; then
         "$APP_PATH"
     echo "  ✓ 코드 서명 완료 (entitlements + profile 포함)"
 else
-    # 프로비저닝 프로파일 제거 (이전 배포에서 남아있을 수 있음)
+    # 프로비저닝 프로파일 제거 + 엔타이틀먼트 포함 서명
+    # (Keychain 접근 등 소셜 기능에 필요, 프로파일 없이도 동작)
     rm -f "$APP_PATH/Contents/embedded.provisionprofile"
-    codesign --force --sign "$IDENTITY" "$APP_PATH"
-    echo "  ✓ 코드 서명 완료 (단순 서명)"
+    codesign --force --sign "$IDENTITY" \
+        --entitlements "$ENTITLEMENTS" \
+        "$APP_PATH"
+    echo "  ✓ 코드 서명 완료 (entitlements 포함, profile 없음)"
 fi
 
 # Step 5: 검증
