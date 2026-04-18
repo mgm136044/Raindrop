@@ -42,8 +42,12 @@ final class AuthViewModel: ObservableObject {
         self.firestoreService = firestoreService
         self.dateService = dateService
         // Restore persisted attempts count (default 5 if never set)
-        let stored = UserDefaults.standard.integer(forKey: "auth_attempts_remaining")
-        loginAttemptsRemaining = stored > 0 ? stored : 5
+        // Use object(forKey:) to distinguish "key absent" from "stored value is 0"
+        if UserDefaults.standard.object(forKey: "auth_attempts_remaining") != nil {
+            loginAttemptsRemaining = UserDefaults.standard.integer(forKey: "auth_attempts_remaining")
+        } else {
+            loginAttemptsRemaining = 5
+        }
         checkCurrentAuth()
     }
 
@@ -86,6 +90,14 @@ final class AuthViewModel: ObservableObject {
         // Rate limiting: same lockout applies to sign-up to prevent account enumeration
         if let lockout = lockoutUntil, Date() < lockout {
             errorMessage = "로그인 시도가 초과되었습니다. 30초 후 다시 시도해 주세요."
+            return
+        }
+
+        // Client-side password validation before hitting Firebase
+        guard password.count >= 8,
+              password.rangeOfCharacter(from: .letters) != nil,
+              password.rangeOfCharacter(from: .decimalDigits) != nil else {
+            errorMessage = "비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다."
             return
         }
 
@@ -211,11 +223,16 @@ final class AuthViewModel: ObservableObject {
 
     private func generateUniqueInviteCode() async throws -> String {
         let chars = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        let threshold = 256 - (256 % chars.count) // 252: rejection sampling to eliminate modular bias
         for _ in 0..<10 {
-            // CWE-330: 암호학적 보안 난수 사용 (SecRandomCopyBytes)
-            var randomBytes = [UInt8](repeating: 0, count: 6)
-            _ = SecRandomCopyBytes(kSecRandomDefault, 6, &randomBytes)
-            let code = String(randomBytes.map { chars[Int($0) % chars.count] })
+            var code = ""
+            while code.count < 6 {
+                var byte: UInt8 = 0
+                _ = SecRandomCopyBytes(kSecRandomDefault, 1, &byte)
+                if byte < threshold {
+                    code.append(chars[Int(byte) % chars.count])
+                }
+            }
             let existing = try await firestoreService.queryUserByInviteCode(code)
             if existing == nil { return code }
         }
