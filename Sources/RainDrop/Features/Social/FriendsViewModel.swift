@@ -102,7 +102,10 @@ final class FriendsViewModel: ObservableObject {
               let myNickname = authViewModel.currentUser?.nickname else { return }
 
         // Self-guard: prevent sending friend request to yourself
-        guard user.id != uid else { return }
+        guard user.id != uid else {
+            errorMessage = "자신에게는 친구 요청을 보낼 수 없습니다."
+            return
+        }
 
         Task {
             do {

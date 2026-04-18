@@ -17,8 +17,21 @@ final class AuthViewModel: ObservableObject {
     @Published private(set) var currentUser: UserProfile?
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
-    @Published private(set) var loginAttemptsRemaining: Int = 5
-    private var lockoutUntil: Date?
+    @Published private(set) var loginAttemptsRemaining: Int = 5  // backed by UserDefaults
+
+    private var lockoutUntil: Date? {
+        get {
+            let ts = UserDefaults.standard.double(forKey: "auth_lockout_until")
+            return ts > 0 ? Date(timeIntervalSince1970: ts) : nil
+        }
+        set {
+            if let date = newValue {
+                UserDefaults.standard.set(date.timeIntervalSince1970, forKey: "auth_lockout_until")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "auth_lockout_until")
+            }
+        }
+    }
 
     private let firestoreService: FirestoreService
     private let dateService: DateService
@@ -28,6 +41,9 @@ final class AuthViewModel: ObservableObject {
     init(firestoreService: FirestoreService, dateService: DateService = DateService()) {
         self.firestoreService = firestoreService
         self.dateService = dateService
+        // Restore persisted attempts count (default 5 if never set)
+        let stored = UserDefaults.standard.integer(forKey: "auth_attempts_remaining")
+        loginAttemptsRemaining = stored > 0 ? stored : 5
         checkCurrentAuth()
     }
 
@@ -46,16 +62,17 @@ final class AuthViewModel: ObservableObject {
         Task {
             do {
                 let result = try await Auth.auth().signIn(withEmail: email, password: password)
-                loginAttemptsRemaining = 5
+                setAttemptsRemaining(5)
                 lockoutUntil = nil
                 await handleAuthResult(uid: result.user.uid)
             } catch {
-                loginAttemptsRemaining -= 1
-                if loginAttemptsRemaining <= 0 {
+                let remaining = loginAttemptsRemaining - 1
+                if remaining <= 0 {
                     lockoutUntil = Date().addingTimeInterval(30)
-                    loginAttemptsRemaining = 5
+                    setAttemptsRemaining(5)
                     errorMessage = "로그인 시도가 초과되었습니다. 30초 후 다시 시도해 주세요."
                 } else {
+                    setAttemptsRemaining(remaining)
                     errorMessage = mapAuthError(error, context: "로그인")
                 }
             }
@@ -65,6 +82,13 @@ final class AuthViewModel: ObservableObject {
 
     func signUpWithEmail(email: String, password: String) {
         guard !isLoading else { return }
+
+        // Rate limiting: same lockout applies to sign-up to prevent account enumeration
+        if let lockout = lockoutUntil, Date() < lockout {
+            errorMessage = "로그인 시도가 초과되었습니다. 30초 후 다시 시도해 주세요."
+            return
+        }
+
         isLoading = true
         errorMessage = nil
 
@@ -100,8 +124,11 @@ final class AuthViewModel: ObservableObject {
             return
         }
 
-        // Nickname character whitelist: alphanumeric, Korean, space, underscore, hyphen
-        let allowed = CharacterSet.alphanumerics
+        // Nickname character whitelist: ASCII a-z A-Z 0-9, Korean syllables, space/underscore/hyphen
+        // Using explicit ASCII ranges instead of .alphanumerics to exclude non-ASCII Unicode letters
+        let allowed = CharacterSet(charactersIn: "a"..."z")
+            .union(CharacterSet(charactersIn: "A"..."Z"))
+            .union(CharacterSet(charactersIn: "0"..."9"))
             .union(CharacterSet(charactersIn: "\u{AC00}"..."\u{D7A3}"))  // Korean syllables
             .union(CharacterSet(charactersIn: " _-"))
         let isClean = trimmed.unicodeScalars.allSatisfy { allowed.contains($0) }
@@ -155,6 +182,11 @@ final class AuthViewModel: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func setAttemptsRemaining(_ count: Int) {
+        loginAttemptsRemaining = count
+        UserDefaults.standard.set(count, forKey: "auth_attempts_remaining")
+    }
 
     private func checkCurrentAuth() {
         guard let user = Auth.auth().currentUser else {
