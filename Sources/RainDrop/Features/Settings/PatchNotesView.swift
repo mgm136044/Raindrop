@@ -15,6 +15,14 @@ private let patchNotes: [PatchNote] = [
             "보안 강화 — 셸 스크립트 변수 인용 처리 (인젝션 방지)",
             "크래시 수정 — AppleSignInCoordinator 강제 언래핑 제거",
         ]),
+        PatchNote(version: "3.0.0", date: "2026.04.19", changes: [
+            "소셜 기능 활성화 — 이메일/비밀번호 로그인, 친구, 랭킹",
+            "비밀번호 보안 강화 — 8자 이상 + 영문+숫자 필수",
+            "로그인 보호 — 5회 실패 시 30초 잠금",
+            "닉네임 안전 문자 제한 — 한글/영숫자/공백만 허용",
+            "Firestore 보안 규칙 코드 관리",
+            "Swift 동시성 안정화 — BucketShapeProvider @MainActor 제거",
+        ]),
         PatchNote(version: "2.9.0", date: "2026.04.14", changes: [
             "성능 최적화 — 전체 CPU 35-65% 감소",
             "비활성 애니메이션 자동 중단 (테라리움, 오버플로우, 스플래시, 구름)",
